@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        #maze {
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            grid-template-rows: repeat(10, 30px);
+            gap: 1px;
+            border: 2px solid #000;
+            background-color: #fff;
+            margin-top: 20px;
+        }
+
+        .cell {
+            width: 30px;
+            height: 30px;
+            background-color: #ccc;
+            transition: background-color 0.3s ease;
+        }
+
+        .wall {
+            background-color: #000;
+        }
+
+        .player {
+            background-color: #00f;
+            border-radius: 50%;
+        }
+
+        .exit {
+            background-color: #0f0;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+            color: #333;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .control-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .control-button:hover {
+            background-color: #0056b3;
+        }
+
+        .control-button:active {
+            background-color: #003d80;
+            transform: scale(0.95);
+        }
+
+        .control-button-row {
+            display: flex;
+        }
+
+        .control-button-row button {
+            margin: 0 5px;
+        }
+
+        #level-display {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<div id="level-display">Level: 1 / 10</div>
+<div id="maze"></div>
+<p id="status">Use the buttons to move the player.</p>
+
+<div class="controls">
+    <div class="control-button-row">
+        <button class="control-button" id="up">Up</button>
+    </div>
+    <div class="control-button-row">
+        <button class="control-button" id="left">Left</button>
+        <button class="control-button" id="right">Right</button>
+    </div>
+    <div class="control-button-row">
+        <button class="control-button" id="down">Down</button>
+    </div>
+</div>
+
+<script>
+    const mazes = [
+        // Level 1 - Simple Intro
+        [
+            "1111111111",
+            "1000000001",
+            "1011111101",
+            "1010000101",
+            "1010110101",
+            "1010000001",
+            "1011111111",
+            "1000000001",
+            "1111111101",
+            "1111111001"
+        ],
+        // Level 2 - Narrow Passages
+        [
+            "1111111111",
+            "1000010001",
+            "1011010111",
+            "1010010001",
+            "1010111011",
+            "1010000101",
+            "1011010101",
+            "1000010001",
+            "1111111011",
+            "1111111001"
+        ],
+        // Level 3 - Zigzag Challenge
+        [
+            "1111111111",
+            "1000000001",
+            "1011010111",
+            "1010010001",
+            "1010111011",
+            "1010010101",
+            "1010101001",
+            "1010001011",
+            "1000000001",
+            "1111111001"
+        ],
+        // Level 4 - Winding Path
+        [
+            "1111111111",
+            "1000100001",
+            "1010011111",
+            "1010100001",
+            "1010011101",
+            "1010100001",
+            "1010011111",
+            "1000100001",
+            "1111110111",
+            "1111111001"
+        ],
+        // Level 5 - Maze of Turns
+        [
+            "1111111111",
+            "1000000011",
+            "1011010111",
+            "1010010001",
+            "1010111011",
+            "1010010101",
+            "1010101001",
+            "1010001011",
+            "1000000001",
+            "1111111111"
+        ],
+        // Level 6 - Serpentine Route
+        [
+            "1111111111",
+            "1000010001",
+            "1011010111",
+            "1010010001",
+            "1010111011",
+            "1010010101",
+            "1010101001",
+            "1010001011",
+            "1000000001",
+            "1111111001"
+        ],
+        // Level 7 - Tight Corners
+        [
+            "1111111111",
+            "1000000011",
+            "1011010111",
+            "1010010001",
+            "1010111011",
+            "1010010101",
+            "1010101001",
+            "1010001011",
+            "1000000001",
+            "1111110001"
+        ],
+        // Level 8 - Maze of Deception
+        [
+            "1111111111",
+            "1000100001",
+            "1010011111",
+            "1010100001",
+            "1010011101",
+            "1010100001",
+            "1010011111",
+            "1000100001",
+            "1111111011",
+            "1111110001"
+        ],
+        // Level 9 - Complex Labyrinth
+        [
+            "1111111111",
+            "1000000111",
+            "1011010111",
+            "1010010001",
+            "1010111011",
+            "1010010101",
+            "1010101001",
+            "1010001011",
+            "1000000001",
+            "1111110001"
+        ],
+        // Level 10 - Ultimate Challenge
+        [
+            "1111111111",
+            "1000000011",
+            "1011010111",
+            "1010010001",
+            "1010111011",
+            "1010010101",
+            "1010101001",
+            "1010001011",
+            "1000000001",
+            "1111111001"
+        ]
+    ];
+
+    let currentMazeIndex = 0;
+    const player = { x: 1, y: 1 };
+    const exit = { x: 8, y: 8 };
+
+    function createMaze() {
+        const maze = mazes[currentMazeIndex];
+        const mazeContainer = document.getElementById("maze");
+        const levelDisplay = document.getElementById("level-display");
+        mazeContainer.innerHTML = "";
+        
+        maze.forEach((row, y) => {
+            row.split('').forEach((cell, x) => {
+                const div = document.createElement("div");
+                div.classList.add("cell");
+                if (cell === "1") {
+                    div.classList.add("wall");
+                }
+                mazeContainer.appendChild(div);
+            });
+        });
+
+        // Update level display
+        levelDisplay.textContent = `Level: ${currentMazeIndex + 1} / 10`;
+
+        updatePlayerPosition();
+        updateExitPosition();
+    }
+
+    function updatePlayerPosition() {
+        const index = player.y * 10 + player.x;
+        const cells = document.querySelectorAll(".cell");
+        cells.forEach(cell => cell.classList.remove("player"));
+        cells[index].classList.add("player");
+    }
+
+    function updateExitPosition() {
+        const index = exit.y * 10 + exit.x;
+        const cells = document.querySelectorAll(".cell");
+        cells.forEach(cell => cell.classList.remove("exit"));
+        cells[index].classList.add("exit");
+    }
+
+    function movePlayer(dx, dy) {
+        const newX = player.x + dx;
+        const newY = player.y + dy;
+        const maze = mazes[currentMazeIndex];
+        if (maze[newY] && maze[newY][newX] === "0") {
+            player.x = newX;
+            player.y = newY;
+            updatePlayerPosition();
+            if (player.x === exit.x && player.y === exit.y) {
+                if (currentMazeIndex < mazes.length - 1) {
+                    currentMazeIndex++;
+                    player.x = 1;
+                    player.y = 1;
+                    document.getElementById("status").textContent = "Maze completed! Moving to the next maze.";
+                    createMaze();
+                } else {
+                    document.getElementById("status").textContent = "Congratulations! You completed all mazes.";
+                }
+            }
+        }
+    }
+
+    // Keyboard support
+    document.addEventListener('keydown', (event) => {
+        switch(event.key) {
+            case 'ArrowUp': movePlayer(0, -1); break;
+            case 'ArrowDown': movePlayer(0, 1); break;
+            case 'ArrowLeft': movePlayer(-1, 0); break;
+            case 'ArrowRight': movePlayer(1, 0); break;
+        }
+    });
+
+    document.getElementById("up").addEventListener("click", () => movePlayer(0, -1));
+    document.getElementById("down").addEventListener("click", () => movePlayer(0, 1));
+    document.getElementById("left").addEventListener("click", () => movePlayer(-1, 0));
+    document.getElementById("right").addEventListener("click", () => movePlayer(1, 0));
+
+    createMaze();
+</script>
+
+</body>
+</html>

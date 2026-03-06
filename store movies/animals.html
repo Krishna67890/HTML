@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazing Animals</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+
+        header {
+            background: #ff0000;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .animal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .animal-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .animal-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .animal-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .animal-card:hover .animal-image {
+            transform: scale(1.05);
+        }
+
+        .animal-info {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .animal-name {
+            color: #ff0000;
+            font-size: 1.5rem;
+            margin: 0 0 1rem 0;
+        }
+
+        .animal-details {
+            margin-bottom: 1rem;
+        }
+
+        .animal-details p {
+            margin: 0.5rem 0;
+            color: #333;
+        }
+
+        .animal-details strong {
+            color: #ff0000;
+        }
+
+        .facts-title {
+            color: #ff0000;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+        }
+
+        .facts-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .facts-list li {
+            padding-left: 20px;
+            position: relative;
+            margin: 0.5rem 0;
+            color: #444;
+        }
+
+        .facts-list li:before {
+            content: "•";
+            color: #ff0000;
+            position: absolute;
+            left: 0;
+        }
+
+        .category-title {
+            color: #ff0000;
+            text-align: center;
+            margin: 2rem 0;
+            font-size: 2rem;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            .animal-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .animal-image {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Amazing Animals</h1>
+        <p>Discover Earth's Most Fascinating Creatures</p>
+    </header>
+
+    <div class="container">
+        <h2 class="category-title">Big Cats</h2>
+        <div class="animal-grid">
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/orange/white?text=Bengal+Tiger" alt="Bengal Tiger" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Bengal Tiger</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> Indian Subcontinent</p>
+                        <p><strong>Lifespan:</strong> 8-10 years in wild</p>
+                        <p><strong>Diet:</strong> Large ungulates, wild boar</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Each tiger has unique stripe patterns</li>
+                        <li>Can leap up to 20 feet in length</li>
+                        <li>Excellent swimmers and can cross rivers</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/yellow/black?text=African+Lion" alt="African Lion" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">African Lion</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> African Savannas</p>
+                        <p><strong>Lifespan:</strong> 10-14 years in wild</p>
+                        <p><strong>Diet:</strong> Large mammals</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Males can weigh up to 550 pounds</li>
+                        <li>Can sleep up to 20 hours a day</li>
+                        <li>Females do most of the hunting</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/gray/white?text=Leopard" alt="Leopard" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Leopard</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> Africa and Asia</p>
+                        <p><strong>Lifespan:</strong> 12-17 years</p>
+                        <p><strong>Diet:</strong> Medium-sized prey</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Can carry prey twice their body weight up trees</li>
+                        <li>Excellent climbers and swimmers</li>
+                        <li>Most successful hunter of all big cats</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="category-title">Marine Life</h2>
+        <div class="animal-grid">
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/blue/white?text=Orca" alt="Orca" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Orca (Killer Whale)</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> All oceans</p>
+                        <p><strong>Lifespan:</strong> 50-90 years</p>
+                        <p><strong>Diet:</strong> Fish, seals, other marine mammals</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Highly social animals that live in pods</li>
+                        <li>Each pod has its own dialect</li>
+                        <li>Can swim up to 40 mph</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/lightblue/black?text=Humpback+Whale" alt="Humpback Whale" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Humpback Whale</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> Global oceans</p>
+                        <p><strong>Lifespan:</strong> 45-50 years</p>
+                        <p><strong>Diet:</strong> Krill and small fish</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Known for complex songs that can last for hours</li>
+                        <li>Can breach completely out of water</li>
+                        <li>Travel up to 8000 km during migration</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/green/white?text=Green+Sea+Turtle" alt="Green Sea Turtle" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Green Sea Turtle</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> Tropical oceans</p>
+                        <p><strong>Lifespan:</strong> Up to 100 years</p>
+                        <p><strong>Diet:</strong> Seagrasses and algae</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Can hold breath for up to 5 hours</li>
+                        <li>Return to birthplace to lay eggs</li>
+                        <li>Travel thousands of miles to feed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="category-title">Birds of Prey</h2>
+        <div class="animal-grid">
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/brown/white?text=Golden+Eagle" alt="Golden Eagle" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Golden Eagle</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> Northern Hemisphere</p>
+                        <p><strong>Lifespan:</strong> 30 years</p>
+                        <p><strong>Diet:</strong> Small mammals, birds</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Wingspan reaches up to 7.5 feet</li>
+                        <li>Can dive at speeds of 200 mph</li>
+                        <li>Mates for life</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/gray/white?text=Peregrine+Falcon" alt="Peregrine Falcon" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Peregrine Falcon</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> Worldwide</p>
+                        <p><strong>Lifespan:</strong> 15-20 years</p>
+                        <p><strong>Diet:</strong> Birds</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Fastest animal on Earth, reaching speeds over 240 mph</li>
+                        <li>Can spot prey from over 3 kilometers away</li>
+                        <li>Found on every continent except Antarctica</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/darkbrown/white?text=Harpy+Eagle" alt="Harpy Eagle" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Harpy Eagle</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> Tropical rainforests</p>
+                        <p><strong>Lifespan:</strong> 25-35 years</p>
+                        <p><strong>Diet:</strong> Monkeys, sloths</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Largest and most powerful eagle in the world</li>
+                        <li>Talons as large as a grizzly bear's claws</li>
+                        <li>Can carry prey equal to their body weight</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="category-title">Primates</h2>
+        <div class="animal-grid">
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/black/white?text=Mountain+Gorilla" alt="Mountain Gorilla" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Mountain Gorilla</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> African mountains</p>
+                        <p><strong>Lifespan:</strong> 35-40 years</p>
+                        <p><strong>Diet:</strong> Vegetation</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Share 98% of their DNA with humans</li>
+                        <li>Live in groups called troops</li>
+                        <li>Adult males are called silverbacks</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/orange/white?text=Orangutan" alt="Orangutan" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Orangutan</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> Rainforests of Borneo and Sumatra</p>
+                        <p><strong>Lifespan:</strong> 35-40 years</p>
+                        <p><strong>Diet:</strong> Fruit, leaves, insects</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Most intelligent non-human primate</li>
+                        <li>Can use tools in the wild</li>
+                        <li>Longest childhood dependency of any animal</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="animal-card">
+                <img src="https://placehold.co/600x400/gray/white?text=Ring-tailed+Lemur" alt="Ring-tailed Lemur" class="animal-image">
+                <div class="animal-info">
+                    <h3 class="animal-name">Ring-tailed Lemur</h3>
+                    <div class="animal-details">
+                        <p><strong>Habitat:</strong> Madagascar</p>
+                        <p><strong>Lifespan:</strong> 16-19 years</p>
+                        <p><strong>Diet:</strong> Fruit, leaves, flowers</p>
+                    </div>
+                    <h4 class="facts-title">Amazing Facts</h4>
+                    <ul class="facts-list">
+                        <li>Use their tails for balance and communication</li>
+                        <li>Female lemurs are dominant over males</li>
+                        <li>Spend about 40% of their day on the ground</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

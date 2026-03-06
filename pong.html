@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Pong</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #1a1a2e;
+            color: #ffffff;
+        }
+        canvas {
+            background: #16213e;
+            border: 4px solid #0f3460;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        button {
+            background-color: #0f3460;
+            color: #e94560;
+            border: 2px solid #e94560;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background-color: #e94560;
+            color: #ffffff;
+        }
+        #playerNames {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 10px;
+        }
+        #playerNames input {
+            width: 45%;
+            padding: 10px;
+            background-color: #16213e;
+            border: 2px solid #0f3460;
+            color: #ffffff;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="playerNames">
+        <input type="text" id="player1Name" placeholder="Player 1 Name" value="Player 1">
+        <input type="text" id="player2Name" placeholder="Player 2 Name" value="Player 2">
+    </div>
+    <canvas id="pongCanvas" width="600" height="400"></canvas>
+    <div class="controls">
+        <div class="player-controls">
+            <div>Player 1 Controls</div>
+            <button id="wButton">W (Up)</button>
+            <button id="sButton">S (Down)</button>
+        </div>
+        <div class="player-controls">
+            <div>Player 2 Controls</div>
+            <button id="upButton">▲ (Up)</button>
+            <button id="downButton">▼ (Down)</button>
+        </div>
+    </div>
+
+    <script>
+        // Game Configuration
+        const canvas = document.getElementById("pongCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Sound Effects
+        const hitSound = new Audio('data:audio/wav;base64,UklGRigCAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhwgEAAAAAAAAAAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////');
+        const scoreSound = new Audio('data:audio/wav;base64,UklGRigCAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhwgEAAAAAAAAAAP//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////');
+
+        // Game State
+        const gameState = {
+            paused: false,
+            gameOver: false
+        };
+
+        // Net Configuration
+        const net = {
+            x: canvas.width / 2 - 1,
+            y: 0,
+            width: 2,
+            height: canvas.height,
+            color: "#ffffff"
+        };
+
+        // Player Configurations
+        const player1 = {
+            x: 10,
+            y: canvas.height / 2 - 50,
+            width: 10,
+            height: 100,
+            color: "#e94560",
+            score: 0,
+            speed: 8
+        };
+
+        const player2 = {
+            x: canvas.width - 20,
+            y: canvas.height / 2 - 50,
+            width: 10,
+            height: 100,
+            color: "#0f3460",
+            score: 0,
+            speed: 8
+        };
+
+        // Ball Configuration
+        const ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 10,
+            speed: 5,
+            velocityX: 5,
+            velocityY: 5,
+            color: "#ffffff"
+        };
+
+        // Control States
+        const controls = {
+            wPressed: false,
+            sPressed: false,
+            upArrowPressed: false,
+            downArrowPressed: false
+        };
+
+        // Drawing Functions
+        function drawRect(x, y, w, h, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, w, h);
+        }
+
+        function drawCircle(x, y, r, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2, false);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawText(text, x, y, color = "#ffffff") {
+            ctx.fillStyle = color;
+            ctx.font = "32px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(text, x, y);
+        }
+
+        function drawNet() {
+            for (let i = 0; i <= canvas.height; i += 15) {
+                drawRect(net.x, i, net.width, 10, net.color);
+            }
+        }
+
+        // Game Logic Functions
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.speed = 5;
+            ball.velocityX = -ball.velocityX;
+            ball.velocityY = Math.random() * 5 - 2.5;
+        }
+
+        function collision(b, p) {
+            return (
+                b.x + b.radius > p.x &&
+                b.x - b.radius < p.x + p.width &&
+                b.y + b.radius > p.y &&
+                b.y - b.radius < p.y + p.height
+            );
+        }
+
+        function movePaddles() {
+            // Player 1 Movement
+            if (controls.wPressed && player1.y > 0) {
+                player1.y -= player1.speed;
+            }
+            if (controls.sPressed && player1.y < canvas.height - player1.height) {
+                player1.y += player1.speed;
+            }
+
+            // Player 2 Movement
+            if (controls.upArrowPressed && player2.y > 0) {
+                player2.y -= player2.speed;
+            }
+            if (controls.downArrowPressed && player2.y < canvas.height - player2.height) {
+                player2.y += player2.speed;
+            }
+        }
+
+        function update() {
+            // Move Ball
+            ball.x += ball.velocityX;
+            ball.y += ball.velocityY;
+
+            // Wall Collision (Top and Bottom)
+            if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+                ball.velocityY = -ball.velocityY;
+            }
+
+            // Determine which player to check
+            let player = ball.x < canvas.width / 2 ? player1 : player2;
+
+            // Paddle Collision
+            if (collision(ball, player)) {
+                // Where the ball hit the paddle
+                let collidePoint = ball.y - (player.y + player.height / 2);
+                collidePoint = collidePoint / (player.height / 2);
+
+                // Calculate angle
+                let angleRad = collidePoint * Math.PI / 4;
+                
+                // Change velocity direction
+                let direction = player === player1 ? 1 : -1;
+                ball.velocityX = direction * ball.speed * Math.cos(angleRad);
+                ball.velocityY = ball.speed * Math.sin(angleRad);
+
+                // Increase ball speed slightly
+                ball.speed += 0.5;
+            }
+
+            // Scoring
+            if (ball.x - ball.radius < 0) {
+                player2.score++;
+                resetBall();
+            } else if (ball.x + ball.radius > canvas.width) {
+                player1.score++;
+                resetBall();
+            }
+        }
+
+        function render() {
+            // Clear canvas
+            drawRect(0, 0, canvas.width, canvas.height, "#1a1a2e");
+
+            // Draw net
+            drawNet();
+
+            // Draw paddles
+            drawRect(player1.x, player1.y, player1.width, player1.height, player1.color);
+            drawRect(player2.x, player2.y, player2.width, player2.height, player2.color);
+
+            // Draw ball
+            drawCircle(ball.x, ball.y, ball.radius, ball.color);
+
+            // Draw scores
+            drawText(document.getElementById('player1Name').value + ": " + player1.score, canvas.width / 4, 50);
+            drawText(document.getElementById('player2Name').value + ": " + player2.score, 3 * canvas.width / 4, 50);
+        }
+
+        function gameLoop() {
+            if (!gameState.paused && !gameState.gameOver) {
+                movePaddles();
+                update();
+                render();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Event Listeners for Buttons
+        document.getElementById("wButton").addEventListener("mousedown", () => controls.wPressed = true);
+        document.getElementById("wButton").addEventListener("mouseup", () => controls.wPressed = false);
+        document.getElementById("wButton").addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            controls.wPressed = true;
+        });
+        document.getElementById("wButton").addEventListener("touchend", (e) => {
+            e.preventDefault();
+            controls.wPressed = false;
+        });
+
+        document.getElementById("sButton").addEventListener("mousedown", () => controls.sPressed = true);
+        document.getElementById("sButton").addEventListener("mouseup", () => controls.sPressed = false);
+        document.getElementById("sButton").addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            controls.sPressed = true;
+        });
+        document.getElementById("sButton").addEventListener("touchend", (e) => {
+            e.preventDefault();
+            controls.sPressed = false;
+        });
+
+        document.getElementById("upButton").addEventListener("mousedown", () => controls.upArrowPressed = true);
+        document.getElementById("upButton").addEventListener("mouseup", () => controls.upArrowPressed = false);
+        document.getElementById("upButton").addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            controls.upArrowPressed = true;
+        });
+        document.getElementById("upButton").addEventListener("touchend", (e) => {
+            e.preventDefault();
+            controls.upArrowPressed = false;
+        });
+
+        document.getElementById("downButton").addEventListener("mousedown", () => controls.downArrowPressed = true);
+        document.getElementById("downButton").addEventListener("mouseup", () => controls.downArrowPressed = false);
+        document.getElementById("downButton").addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            controls.downArrowPressed = true;
+        });
+        document.getElementById("downButton").addEventListener("touchend", (e) => {
+            e.preventDefault();
+            controls.downArrowPressed = false;
+        });
+
+        // Keyboard Controls
+        document.addEventListener('keydown', (e) => {
+            switch(e.key.toLowerCase()) {
+                case 'w': controls.wPressed = true; break;
+                case 's': controls.sPressed = true; break;
+                case 'arrowup': controls.upArrowPressed = true; break;
+                case 'arrowdown': controls.downArrowPressed = true; break;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            switch(e.key.toLowerCase()) {
+                case 'w': controls.wPressed = false; break;
+                case 's': controls.sPressed = false; break;
+                case 'arrowup': controls.upArrowPressed = false; break;
+                case 'arrowdown': controls.downArrowPressed = false; break;
+            }
+        });
+
+        // Start Game Loop
+        gameLoop();
+    </script>
+</body>
+</html>

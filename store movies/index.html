@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Upload and Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .upload-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        #movieFile {
+            margin: 20px auto;
+            display: block;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+        }
+
+        button {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        table {
+            margin: 20px auto;
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        #videoPlayerContainer {
+            max-width: 800px;
+            margin: 20px auto;
+            background: black;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #videoPlayer {
+            width: 100%;
+            max-height: 450px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        #videoLink {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #ffe6e6;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #28a745;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e6ffe6;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 180px;
+            background: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-thumbnail video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 15px;
+        }
+
+        .video-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .video-metadata {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            background: #f8f9fa;
+        }
+
+        .video-actions button {
+            flex: 1;
+            padding: 8px;
+            font-size: 0.9em;
+        }
+
+        .history-filter {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .history-filter select {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        .video-date {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            button {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload, View, and Manage Your Videos</h1>
+        
+        <div class="upload-section">
+            <h2>Upload Video</h2>
+            <input accept="video/*" id="movieFile" onchange="previewVideo(event)" type="file" />
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <h2>Preview Video</h2>
+            <div id="videoPlayerContainer" style="display: none;">
+                <video controls id="videoPlayer"></video>
+            </div>
+
+            <div style="text-align: center;">
+                <button id="uploadButton" onclick="saveVideo()" disabled>Upload Video</button>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <h2>Upload from External Hosting</h2>
+            <div class="input-group">
+                <input id="videoLink" placeholder="Paste video link here (YouTube or Google Drive)" type="text" />
+                <button onclick="saveVideoFromLink()">Save Video</button>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <h2>Your Uploaded Videos</h2>
+            <table id="uploadedVideosTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Size</th>
+                        <th>Upload Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dynamic rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="upload-section">
+            <h2>Your Linked Videos</h2>
+            <table id="linkedVideosTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Source</th>
+                        <th>Added Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dynamic rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="upload-section">
+            <h2>Your Video History</h2>
+            <div class="history-filter">
+                <select id="sortFilter" onchange="loadVideos()">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="alphabetical">Alphabetical</option>
+                </select>
+                <select id="typeFilter" onchange="loadVideos()">
+                    <option value="all">All Videos</option>
+                    <option value="uploaded">Uploaded Videos</option>
+                    <option value="linked">Linked Videos</option>
+                </select>
+            </div>
+            
+            <div id="videoGrid" class="video-grid">
+                <!-- Video cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedVideoFile = null;
+        const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB limit
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successElement = document.getElementById('successMessage');
+            successElement.textContent = message;
+            successElement.style.display = 'block';
+            setTimeout(() => {
+                successElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function previewVideo(event) {
+            const file = event.target.files[0];
+            const uploadButton = document.getElementById('uploadButton');
+            
+            if (!file) {
+                uploadButton.disabled = true;
+                return;
+            }
+
+            if (!file.type.startsWith("video/")) {
+                showError('Please select a valid video file.');
+                uploadButton.disabled = true;
+                return;
+            }
+
+            if (file.size > MAX_FILE_SIZE) {
+                showError(`File size exceeds limit of ${formatFileSize(MAX_FILE_SIZE)}`);
+                uploadButton.disabled = true;
+                return;
+            }
+
+            const fileUrl = URL.createObjectURL(file);
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoPlayerContainer = document.getElementById('videoPlayerContainer');
+            
+            uploadedVideoFile = file;
+            uploadButton.disabled = false;
+            
+            videoPlayer.src = fileUrl;
+            videoPlayerContainer.style.display = 'block';
+            
+            showSuccess('Video loaded successfully! Click Upload to save.');
+        }
+
+        function saveVideo() {
+            if (!uploadedVideoFile) {
+                showError('Please upload a video before saving.');
+                return;
+            }
+
+            const title = prompt('Enter a title for your video:');
+            if (!title) return;
+
+            const videoData = {
+                title,
+                size: formatFileSize(uploadedVideoFile.size),
+                date: new Date().toLocaleDateString(),
+                link: URL.createObjectURL(uploadedVideoFile)
+            };
+
+            const uploadedVideos = JSON.parse(localStorage.getItem('uploadedVideos')) || [];
+            uploadedVideos.push(videoData);
+            localStorage.setItem('uploadedVideos', JSON.stringify(uploadedVideos));
+
+            showSuccess('Video uploaded successfully!');
+            loadVideos();
+            
+            // Reset the form
+            document.getElementById('movieFile').value = '';
+            document.getElementById('videoPlayer').src = '';
+            document.getElementById('videoPlayerContainer').style.display = 'none';
+            document.getElementById('uploadButton').disabled = true;
+            uploadedVideoFile = null;
+        }
+
+        function isValidVideoUrl(url) {
+            const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
+            const googleDriveRegex = /^https:\/\/drive\.google\.com\/.+/;
+            return youtubeRegex.test(url) || googleDriveRegex.test(url);
+        }
+
+        function getVideoSource(url) {
+            if (url.includes('youtube.com') || url.includes('youtu.be')) return 'YouTube';
+            if (url.includes('drive.google.com')) return 'Google Drive';
+            return 'External Link';
+        }
+
+        function saveVideoFromLink() {
+            const videoLink = document.getElementById('videoLink').value.trim();
+            
+            if (!videoLink) {
+                showError('Please enter a video link.');
+                return;
+            }
+
+            if (!isValidVideoUrl(videoLink)) {
+                showError('Please enter a valid YouTube or Google Drive video link.');
+                return;
+            }
+
+            const title = prompt('Enter a title for this video:');
+            if (!title) return;
+
+            const videoData = {
+                title,
+                link: videoLink,
+                source: getVideoSource(videoLink),
+                date: new Date().toLocaleDateString()
+            };
+
+            const linkedVideos = JSON.parse(localStorage.getItem('linkedVideos')) || [];
+            linkedVideos.push(videoData);
+            localStorage.setItem('linkedVideos', JSON.stringify(linkedVideos));
+
+            showSuccess('Video link saved successfully!');
+            document.getElementById('videoLink').value = '';
+            loadVideos();
+        }
+
+        function loadVideos() {
+            const uploadedVideos = JSON.parse(localStorage.getItem('uploadedVideos')) || [];
+            const linkedVideos = JSON.parse(localStorage.getItem('linkedVideos')) || [];
+            const sortFilter = document.getElementById('sortFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            // Combine and process videos based on filters
+            let allVideos = [];
+            if (typeFilter === 'all' || typeFilter === 'uploaded') {
+                allVideos.push(...uploadedVideos.map(v => ({...v, type: 'uploaded'})));
+            }
+            if (typeFilter === 'all' || typeFilter === 'linked') {
+                allVideos.push(...linkedVideos.map(v => ({...v, type: 'linked'})));
+            }
+
+            // Sort videos
+            switch(sortFilter) {
+                case 'newest':
+                    allVideos.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    break;
+                case 'oldest':
+                    allVideos.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    break;
+                case 'alphabetical':
+                    allVideos.sort((a, b) => a.title.localeCompare(b.title));
+                    break;
+            }
+
+            // Update video grid
+            const videoGrid = document.getElementById('videoGrid');
+            videoGrid.innerHTML = '';
+
+            if (allVideos.length === 0) {
+                videoGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i>📹</i>
+                        <h3>No videos yet</h3>
+                        <p>Upload or link some videos to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            allVideos.forEach((video, index) => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                
+                const thumbnailUrl = video.type === 'uploaded' ? video.link : 
+                    (video.link.includes('youtube') ? `https://img.youtube.com/vi/${getYouTubeVideoId(video.link)}/0.jpg` : 
+                    'https://via.placeholder.com/300x180?text=External+Video');
+
+                card.innerHTML = `
+                    <div class="video-thumbnail">
+                        ${video.type === 'uploaded' ? 
+                            `<video src="${video.link}" preload="metadata"></video>` :
+                            `<img src="${thumbnailUrl}" alt="${video.title}">`
+                        }
+                        <div class="video-date">${video.date}</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-metadata">
+                            ${video.type === 'uploaded' ? 
+                                `Size: ${video.size || 'N/A'}` :
+                                `Source: ${video.source}`
+                            }
+                        </div>
+                    </div>
+                    <div class="video-actions">
+                        ${video.type === 'uploaded' ? `
+                            <button onclick="watchVideo('${video.link}')">Watch</button>
+                            <button onclick="downloadVideo('${video.link}', '${video.title}')">Download</button>
+                            <button onclick="deleteUploadedVideo(${index})">Delete</button>
+                        ` : `
+                            <button onclick="window.open('${video.link}', '_blank')">Watch</button>
+                            <button onclick="deleteLinkedVideo(${index})">Delete</button>
+                        `}
+                    </div>
+                `;
+                videoGrid.appendChild(card);
+            });
+
+            // Initialize video thumbnails
+            document.querySelectorAll('.video-thumbnail video').forEach(video => {
+                video.currentTime = 1; // Set thumbnail to first frame
+            });
+        }
+
+        function getYouTubeVideoId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function watchVideo(url) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoPlayerContainer = document.getElementById('videoPlayerContainer');
+
+            videoPlayer.src = url;
+            videoPlayerContainer.style.display = 'block';
+            videoPlayer.play();
+            videoPlayerContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteUploadedVideo(index) {
+            if (!confirm('Are you sure you want to delete this video?')) return;
+            
+            const uploadedVideos = JSON.parse(localStorage.getItem('uploadedVideos')) || [];
+            uploadedVideos.splice(index, 1);
+            localStorage.setItem('uploadedVideos', JSON.stringify(uploadedVideos));
+            
+            showSuccess('Video deleted successfully!');
+            loadVideos();
+        }
+
+        function deleteLinkedVideo(index) {
+            if (!confirm('Are you sure you want to delete this video link?')) return;
+            
+            const linkedVideos = JSON.parse(localStorage.getItem('linkedVideos')) || [];
+            linkedVideos.splice(index, 1);
+            localStorage.setItem('linkedVideos', JSON.stringify(linkedVideos));
+            
+            showSuccess('Video link deleted successfully!');
+            loadVideos();
+        }
+
+        function downloadVideo(url, title) {
+            if (url.includes('drive.google.com')) {
+                url = url.replace('view?usp=sharing', 'uc?export=download');
+            }
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = title + '.mp4';
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', loadVideos);
+    </script>
+</body>
+</html>

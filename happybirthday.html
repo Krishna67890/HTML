@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Happy Birthday Surprise!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            transition: background 0.5s ease;
+        }
+
+        /* --- Sender View --- */
+        #sender-view {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: #ff69b4;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        select, input[type='text'] {
+            padding: 12px;
+            margin: 10px;
+            width: 80%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .option {
+            border: 3px solid #transparent;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .option:hover, .option.selected {
+            border-color: #ff69b4;
+            transform: scale(1.05);
+        }
+        .option.selected::after {
+            content: '✔';
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            color: white;
+            background-color: #ff69b4;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 14px;
+        }
+
+        .option img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .bg-option {
+            height: 80px;
+            border-radius: 8px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+
+        #generatedUrl {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4f8;
+            border-radius: 5px;
+            word-break: break-all;
+            font-size: 14px;
+            text-align: left;
+        }
+        #generatedUrl a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* --- Receiver View --- */
+        #receiver-view {
+            display: none; /* Hidden by default */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #receiver-view h1 {
+            font-size: 4em;
+            color: white;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-25px); }
+        }
+
+        #receiver-view .cake-image {
+            width: 250px;
+            height: 250px;
+            margin: 20px auto;
+            animation: spin 30s infinite linear;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        #receiver-view .message {
+            font-size: 1.8em;
+            margin: 20px;
+            padding: 25px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            max-width: 80%;
+        }
+
+        /* Background Styles */
+        .bg-stars { background: #000 url('https://www.transparenttextures.com/patterns/stardust.png') repeat; }
+        .bg-hearts { background-color: #fce4ec; background-image: radial-gradient(#f8bbd0 10%, transparent 11%), radial-gradient(#f8bbd0 10%, transparent 11%); background-size: 40px 40px; background-position: 0 0, 20px 20px; }
+        .bg-balloons { background: #e3f2fd url('https://i.imgur.com/gY9vJ5g.png') repeat; animation: float 30s linear infinite; }
+        @keyframes float { from { background-position: 0 0; } to { background-position: 1000px 500px; } }
+        .bg-gradient { background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sender's View: To create the surprise -->
+    <div id="sender-view">
+        <h1>Create a Birthday Surprise! 🎂</h1>
+        
+        <div class="form-group">
+            <input type="text" id="name" placeholder="Enter their name">
+            <select id="relationship">
+                <option value="">-- Select Relationship --</option>
+                <option value="friend">Friend</option>
+                <option value="best-friend">Best Friend</option>
+                <option value="sister">Sister</option>
+                <option value="brother">Brother</option>
+                <option value="mother">Mother</option>
+                <option value="father">Father</option>
+                <option value="wife">Wife</option>
+                <option value="husband">Husband</option>
+                <option value="grandmother">Grandmother</option>
+                <option value="grandfather">Grandfather</option>
+                <option value="dost">Dost</option>
+            </select>
+        </div>
+
+        <h2>Select a Cake</h2>
+        <div class="selection-grid" id="cake-options">
+            <!-- Cake options will be added by JS -->
+        </div>
+
+        <h2>Select Background Theme</h2>
+        <div class="selection-grid" id="background-options">
+            <!-- Background options will be added by JS -->
+        </div>
+
+        <br>
+        <button onclick="generateSurprise()">Generate Surprise Link!</button>
+
+        <div id="generatedUrl"></div>
+    </div>
+
+    <!-- Receiver's View: The actual surprise -->
+    <div id="receiver-view">
+        <h1 id="birthday-heading">Happy Birthday! 🎉</h1>
+        <p id="personalized-message" class="message"></p>
+        <img src="" id="selected-cake" class="cake-image" alt="Birthday Cake">
+    </div>
+
+    <script>
+        const cakeData = {
+            'chocolate': 'https://i.imgur.com/P61sA5r.png',
+            'red-velvet': 'https://i.imgur.com/5nL1P2N.png',
+            'fruit': 'https://i.imgur.com/Nn21b2b.png',
+            'cheesecake': 'https://i.imgur.com/8pCFsUd.png',
+            'vanilla-confetti': 'https://i.imgur.com/S5dmyiV.png',
+            'black-forest': 'https://i.imgur.com/O1bJ1zJ.png'
+        };
+
+        const backgroundData = {
+            'stars': { 'name': 'Night Sky', 'class': 'bg-stars' },
+            'hearts': { 'name': 'Lovely Hearts', 'class': 'bg-hearts' },
+            'balloons': { 'name': 'Floating Balloons', 'class': 'bg-balloons' },
+            'gradient': { 'name': 'Pastel Gradient', 'class': 'bg-gradient' }
+        };
+
+        let selectedCake = '';
+        let selectedBackground = '';
+
+        // --- Main Logic: Check URL on Load ---
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get('name');
+
+            if (name) { // If name exists, we are in receiver view
+                displaySurprise(params);
+            } else { // Otherwise, we are in sender view
+                setupSenderView();
+            }
+        };
+
+        // --- Receiver View Logic ---
+        function displaySurprise(params) {
+            document.getElementById('sender-view').style.display = 'none';
+            document.getElementById('receiver-view').style.display = 'flex';
+
+            const name = params.get('name');
+            const relationship = params.get('relationship');
+            const cake = params.get('cake');
+            const background = params.get('background');
+
+            // Set background
+            if (backgroundData[background]) {
+                document.body.className = backgroundData[background].class;
+            }
+
+            // Set birthday heading
+            document.getElementById('birthday-heading').innerText = `Happy Birthday, ${name}! 🎉`;
+
+            // Set personalized message
+            const messages = {
+                'sister': `To my amazing sister, you light up my world! 🌟`,
+                'brother': `To my awesome brother, keep shining! 💫`,
+                'mother': `Dearest Mom, you're the best! ❤️`,
+                'father': `Dear Dad, you're my hero! 💪`,
+                'friend': `To my wonderful friend, so glad to have you! 🎈`,
+                'best-friend': `To my irreplaceable bestie, let's celebrate! 🥳`,
+                'wife': `To my beautiful wife, my love for you grows every day. 💖`,
+                'husband': `To my loving husband, you are my rock. 🥰`,
+                'dost': `Mere pyaare dost, janamdin bohot mubarak! 🎊`,
+                'grandmother': `Dearest Grandma, your stories and love are treasures. 💝`,
+                'grandfather': `Dear Grandpa, you're a legend! 🌟`
+            };
+            document.getElementById('personalized-message').innerText = messages[relationship] || `Wishing you the best on your special day!`;
+
+            // Set cake image
+            if (cakeData[cake]) {
+                document.getElementById('selected-cake').src = cakeData[cake];
+            }
+        }
+
+        // --- Sender View Logic ---
+        function setupSenderView() {
+            const cakeOptionsContainer = document.getElementById('cake-options');
+            Object.keys(cakeData).forEach(key => {
+                const option = document.createElement('div');
+                option.className = 'option cake-option';
+                option.dataset.value = key;
+                option.innerHTML = `<img src="${cakeData[key]}" alt="${key}"><p>${key.replace('-', ' ')}</p>`;
+                option.onclick = () => selectOption(option, 'cake');
+                cakeOptionsContainer.appendChild(option);
+            });
+
+            const backgroundOptionsContainer = document.getElementById('background-options');
+            Object.keys(backgroundData).forEach(key => {
+                const option = document.createElement('div');
+                option.className = `option bg-option ${backgroundData[key].class}`;
+                option.dataset.value = key;
+                option.onclick = () => selectOption(option, 'background');
+                backgroundOptionsContainer.appendChild(option);
+            });
+        }
+
+        function selectOption(element, type) {
+            const containerId = type === 'cake' ? 'cake-options' : 'background-options';
+            document.querySelectorAll(`#${containerId} .option`).forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            if (type === 'cake') {
+                selectedCake = element.dataset.value;
+            } else {
+                selectedBackground = element.dataset.value;
+            }
+        }
+
+        function generateSurprise() {
+            const name = document.getElementById('name').value;
+            const relationship = document.getElementById('relationship').value;
+
+            if (!name || !relationship || !selectedCake || !selectedBackground) {
+                alert('Please fill in all fields and select a cake and background!');
+                return;
+            }
+            
+            const params = new URLSearchParams();
+            params.append('name', name);
+            params.append('relationship', relationship);
+            params.append('cake', selectedCake);
+            params.append('background', selectedBackground);
+            
+            const url = `${window.location.pathname}?${params.toString()}`;
+            const fullUrl = `${window.location.origin}${url}`;
+            
+            document.getElementById('generatedUrl').innerHTML = 
+                `<b>Your surprise is ready!</b><br>
+                <p>Share this link with the birthday person:</p>
+                <a href="${url}" target="_blank">${fullUrl}</a>`;
+        }
+    </script>
+</body>
+</html>

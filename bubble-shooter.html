@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Bubble Shooter</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #1a1a2e;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+    .game-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 600px;
+    }
+    #gameCanvas {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      border-radius: 10px;
+    }
+    #hud {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+      color: white;
+      z-index: 10;
+    }
+    #controls {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      z-index: 10;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background-color: #2980b9;
+      transform: scale(1.05);
+    }
+    #startScreen, #gameOverScreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div id="startScreen">
+      <h1>Bubble Shooter</h1>
+      <p>Click to shoot bubbles and clear the board!</p>
+      <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div id="gameOverScreen" style="display:none;">
+      <h1>Game Over</h1>
+      <p id="finalScore">Your Score: 0</p>
+      <button onclick="restartGame()">Restart</button>
+    </div>
+
+    <div id="hud">
+      <div>Score: <span id="score">0</span></div>
+      <div>Time: <span id="timer">60</span></div>
+      <div>Lives: <span id="lives">3</span></div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="controls">
+      <button id="pause">Pause</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      const startScreen = document.getElementById("startScreen");
+      const gameOverScreen = document.getElementById("gameOverScreen");
+      const scoreDisplay = document.getElementById("score");
+      const timerDisplay = document.getElementById("timer");
+      const livesDisplay = document.getElementById("lives");
+      const finalScoreDisplay = document.getElementById("finalScore");
+      const pauseButton = document.getElementById("pause");
+
+      // Game configuration
+      const config = {
+        bubbleRadius: 25,
+        colors: [
+          "#e74c3c", "#3498db", "#2ecc71", 
+          "#f39c12", "#9b59b6", "#1abc9c"
+        ],
+        rows: 8,
+        columns: 12,
+        gameTime: 60,
+        lives: 3
+      };
+
+      // Game state
+      let gameState = {
+        score: 0,
+        timeLeft: config.gameTime,
+        lives: config.lives,
+        bubbles: [],
+        playerBubble: null,
+        gamePaused: false,
+        gameOver: false,
+        specialPowerUps: []
+      };
+
+      // Resize canvas
+      function resizeCanvas() {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+      }
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
+      // Initialize game
+      function initGame() {
+        gameState.bubbles = [];
+        gameState.score = 0;
+        gameState.timeLeft = config.gameTime;
+        gameState.lives = config.lives;
+        gameState.gameOver = false;
+        gameState.specialPowerUps = [];
+
+        // Create initial bubble grid
+        for (let row = 0; row < config.rows; row++) {
+          for (let col = 0; col < config.columns; col++) {
+            const x = col * (config.bubbleRadius * 2 + 5) + config.bubbleRadius;
+            const y = row * (config.bubbleRadius * 2 + 5) + config.bubbleRadius;
+            gameState.bubbles.push({
+              x, 
+              y, 
+              radius: config.bubbleRadius,
+              color: config.colors[Math.floor(Math.random() * config.colors.length)],
+              destroyed: false
+            });
+          }
+        }
+
+        // Create player bubble
+        gameState.playerBubble = {
+          x: canvas.width / 2,
+          y: canvas.height - 50,
+          radius: config.bubbleRadius,
+          color: config.colors[Math.floor(Math.random() * config.colors.length)],
+          dx: 0,
+          dy: 0,
+          speed: 15
+        };
+
+        // Start timer
+        startTimer();
+      }
+
+      // Draw bubbles
+      function drawBubbles() {
+        gameState.bubbles.forEach(bubble => {
+          if (!bubble.destroyed) {
+            ctx.beginPath();
+            ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+            ctx.fillStyle = bubble.color;
+            ctx.fill();
+            
+            // Add shine effect
+            ctx.beginPath();
+            ctx.arc(
+              bubble.x - bubble.radius/3, 
+              bubble.y - bubble.radius/3, 
+              bubble.radius/4, 
+              0, 
+              Math.PI * 2
+            );
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fill();
+          }
+        });
+      }
+
+      // Draw player bubble
+      function drawPlayerBubble() {
+        ctx.beginPath();
+        ctx.arc(
+          gameState.playerBubble.x, 
+          gameState.playerBubble.y, 
+          gameState.playerBubble.radius, 
+          0, 
+          Math.PI * 2
+        );
+        ctx.fillStyle = gameState.playerBubble.color;
+        ctx.fill();
+      }
+
+      // Move player bubble
+      function movePlayerBubble() {
+        if (gameState.playerBubble.dx !== 0 || gameState.playerBubble.dy !== 0) {
+          gameState.playerBubble.x += gameState.playerBubble.dx;
+          gameState.playerBubble.y += gameState.playerBubble.dy;
+
+          // Wall collision
+          if (gameState.playerBubble.x - config.bubbleRadius <= 0 || 
+              gameState.playerBubble.x + config.bubbleRadius >= canvas.width) {
+            gameState.playerBubble.dx *= -1;
+          }
+
+          // Bubble collision detection
+          for (const bubble of gameState.bubbles) {
+            if (!bubble.destroyed) {
+              const dist = Math.hypot(
+                gameState.playerBubble.x - bubble.x, 
+                gameState.playerBubble.y - bubble.y
+              );
+              
+              if (dist < gameState.playerBubble.radius + bubble.radius) {
+                // Color match
+                if (gameState.playerBubble.color === bubble.color) {
+                  bubble.destroyed = true;
+                  gameState.score += 10;
+                  scoreDisplay.textContent = gameState.score;
+                  
+                  // Chance for power-up
+                  if (Math.random() < 0.1) {
+                    createPowerUp(bubble.x, bubble.y);
+                  }
+                }
+                
+                // Reset player bubble
+                resetPlayerBubble();
+                return;
+              }
+            }
+          }
+
+          // Out of bounds
+          if (gameState.playerBubble.y < 0) {
+            resetPlayerBubble();
+            gameState.lives--;
+            livesDisplay.textContent = gameState.lives;
+          }
+        }
+      }
+
+      // Reset player bubble
+      function resetPlayerBubble() {
+        gameState.playerBubble.x = canvas.width / 2;
+        gameState.playerBubble.y = canvas.height - 50;
+        gameState.playerBubble.color = config.colors[
+          Math.floor(Math.random() * config.colors.length)
+        ];
+        gameState.playerBubble.dx = 0;
+        gameState.playerBubble.dy = 0;
+      }
+
+      // Create power-ups
+      function createPowerUp(x, y) {
+        const powerUpTypes = [
+          { type: 'extraTime', color: '#f1c40f' },
+          { type: 'extraLife', color: '#2ecc71' },
+          { type: 'scoreBoost', color: '#3498db' }
+        ];
+        
+        const powerUp = {
+          x, 
+          y, 
+          radius: config.bubbleRadius / 2,
+          ...powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)]
+        };
+        
+        gameState.specialPowerUps.push(powerUp);
+      }
+
+      // Draw power-ups
+      function drawPowerUps() {
+        gameState.specialPowerUps.forEach(powerUp => {
+          ctx.beginPath();
+          ctx.arc(powerUp.x, powerUp.y, powerUp.radius, 0, Math.PI * 2);
+          ctx.fillStyle = powerUp.color;
+          ctx.fill();
+        });
+      }
+
+      // Check power-up collection
+      function checkPowerUpCollection() {
+        gameState.specialPowerUps = gameState.specialPowerUps.filter(powerUp => {
+          powerUp.y += 2; // Fall down
+          
+          // Check collection
+          const dist = Math.hypot(
+            gameState.playerBubble.x - powerUp.x, 
+            gameState.playerBubble.y - powerUp.y
+          );
+          
+          if (dist < gameState.playerBubble.radius + powerUp.radius) {
+            switch(powerUp.type) {
+              case 'extraTime':
+                gameState.timeLeft += 15;
+                break;
+              case 'extraLife':
+                gameState.lives++;
+                livesDisplay.textContent = gameState.lives;
+                break;
+              case 'scoreBoost':
+                gameState.score += 50;
+                scoreDisplay.textContent = gameState.score;
+                break;
+            }
+            return false; // Remove power-up
+          }
+          
+          // Remove if out of bounds
+          return powerUp.y < canvas.height;
+        });
+      }
+
+      // Start timer
+      function startTimer() {
+        const timerInterval = setInterval(() => {
+          if (!gameState.gamePaused && !gameState.gameOver) {
+            gameState.timeLeft--;
+            timerDisplay.textContent = gameState.timeLeft;
+            
+            if (gameState.timeLeft <= 0 || gameState.lives <= 0) {
+              clearInterval(timerInterval);
+              endGame();
+            }
+          }
+        }, 1000);
+      }
+
+      // Game loop
+      function gameLoop() {
+        if (!gameState.gamePaused && !gameState.gameOver) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          drawBubbles();
+          drawPlayerBubble();
+          drawPowerUps();
+          
+          movePlayerBubble();
+          checkPowerUpCollection();
+        }
+        
+        requestAnimationFrame(gameLoop);
+      }
+
+      // Shoot bubble
+      canvas.addEventListener("click", (event) => {
+        if (gameState.gameOver || gameState.gamePaused) return;
+        
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        
+        const angle = Math.atan2(
+          mouseY - gameState.playerBubble.y, 
+          mouseX - gameState.playerBubble.x
+        );
+        
+        gameState.playerBubble.dx = gameState.playerBubble.speed * Math.cos(angle);
+        gameState.playerBubble.dy = gameState.playerBubble.speed * Math.sin(angle);
+      });
+
+      // Pause game
+      pauseButton.addEventListener("click", () => {
+        gameState.gamePaused = !gameState.gamePaused;
+        pauseButton.textContent = gameState.gamePaused ? "Resume" : "Pause";
+      });
+
+      // Start game
+      function startGame() {
+        startScreen.style.display = 'none';
+        initGame();
+        gameLoop();
+      }
+
+      // End game
+      function endGame() {
+        gameState.gameOver = true;
+        gameOverScreen.style.display = 'flex';
+        finalScoreDisplay.textContent = `Your Score: ${gameState.score}`;
+      }
+
+      // Restart game
+      function restartGame() {
+        gameOverScreen.style.display = 'none';
+        startGame();
+      }
+
+      // Initial setup
+      startGame();
+    });
+  </script>
+</body>
+</html>

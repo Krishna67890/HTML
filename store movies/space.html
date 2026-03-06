@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Explorer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+        }
+        header {
+            background: #ff0000;
+            color: #000000;
+            text-align: center;
+            padding: 20px;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background: #000000;
+            padding: 10px;
+        }
+        nav a {
+            color: #ff0000;
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #cc0000;
+        }
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .planet {
+            background: #ffffff;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border: 2px solid #ff0000;
+        }
+        .planet h3 {
+            margin: 0 0 10px;
+            color: #ff0000;
+            font-size: 1.5em;
+            text-transform: uppercase;
+        }
+        .planet p {
+            margin: 8px 0;
+            color: #000000;
+        }
+        .planet strong {
+            color: #ff0000;
+        }
+        .planet a {
+            color: #ff0000;
+            text-decoration: none;
+            border-bottom: 1px dotted #ff0000;
+        }
+        .planet a:hover {
+            color: #cc0000;
+            border-bottom: 1px solid #cc0000;
+        }
+        .interesting-facts {
+            background: #f8f8f8;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #ff0000;
+        }
+        .interesting-facts h4 {
+            color: #ff0000;
+            margin: 0 0 10px;
+            text-transform: uppercase;
+        }
+        .facts-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .facts-list li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #000000;
+        }
+        .facts-list li:before {
+            content: "★";
+            position: absolute;
+            left: 0;
+            color: #ff0000;
+        }
+        @media (max-width: 600px) {
+            nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            .planet {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Space Explorer</h1>
+        <p>Discover the wonders of our solar system!</p>
+    </header>
+    <nav>
+        <a href="#inner-planets">Inner Planets</a>
+        <a href="#outer-planets">Outer Planets</a>
+        <a href="https://eyes.nasa.gov/apps/solar-system/" target="_blank">3D Solar System</a>
+    </nav>
+    <div class="container">
+        <section id="inner-planets">
+            <h2>Inner Planets</h2>
+            <div id="inner-planets-content"></div>
+        </section>
+        <section id="outer-planets">
+            <h2>Outer Planets</h2>
+            <div id="outer-planets-content"></div>
+        </section>
+    </div>
+
+    <script>
+        const planets = [
+            {
+                name: "Mercury",
+                type: "inner",
+                distanceFromSun: "57.9 million km",
+                diameter: "4,880 km",
+                temperature: "-173 to 427°C",
+                description: "Mercury is the smallest planet and closest to the Sun.",
+                link: "https://solarsystem.nasa.gov/planets/mercury/overview/"
+            },
+            {
+                name: "Venus",
+                type: "inner",
+                distanceFromSun: "108.2 million km",
+                diameter: "12,104 km",
+                temperature: "462°C",
+                description: "Venus is the hottest planet and has a thick atmosphere.",
+                link: "https://solarsystem.nasa.gov/planets/venus/overview/"
+            },
+            {
+                name: "Earth",
+                type: "inner",
+                distanceFromSun: "149.6 million km",
+                diameter: "12,742 km",
+                temperature: "-88 to 58°C",
+                description: "Earth is the only planet known to support life.",
+                link: "https://solarsystem.nasa.gov/planets/earth/overview/"
+            },
+            {
+                name: "Mars",
+                type: "inner",
+                distanceFromSun: "227.9 million km",
+                diameter: "6,779 km",
+                temperature: "-87 to -5°C",
+                description: "Mars is known as the Red Planet.",
+                link: "https://solarsystem.nasa.gov/planets/mars/overview/"
+            },
+            {
+                name: "Jupiter",
+                type: "outer",
+                distanceFromSun: "778.5 million km",
+                diameter: "139,820 km",
+                temperature: "-108°C",
+                description: "Jupiter is the largest planet in the solar system.",
+                link: "https://solarsystem.nasa.gov/planets/jupiter/overview/"
+            },
+            {
+                name: "Saturn",
+                type: "outer",
+                distanceFromSun: "1.4 billion km",
+                diameter: "116,460 km",
+                temperature: "-138°C",
+                description: "Saturn is famous for its stunning ring system.",
+                link: "https://solarsystem.nasa.gov/planets/saturn/overview/"
+            },
+            {
+                name: "Uranus",
+                type: "outer",
+                distanceFromSun: "2.9 billion km",
+                diameter: "50,724 km",
+                temperature: "-195°C",
+                description: "Uranus rotates on its side.",
+                link: "https://solarsystem.nasa.gov/planets/uranus/overview/"
+            },
+            {
+                name: "Neptune",
+                type: "outer",
+                distanceFromSun: "4.5 billion km",
+                diameter: "49,244 km",
+                temperature: "-201°C",
+                description: "Neptune is known for its deep blue color and strong winds.",
+                link: "https://solarsystem.nasa.gov/planets/neptune/overview/"
+            }
+        ];
+
+        function populatePlanets() {
+            const innerPlanetsContainer = document.getElementById("inner-planets-content");
+            const outerPlanetsContainer = document.getElementById("outer-planets-content");
+
+            planets.forEach(planet => {
+                const planetDiv = document.createElement("div");
+                planetDiv.className = "planet";
+                planetDiv.innerHTML = `
+                    <h3>${planet.name}</h3>
+                    <p><strong>Distance from Sun:</strong> ${planet.distanceFromSun}</p>
+                    <p><strong>Diameter:</strong> ${planet.diameter}</p>
+                    <p><strong>Temperature:</strong> ${planet.temperature}</p>
+                    <p>${planet.description}</p>
+                    <div class="interesting-facts">
+                        <h4>Interesting Facts</h4>
+                        <ul class="facts-list">
+                            ${getInterestingFacts(planet.name)}
+                        </ul>
+                    </div>
+                    <p><a href="${planet.link}" target="_blank">Learn more</a></p>
+                `;
+                if (planet.type === "inner") {
+                    innerPlanetsContainer.appendChild(planetDiv);
+                } else {
+                    outerPlanetsContainer.appendChild(planetDiv);
+                }
+            });
+        }
+
+        function getInterestingFacts(planetName) {
+            const facts = {
+                "Mercury": [
+                    "Has the most extreme temperature variations in the solar system",
+                    "A year on Mercury is just 88 Earth days",
+                    "Despite being closest to the Sun, it's not the hottest planet"
+                ],
+                "Venus": [
+                    "Rotates backwards compared to most planets",
+                    "Has the longest day of any planet",
+                    "Surface pressure is 90 times that of Earth"
+                ],
+                "Earth": [
+                    "Only planet known to harbor life",
+                    "Has a powerful magnetic field that protects us",
+                    "71% of surface is covered by water"
+                ],
+                "Mars": [
+                    "Home to the largest volcano in the solar system",
+                    "Has two small moons named Phobos and Deimos",
+                    "Experiences planet-wide dust storms"
+                ],
+                "Jupiter": [
+                    "Has a Great Red Spot storm raging for over 400 years",
+                    "Could fit over 1,300 Earths inside it",
+                    "Has at least 79 moons"
+                ],
+                "Saturn": [
+                    "Its rings are mostly made of ice and rock",
+                    "Could float in a giant bathtub of water",
+                    "Has the most extensive ring system"
+                ],
+                "Uranus": [
+                    "Rotates on its side at 98 degrees",
+                    "First planet discovered using a telescope",
+                    "Has 13 known rings"
+                ],
+                "Neptune": [
+                    "Has the strongest winds in the solar system",
+                    "Takes 165 Earth years to orbit the Sun",
+                    "Has a dark spot similar to Jupiter's"
+                ]
+            };
+            return facts[planetName].map(fact => `<li>${fact}</li>`).join('');
+        }
+
+        populatePlanets();
+    </script>
+</body>
+</html>

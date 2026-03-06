@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Kho Kho Challenge</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --chaser-color: #e74c3c;
+            --runner-color: #2ecc71;
+            --special-color: #f39c12;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: white;
+            overflow: hidden;
+        }
+        .game-container {
+            background-color: rgba(52, 73, 94, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            width: 95%;
+            max-width: 1000px;
+            text-align: center;
+        }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .game-stats {
+            display: flex;
+            gap: 20px;
+            background-color: rgba(44, 62, 80, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            background-color: rgba(44, 62, 80, 0.5);
+            padding: 15px;
+            border-radius: 15px;
+        }
+        .cell {
+            aspect-ratio: 1;
+            background-color: rgba(127, 140, 141, 0.3);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        .player {
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: absolute;
+            z-index: 10;
+        }
+        .chaser {
+            background-color: var(--chaser-color);
+            color: white;
+        }
+        .runner {
+            background-color: var(--runner-color);
+            color: white;
+        }
+        .defender {
+            background-color: #66bb6a;
+            color: white;
+        }
+        .power-up {
+            background-color: var(--special-color);
+            color: black;
+            font-size: 0.7em;
+        }
+        .special-zone {
+            background-color: rgba(46, 204, 113, 0.2);
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        button {
+            background-color: var(--secondary-color);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        #gameStatus {
+            margin-top: 15px;
+            font-size: 18px;
+            min-height: 40px;
+            background-color: rgba(52, 73, 94, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-stats">
+                <div>🏃 Runners: <span id="runnerCount">7</span></div>
+                <div>🏃‍♂️ Chasers: <span id="chaserCount">1</span></div>
+                <div>⏱️ Time: <span id="gameTimer">00:00</span></div>
+                <div>🌟 Score: <span id="gameScore">0</span></div>
+            </div>
+        </div>
+        
+        <h1>Ultimate Kho Kho Challenge</h1>
+        
+        <div class="game-board" id="gameBoard"></div>
+        
+        <div class="controls">
+            <button onclick="game.startGame()">Start Game</button>
+            <button onclick="game.resetGame()">Reset Game</button>
+            <button onclick="game.togglePowerUps()">Toggle Power-Ups</button>
+            <button onclick="game.moveChaser('up')">Move Up</button>
+            <button onclick="game.moveChaser('down')">Move Down</button>
+            <button onclick="game.moveChaser('left')">Move Left</button>
+            <button onclick="game.moveChaser('right')">Move Right</button>
+        </div>
+        
+        <div id="gameStatus">Welcome to Kho Kho! Click Start to begin.</div>
+    </div>
+
+    <script>
+        class KhoKhoGame {
+            constructor() {
+                this.boardSize = 10;
+                this.gameBoard = document.getElementById('gameBoard');
+                this.gameStatus = document.getElementById('gameStatus');
+                this.runnerCountDisplay = document.getElementById('runnerCount');
+                this.chaserCountDisplay = document.getElementById('chaserCount');
+                this.gameTimerDisplay = document.getElementById('gameTimer');
+                this.gameScoreDisplay = document.getElementById('gameScore');
+                
+                this.gameState = {
+                    started: false,
+                    time: 0,
+                    score: 0,
+                    powerUpsEnabled: false
+                };
+                
+                this.players = {
+                    chaser: null,
+                    defenders: [],
+                    runners: []
+                };
+                
+                this.timerInterval = null;
+                this.defendersInterval = null;
+                this.powerUps = ['speed', 'shield', 'teleport', 'freeze'];
+            }
+
+            createBoard() {
+                this.gameBoard.innerHTML = '';
+                for (let i = 0; i < this.boardSize * this.boardSize; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.index = i;
+                    
+                    // Special zones with unique mechanics
+                    if ([0, 9, 90, 99].includes(i)) {
+                        cell.classList.add('special-zone');
+                    }
+                    
+                    this.gameBoard.appendChild(cell);
+                }
+            }
+
+            initializePlayers() {
+                const specialPositions = [0, 9, 90, 99];
+                
+                // Place Chaser
+                const chaserPosition = specialPositions[1];  // Right side
+                const chaser = this.createPlayer('chaser', 'C');
+                this.gameBoard.children[chaserPosition].appendChild(chaser);
+                this.players.chaser = chaser;
+
+                // Place Defenders
+                const defenderPositions = [0, 20, 40];  // Left side
+                for (let i = 0; i < 3; i++) {
+                    const position = defenderPositions[i];
+                    const defender = this.createPlayer('defender', `D${i+1}`);
+                    this.gameBoard.children[position].appendChild(defender);
+                    this.players.defenders.push({
+                        element: defender,
+                        position: { 
+                            top: this.getPercentagePosition(position).top, 
+                            left: this.getPercentagePosition(position).left 
+                        },
+                        speed: 2
+                    });
+                }
+
+                // Place Runners
+                for (let i = 0; i < 7; i++) {
+                    const position = this.getRandomEmptyPosition(specialPositions.concat(defenderPositions));
+                    const runner = this.createPlayer('runner', `R${i+1}`);
+                    this.gameBoard.children[position].appendChild(runner);
+                    this.players.runners.push(runner);
+                }
+
+                this.updatePlayerCounts();
+            }
+
+            createPlayer(type, label) {
+                const player = document.createElement('div');
+                player.classList.add('player', type);
+                player.textContent = label;
+                
+                // Add click interaction
+                player.addEventListener('click', (e) => this.handlePlayerInteraction(e));
+                
+                // Power-up logic
+                if (this.gameState.powerUpsEnabled && Math.random() < 0.2) {
+                    const powerUp = this.powerUps[Math.floor(Math.random() * this.powerUps.length)];
+                    player.dataset.powerUp = powerUp;
+                    player.classList.add('power-up');
+                    player.title = `Power-Up: ${powerUp}`;
+                }
+                
+                return player;
+            }
+
+            getPercentagePosition(index) {
+                const row = Math.floor(index / this.boardSize);
+                const col = index % this.boardSize;
+                return {
+                    top: (row / (this.boardSize - 1)) * 100,
+                    left: (col / (this.boardSize - 1)) * 100
+                };
+            }
+
+            moveChaser(direction) {
+                if (!this.gameState.started || !this.players.chaser) return;
+
+                const currentCell = this.players.chaser.parentElement;
+                const currentIndex = parseInt(currentCell.dataset.index);
+                let newIndex;
+
+                switch(direction) {
+                    case 'up':
+                        newIndex = currentIndex - this.boardSize;
+                        break;
+                    case 'down':
+                        newIndex = currentIndex + this.boardSize;
+                        break;
+                    case 'left':
+                        newIndex = currentIndex - 1;
+                        break;
+                    case 'right':
+                        newIndex = currentIndex + 1;
+                        break;
+                }
+
+                // Boundary and valid move checks
+                if (newIndex >= 0 && newIndex < this.boardSize * this.boardSize) {
+                    const newCell = this.gameBoard.children[newIndex];
+                    
+                    // Move chaser
+                    currentCell.removeChild(this.players.chaser);
+                    newCell.appendChild(this.players.chaser);
+
+                    this.moveDefenders();
+                    this.checkCatches();
+                }
+            }
+
+            moveDefenders() {
+                const chaserCell = this.players.chaser.parentElement;
+                const chaserIndex = parseInt(chaserCell.dataset.index);
+
+                this.players.defenders.forEach(defender => {
+                    if (defender.element.classList.contains('caught')) return;
+
+                    const currentCell = defender.element.parentElement;
+                    const currentIndex = parseInt(currentCell.dataset.index);
+                    
+                    // Evasion logic
+                    let newIndex = currentIndex;
+                    if (currentIndex < chaserIndex) {
+                        // Move right or down to avoid
+                        newIndex += Math.random() < 0.5 ? 1 : this.boardSize;
+                    } else {
+                        // Move left or up to avoid
+                        newIndex -= Math.random() < 0.5 ? 1 : this.boardSize;
+                    }
+
+                    // Boundary checks
+                    if (newIndex >= 0 && newIndex < this.boardSize * this.boardSize) {
+                        const newCell = this.gameBoard.children[newIndex];
+                        
+                        // Ensure cell is empty
+                        if (newCell.children.length === 0) {
+                            currentCell.removeChild(defender.element);
+                            newCell.appendChild(defender.element);
+                        }
+                    }
+                });
+
+                this.checkCatches();
+            }
+
+            checkCatches() {
+                const chaserCell = this.players.chaser.parentElement;
+
+                this.players.defenders.forEach(defender => {
+                    const defenderCell = defender.element.parentElement;
+                    
+                    // Check if chaser and defender are in the same cell
+                    if (chaserCell === defenderCell && 
+                        !defender.element.classList.contains('caught')) {
+                        this.catchDefender(defender);
+                    }
+                });
+            }
+
+            catchDefender(defender) {
+                defender.element.classList.add('caught');
+                defender.element.style.backgroundColor = '#66bb6a';
+                
+                this.gameState.score++;
+                this.gameScoreDisplay.textContent = this.gameState.score;
+
+                // Check if all defenders caught
+                const remainingDefenders = this.players.defenders.filter(
+                    d => !d.element.classList.contains('caught')
+                );
+
+                if (remainingDefenders.length === 0) {
+                    this.endGame(true);
+                }
+            }
+
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    this.gameState.time++;
+                    const minutes = Math.floor(this.gameState.time / 60);
+                    const seconds = this.gameState.time % 60;
+                    this.gameTimerDisplay.textContent = 
+                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+
+            startGame() {
+                if (this.gameState.started) return;
+                
+                this.gameState.started = true;
+                this.gameStatus.textContent = 'Game started! Catch the runners!';
+                this.startTimer();
+            }
+
+            resetGame() {
+                clearInterval(this.timerInterval);
+                this.gameState = {
+                    started: false,
+                    time: 0,
+                    score: 0,
+                    powerUpsEnabled: this.gameState.powerUpsEnabled
+                };
+                
+                this.gameTimerDisplay.textContent = '00:00';
+                this.gameScoreDisplay.textContent = '0';
+                this.gameStatus.textContent = 'Game reset. Click Start to play!';
+                
+                this.createBoard();
+                this.initializePlayers();
+            }
+
+            togglePowerUps() {
+                this.gameState.powerUpsEnabled = !this.gameState.powerUpsEnabled;
+                this.gameStatus.textContent = this.gameState.powerUpsEnabled 
+                    ? 'Power-Ups Enabled! 🌟' 
+                    : 'Power-Ups Disabled 🚫';
+                this.resetGame();
+            }
+
+            endGame(won) {
+                clearInterval(this.timerInterval);
+                this.gameState.started = false;
+                this.gameStatus.textContent = won 
+                    ? `🏆 Victory! You caught all runners in ${this.gameTimerDisplay.textContent}! Score: ${this.gameState.score}` 
+                    : '😞 Game Over! Runners escaped!';
+            }
+
+            handlePlayerInteraction(event) {
+                if (!this.gameState.started) return;
+
+                const player = event.target;
+                const cell = player.parentElement;
+
+                if (player.classList.contains('runner')) {
+                    this.catchRunner(player, cell);
+                }
+            }
+
+            catchRunner(runner, cell) {
+                const catchMessage = runner.dataset.powerUp 
+                    ? `Caught ${runner.textContent} with ${runner.dataset.powerUp} power-up!` 
+                    : `${runner.textContent} caught!`;
+                
+                this.gameStatus.textContent = catchMessage;
+                cell.removeChild(runner);
+                
+                // Update score based on power-ups
+                this.gameState.score += runner.dataset.powerUp ? 20 : 10;
+                this.gameScoreDisplay.textContent = this.gameState.score;
+
+                this.updatePlayerCounts();
+
+                if (this.players.runners.length === 0) {
+                    this.endGame(true);
+                }
+            }
+
+            getRandomEmptyPosition(excludedPositions = []) {
+                let position;
+                do {
+                    position = Math.floor(Math.random() * (this.boardSize * this.boardSize));
+                } while (
+                    this.gameBoard.children[position].children.length > 0 || 
+                    excludedPositions.includes(position)
+                );
+                return position;
+            }
+
+            updatePlayerCounts() {
+                const chasers = this.gameBoard.querySelectorAll('.chaser');
+                const runners = this.gameBoard.querySelectorAll('.runner');
+                
+                this.chaserCountDisplay.textContent = chasers.length;
+                this.runnerCountDisplay.textContent = runners.length;
+            }
+        }
+
+        const game = new KhoKhoGame();
+        game.createBoard();
+        game.initializePlayers();
+    </script>
+</body>
+</html>

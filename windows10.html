@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Windows 10 UI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: url('win10_background.jpg') no-repeat center center/cover;
+            height: 100vh;
+            overflow: hidden;
+            cursor: url('cursor.png'), auto;
+        }
+
+        /* Desktop Icons */
+        .desktop {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .icon {
+            width: 80px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .icon img {
+            width: 50px;
+        }
+
+        .icon p {
+            color: white;
+            font-size: 14px;
+        }
+
+        /* Windows with Hole Effect */
+        .window {
+            width: 350px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.8);
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            display: none;
+            border-radius: 10px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 0, 0, 0.3);
+            clip-path: polygon(
+                5% 0%, 95% 0%, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0% 90%, 0% 10%
+            ); /* Hole Effect */
+            backdrop-filter: blur(8px);
+            transition: transform 0.3s ease-in-out;
+            resize: both;
+            overflow: auto;
+        }
+
+        .title-bar {
+            background: #0078D7;
+            color: white;
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+            border-radius: 10px 10px 0 0;
+            padding: 8px;
+        }
+
+        .title-bar button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .window-content {
+            padding: 15px;
+            color: black;
+            font-size: 14px;
+        }
+
+        /* Taskbar */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .start-button {
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .clock {
+            color: white;
+            font-size: 16px;
+        }
+
+        /* Start Menu */
+        .start-menu {
+            position: fixed;
+            bottom: 45px;
+            left: 10px;
+            width: 220px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .start-menu p {
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .start-menu p:hover {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .folder {
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .folder:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            display: none;
+            z-index: 10;
+        }
+
+        .context-menu p {
+            margin: 0;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .context-menu p:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            margin: 10px;
+            padding: 5px;
+            width: calc(100% - 20px);
+        }
+
+        /* Gallery */
+        .gallery img {
+            width: 100px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Desktop Icons -->
+    <div class="desktop" oncontextmenu="showContextMenu(event)">
+        <div class="icon" onclick="openWindow('notepadWindow')">
+            <img src="notepad.png" alt="Notepad">
+            <p>Notepad</p>
+        </div>
+        <div class="icon" onclick="openWindow('fileExplorer')">
+            <img src="folder.png" alt="File Explorer">
+            <p>This PC</p>
+        </div>
+        <div class="icon" onclick="openWindow('browserWindow')">
+            <img src="browser.png" alt="Web Browser">
+            <p>Browser</p>
+        </div>
+        <div class="icon" onclick="openSettings()">
+            <img src="settings.png" alt="Settings">
+            <p>Settings</p>
+        </div>
+        <div class="icon" onclick="powerOptions()">
+            <img src="power.png" alt="Power">
+            <p>Power</p>
+        </div>
+    </div>
+
+    <!-- Notepad Window -->
+    <div id="notepadWindow" class="window">
+        <div class="title-bar" onmousedown="dragWindow(event, 'notepadWindow')">
+            <span>Notepad</span>
+            <button onclick="closeWindow('notepadWindow')">X</button>
+        </div>
+        <div class="window-content">
+            <textarea style="width: 100%; height: 180px; border: none;"></textarea>
+            <button onclick="saveText()">Save</button>
+        </div>
+    </div>
+
+    <!-- File Explorer Window -->
+    <div id="fileExplorer" class="window">
+        <div class="title-bar" onmousedown="dragWindow(event, 'fileExplorer')">
+            <span>This PC</span>
+            <button onclick="closeWindow('fileExplorer')">X</button>
+        </div>
+        <div class="window-content">
+            <input type="text" class="search-bar" placeholder="Search...">
+            <div class="folder" onclick="openDisk('C')">C: (600GB)</div>
+            <div class="folder" onclick="openDisk('D')">D: (600GB)</div>
+            <div class="folder" onclick="openDisk('E')">E: (600GB)</div>
+            <div class="folder" onclick="openDisk('F')">F: (600GB)</div>
+        </div>
+    </div>
+
+    <!-- Disk Window -->
+    <div id="diskWindow" class="window">
+        <div class="title-bar" onmousedown="dragWindow(event, 'diskWindow')">
+            <span id="diskTitle">Disk</span>
+            <button onclick="closeWindow('diskWindow')">X</button>
+        </div>
+        <div class="window-content">
+            <div id="diskContent"></div>
+            <button onclick="createFileInDisk()">Create File</button>
+        </div>
+    </div>
+
+    <!-- Browser Window -->
+    <div id="browserWindow" class="window">
+        <div class="title-bar" onmousedown="dragWindow(event, 'browserWindow')">
+            <span>Web Browser</span>
+            <button onclick="closeWindow('browserWindow')">X</button>
+        </div>
+        <div class="window-content">
+            <iframe src="https://www.example.com" style="width: 100%; height: 200px; border: none;"></iframe>
+        </div>
+    </div>
+
+    <!-- Settings Window -->
+    <div id="settingsWindow" class="window">
+        <div class="title-bar" onmousedown="dragWindow(event, 'settingsWindow')">
+            <span>Settings</span>
+            <button onclick="closeWindow('settingsWindow')">X</button>
+        </div>
+        <div class="window-content">
+            <h4>Brightness</h4>
+            <input type="range" min="0" max="100" value="50">
+            <h4>Personalization</h4>
+            <input type="file" id="backgroundUpload" accept="image/*" onchange="changeBackground(event)">
+            <p>Change your background image.</p>
+            <h4>Fonts</h4>
+            <select id="fontSelect" onchange="changeFont(this.value)">
+                <option value="Arial">Arial</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Times New Roman">Times New Roman</option>
+            </select>
+            <p>Select your font style.</p>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="contextMenu" class="context-menu">
+        <p onclick="createFile()">New File</p>
+        <p onclick="alert('Properties Clicked')">Properties</p>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="start-button" onclick="toggleStartMenu()">☰</div>
+        <div class="clock" id="clock"></div>
+    </div>
+
+    <!-- Start Menu -->
+    <div id="startMenu" class="start-menu">
+        <p onclick="openWindow('notepadWindow')">📝 Notepad</p>
+        <p onclick="openWindow('fileExplorer')">📁 This PC</p>
+        <p onclick="openWindow('browserWindow')">🌐 Browser</p>
+        <p onclick="openWindow('settingsWindow')">⚙️ Settings</p>
+        <p onclick="powerOptions()">🔌 Power</p>
+    </div>
+
+    <script>
+        // Open & Close Windows
+        function openWindow(id) {
+            let win = document.getElementById(id);
+            win.style.display = 'block';
+            win.style.transform = 'scale(1)';
+        }
+
+        function closeWindow(id) {
+            let win = document.getElementById(id);
+            win.style.transform = 'scale(0)';
+            setTimeout(() => { win.style.display = 'none'; }, 300);
+        }
+
+        // Toggle Start Menu
+        function toggleStartMenu() {
+            let menu = document.getElementById("startMenu");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+        }
+
+        // Update Clock
+        function updateClock() {
+            let now = new Date();
+            document.getElementById("clock").innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Drag Windows
+        function dragWindow(event, windowId) {
+            let win = document.getElementById(windowId);
+            let offsetX = event.clientX - win.offsetLeft;
+            let offsetY = event.clientY - win.offsetTop;
+
+            function move(e) {
+                win.style.left = `${e.clientX - offsetX}px`;
+                win.style.top = `${e.clientY - offsetY}px`;
+            }
+
+            function stop() {
+                document.removeEventListener("mousemove", move);
+                document.removeEventListener("mouseup", stop);
+            }
+
+            document.addEventListener("mousemove", move);
+            document.addEventListener("mouseup", stop);
+        }
+
+        // Save Text Functionality
+        function saveText() {
+            const textarea = document.querySelector('#notepadWindow textarea');
+            const text = textarea.value;
+            alert("Text saved: " + text); // Placeholder for save functionality
+        }
+
+        // Context Menu Functionality
+        function showContextMenu(event) {
+            event.preventDefault();
+            const contextMenu = document.getElementById('contextMenu');
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = `${event.pageX}px`;
+            contextMenu.style.top = `${event.pageY}px`;
+        }
+
+        document.addEventListener('click', () => {
+            document.getElementById('contextMenu').style.display = 'none';
+        });
+
+        function createFile() {
+            alert('New file created!'); // Placeholder for file creation functionality
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        // Open Disk Functionality
+        function openDisk(disk) {
+            document.getElementById('diskTitle').innerText = disk + " Disk";
+            document.getElementById('diskContent').innerText = "Files in " + disk + " Disk:\n";
+            // Simulate adding files to the disk
+            document.getElementById('diskContent').innerText += "File1.txt\nFile2.txt\nFile3.txt";
+            openWindow('diskWindow');
+        }
+
+        function createFileInDisk() {
+            alert('File created in disk!'); // Placeholder for creating a file in the disk
+        }
+
+        // Power Options Functionality
+        function powerOptions() {
+            const action = prompt("Choose an action: Sleep, Power Off, Power On");
+            switch (action.toLowerCase()) {
+                case 'sleep':
+                    alert("System is going to sleep...");
+                    break;
+                case 'power off':
+                    alert("System is powering off...");
+                    break;
+                case 'power on':
+                    alert("System is powering on...");
+                    break;
+                default:
+                    alert("Invalid action.");
+            }
+        }
+
+        // Open Settings Functionality
+        function openSettings() {
+            openWindow('settingsWindow');
+        }
+
+        // Change Background Functionality
+        function changeBackground(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.body.style.backgroundImage = `url(${e.target.result})`;
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // Change Font Functionality
+        function changeFont(font) {
+            document.body.style.fontFamily = font;
+        }
+    </script>
+
+</body>
+</html>

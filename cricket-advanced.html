@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Cricket Simulator: Ultimate Edition</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --field-green: #27ae60;
+            --pitch-color: #8e44ad;
+            --text-color: #ecf0f1;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            perspective: 1500px;
+            overflow: hidden;
+            font-size: 14px; /* Reduced from default */
+            line-height: 1.4; /* Tighter line spacing */
+        }
+        .cricket-stadium {
+            width: 90%; /* Slightly narrower */
+            max-width: 1000px; /* Reduced max width */
+            background: rgba(44, 62, 80, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            transform-style: preserve-3d;
+            transform: rotateX(10deg) scale(0.95);
+            overflow: hidden;
+            margin: 0 auto;
+            padding: 10px; /* Reduced padding */
+        }
+        .stadium-header {
+            background: linear-gradient(to right, #2c3e50, #34495e);
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stadium-header h1 {
+            font-size: 1.8em; /* Smaller header */
+            margin-bottom: 10px;
+        }
+        .game-mode-selector {
+            display: flex;
+            gap: 10px;
+        }
+        .mode-button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px; /* Smaller buttons */
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+        .mode-button.active {
+            background-color: #2980b9;
+            transform: scale(1.1);
+        }
+        .scoreboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 15px;
+            background: rgba(52, 73, 94, 0.7);
+        }
+        .scoreboard-item {
+            background: var(--secondary-color);
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .game-field {
+            position: relative;
+            flex-grow: 1;
+            background: linear-gradient(to bottom, #27ae60 0%, #2ecc71 100%);
+            perspective: 1000px;
+            overflow: hidden;
+        }
+        #cricket-pitch {
+            position: absolute;
+            bottom: 20%;
+            left: 0;
+            width: 100%;
+            height: 10%;
+            background: linear-gradient(to right, #8e44ad, #9b59b6);
+            transform: perspective(500px) rotateX(20deg);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+        }
+        #batsman, #bowler {
+            position: absolute;
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+        }
+        #batsman {
+            bottom: 25%;
+            left: 40%;
+            width: 120px;
+            height: 180px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300"><rect width="200" height="300" fill="%23e74c3c"/><rect x="80" y="0" width="40" height="300" fill="%23c0392b"/></svg>') no-repeat;
+            background-size: cover;
+            z-index: 10;
+            transform: perspective(500px) rotateY(-15deg);
+        }
+        #bowler {
+            top: 20%;
+            right: 20%;
+            width: 100px;
+            height: 150px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 250"><rect width="200" height="250" fill="%233498db"/><circle cx="100" cy="70" r="50" fill="%232980b9"/></svg>') no-repeat;
+            background-size: cover;
+            z-index: 5;
+            transform: perspective(500px) rotateY(15deg);
+        }
+        #ball {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #f1c40f);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transition: all 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        .shot-controls {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 15px;
+            background: rgba(52, 73, 94, 0.9);
+        }
+        .shot-button {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px; /* Reduced padding */
+            border-radius: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em; /* Smaller font */
+        }
+        .shot-button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+        .shot-button .shot-risk {
+            font-size: 0.7em;
+            opacity: 0.7;
+        }
+        #commentary-box {
+            background: rgba(44, 62, 80, 0.9);
+            color: var(--text-color);
+            padding: 15px;
+            text-align: center;
+            font-style: italic;
+            position: relative;
+            overflow: hidden;
+        }
+        #commentary-box::before {
+            content: '🏏';
+            position: absolute;
+            font-size: 3em;
+            opacity: 0.1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+        }
+        .crowd {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 15%;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(44, 62, 80, 0.7),
+                rgba(44, 62, 80, 0.7) 10px,
+                rgba(52, 73, 94, 0.7) 10px,
+                rgba(52, 73, 94, 0.7) 20px
+            );
+            animation: crowd-wave 5s infinite alternate;
+        }
+        @keyframes crowd-wave {
+            0% { transform: translateY(-5px); }
+            100% { transform: translateY(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="team-selection-modal" class="modal">
+        <div class="modal-content">
+            <h2>Cricket Tournament Setup</h2>
+            <div class="mode-selection">
+                <h3>Select Game Mode</h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn" data-mode="practice">
+                        <i class="icon">🏋️</i>
+                        Practice Mode
+                        <small>Learn and improve skills</small>
+                    </button>
+                    <button class="mode-btn" data-mode="tournament">
+                        <i class="icon">🏆</i>
+                        Tournament Mode
+                        <small>Compete for championship</small>
+                    </button>
+                    <button class="mode-btn" data-mode="challenge">
+                        <i class="icon">⚡</i>
+                        Challenge Mode
+                        <small>Extreme difficulty</small>
+                    </button>
+                </div>
+            </div>
+
+            <div class="team-selection" style="display:none;">
+                <div class="team-input">
+                    <h3>Team 1 Details</h3>
+                    <input type="text" id="team1-name" placeholder="Team 1 Name" required>
+                    <input type="text" id="team1-captain" placeholder="Captain Name" required>
+                </div>
+                <div class="team-input">
+                    <h3>Team 2 Details</h3>
+                    <input type="text" id="team2-name" placeholder="Team 2 Name" required>
+                    <input type="text" id="team2-captain" placeholder="Captain Name" required>
+                </div>
+                <button id="start-game-btn">Start Match</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #2c3e50;
+            padding: 15px; /* Less padding */
+            border-radius: 15px;
+            width: 80%; /* Narrower modal */
+            max-width: 500px;
+            text-align: center;
+            color: white;
+        }
+        .mode-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .mode-btn {
+            background-color: #3498db;
+            border: none;
+            color: white;
+            padding: 10px; /* Smaller mode buttons */
+            margin: 5px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 150px;
+            font-size: 0.9em;
+        }
+        .mode-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        .mode-btn .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .mode-btn small {
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        .team-input {
+            margin: 20px 0;
+        }
+        .team-input input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+        }
+        #start-game-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+
+    <div class="cricket-stadium">
+        <div class="stadium-header">
+            <h1>Pro Cricket Simulator</h1>
+            <div class="game-mode-selector">
+                <button class="mode-button active" data-mode="practice">Practice</button>
+                <button class="mode-button" data-mode="tournament">Tournament</button>
+                <button class="mode-button" data-mode="challenge">Challenge</button>
+            </div>
+        </div>
+
+        <div class="scoreboard">
+            <div class="scoreboard-item">
+                <h3>Score</h3>
+                <div id="score">0/0</div>
+            </div>
+            <div class="scoreboard-item">
+                <h3>Overs</h3>
+                <div id="overs">0.0</div>
+            </div>
+            <div class="scoreboard-item">
+                <h3>Run Rate</h3>
+                <div id="run-rate">0.00</div>
+            </div>
+            <div class="scoreboard-item">
+                <h3>Target</h3>
+                <div id="target">N/A</div>
+            </div>
+        </div>
+
+        <div class="game-field">
+            <div class="crowd"></div>
+            <div id="cricket-pitch"></div>
+            <div id="batsman"></div>
+            <div id="bowler"></div>
+            <div id="ball"></div>
+        </div>
+
+        <div class="shot-controls">
+            <button class="shot-button" onclick="playShot('drive')">
+                Drive
+                <span class="shot-risk">Medium Risk</span>
+            </button>
+            <button class="shot-button" onclick="playShot('cut')">
+                Cut
+                <span class="shot-risk">High Risk</span>
+            </button>
+            <button class="shot-button" onclick="playShot('pull')">
+                Pull
+                <span class="shot-risk">Very High Risk</span>
+            </button>
+            <button class="shot-button" onclick="playShot('defense')">
+                Defense
+                <span class="shot-risk">Low Risk</span>
+            </button>
+        </div>
+
+        <div id="commentary-box">Welcome to the Pro Cricket Simulator!</div>
+    </div>
+
+    <script>
+        // Advanced Game State Management
+        const gameState = {
+            score: 0,
+            wickets: 0,
+            balls: 0,
+            overs: 0,
+            target: null,
+            mode: 'practice',
+            isGameOver: false
+        };
+
+        // DOM Elements
+        const elements = {
+            score: document.getElementById('score'),
+            wickets: document.getElementById('wickets'),
+            overs: document.getElementById('overs'),
+            runRate: document.getElementById('run-rate'),
+            target: document.getElementById('target'),
+            ball: document.getElementById('ball'),
+            batsman: document.getElementById('batsman'),
+            bowler: document.getElementById('bowler'),
+            commentary: document.getElementById('commentary-box')
+        };
+
+        // Shot Types with Advanced Probabilities
+        const shotTypes = {
+            drive: { 
+                runs: [0, 1, 2, 3, 4, 6],
+                probabilities: [0.25, 0.2, 0.15, 0.1, 0.15, 0.15],
+                wicketChance: 0.08,
+                commentary: [
+                    "Elegant drive through the covers!",
+                    "Perfectly timed shot!",
+                    "Beautiful batting technique!"
+                ]
+            },
+            cut: { 
+                runs: [0, 1, 2, 3, 4],
+                probabilities: [0.3, 0.2, 0.2, 0.15, 0.15],
+                wicketChance: 0.15,
+                commentary: [
+                    "Sharp cut shot!",
+                    "Precision cutting!",
+                    "Risky but effective!"
+                ]
+            },
+            pull: { 
+                runs: [0, 1, 2, 4, 6],
+                probabilities: [0.3, 0.2, 0.2, 0.15, 0.15],
+                wicketChance: 0.25,
+                commentary: [
+                    "Massive pull shot!",
+                    "Powerful hit over mid-wicket!",
+                    "Dangerous but spectacular!"
+                ]
+            },
+            defense: { 
+                runs: [0],
+                probabilities: [1],
+                wicketChance: 0.02,
+                commentary: [
+                    "Solid defensive technique",
+                    "Careful shot, protecting the wicket",
+                    "Defensive masterclass"
+                ]
+            }
+        };
+
+        // Game Mode Selector
+        document.querySelectorAll('.mode-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.mode-button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                gameState.mode = button.dataset.mode;
+                resetGame();
+            });
+        });
+
+        // Advanced Game Logic
+        function updateGameStats(runs, isOut) {
+            if (isOut) {
+                gameState.wickets++;
+                elements.score.textContent = `${gameState.score}/${gameState.wickets}`;
+                
+                if (gameState.wickets >= 10) {
+                    endGame('All out!');
+                    return false;
+                }
+            }
+
+            gameState.score += runs;
+            gameState.balls++;
+
+            // Update overs
+            gameState.overs = Math.floor(gameState.balls / 6) + 
+                              (gameState.balls % 6 / 10);
+            
+            elements.score.textContent = `${gameState.score}/${gameState.wickets}`;
+            elements.overs.textContent = gameState.overs.toFixed(1);
+
+            // Calculate run rate
+            const runRate = gameState.overs > 0 
+                ? (gameState.score / gameState.overs).toFixed(2) 
+                : '0.00';
+            elements.runRate.textContent = runRate;
+
+            // Check target in tournament mode
+            if (gameState.mode === 'tournament' && gameState.target) {
+                if (gameState.score > gameState.target) {
+                    endGame('Target Achieved!');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // Advanced Ball Physics Engine
+        class CricketBallPhysics {
+            constructor(gameField) {
+                this.gameField = gameField;
+                this.ball = document.getElementById('ball');
+                this.batsman = document.getElementById('batsman');
+                this.bowler = document.getElementById('bowler');
+                
+                // Physics parameters
+                this.physics = {
+                    gravity: 9.8,  // m/s²
+                    airResistance: 0.1,
+                    spinFactor: 0.5,
+                    initialVelocity: 20,  // m/s
+                    bounceCoefficient: 0.7
+                };
+
+                this.state = {
+                    position: { x: 0, y: 0 },
+                    velocity: { x: 0, y: 0 },
+                    spin: { x: 0, y: 0 },
+                    isMoving: false
+                };
+            }
+
+            // Realistic ball trajectory calculation
+            calculateTrajectory(shotType) {
+                const trajectoryParams = {
+                    drive: { 
+                        angle: this.randomInRange(30, 45),
+                        spin: { x: this.randomInRange(-5, 5), y: this.randomInRange(0, 10) }
+                    },
+                    cut: { 
+                        angle: this.randomInRange(120, 150),
+                        spin: { x: this.randomInRange(-10, 10), y: this.randomInRange(0, 15) }
+                    },
+                    pull: { 
+                        angle: this.randomInRange(210, 240),
+                        spin: { x: this.randomInRange(-15, 15), y: this.randomInRange(0, 20) }
+                    },
+                    defense: { 
+                        angle: 90,
+                        spin: { x: 0, y: this.randomInRange(0, 5) }
+                    }
+                };
+
+                const params = trajectoryParams[shotType];
+                
+                // Convert angle to radians
+                const angleRad = params.angle * Math.PI / 180;
+
+                // Initial velocity components
+                this.state.velocity.x = this.physics.initialVelocity * Math.cos(angleRad);
+                this.state.velocity.y = this.physics.initialVelocity * Math.sin(angleRad);
+
+                // Apply spin
+                this.state.spin = params.spin;
+
+                this.state.isMoving = true;
+                this.animateBall();
+            }
+
+            // Realistic ball animation with physics
+            animateBall() {
+                const deltaTime = 0.016;  // 60 FPS
+
+                const updatePosition = () => {
+                    if (!this.state.isMoving) return;
+
+                    // Apply gravity
+                    this.state.velocity.y -= this.physics.gravity * deltaTime;
+
+                    // Apply air resistance
+                    this.state.velocity.x *= (1 - this.physics.airResistance);
+                    this.state.velocity.y *= (1 - this.physics.airResistance);
+
+                    // Apply spin effect
+                    this.state.velocity.x += this.state.spin.x * deltaTime;
+                    this.state.velocity.y += this.state.spin.y * deltaTime;
+
+                    // Update position
+                    this.state.position.x += this.state.velocity.x * deltaTime;
+                    this.state.position.y += this.state.velocity.y * deltaTime;
+
+                    // Boundary and bounce detection
+                    const fieldRect = this.gameField.getBoundingClientRect();
+                    
+                    // Ground bounce
+                    if (this.state.position.y >= fieldRect.height) {
+                        this.state.position.y = fieldRect.height;
+                        this.state.velocity.y *= -this.physics.bounceCoefficient;
+                        this.state.velocity.x *= this.physics.bounceCoefficient;
+                    }
+
+                    // Side wall bounce
+                    if (this.state.position.x <= 0 || this.state.position.x >= fieldRect.width) {
+                        this.state.velocity.x *= -this.physics.bounceCoefficient;
+                    }
+
+                    // Stop conditions
+                    if (Math.abs(this.state.velocity.x) < 0.1 && 
+                        Math.abs(this.state.velocity.y) < 0.1) {
+                        this.state.isMoving = false;
+                    }
+
+                    // Render ball position
+                    this.ball.style.transform = `
+                        translate(${this.state.position.x}px, ${this.state.position.y}px)
+                        rotate(${this.state.spin.x * 10}deg)
+                    `;
+
+                    if (this.state.isMoving) {
+                        requestAnimationFrame(updatePosition);
+                    }
+                };
+
+                updatePosition();
+            }
+
+            // Utility method for random range
+            randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            // Reset ball to initial position
+            reset() {
+                this.state = {
+                    position: { x: 0, y: 0 },
+                    velocity: { x: 0, y: 0 },
+                    spin: { x: 0, y: 0 },
+                    isMoving: false
+                };
+                this.ball.style.transform = 'translate(0, 0)';
+            }
+        }
+
+        // Two-Team Cricket Tournament Management
+        class CricketTournament {
+            constructor(team1Name = 'Team 1', team1Captain = 'Captain 1', team2Name = 'Team 2', team2Captain = 'Captain 2', mode = 'practice') {
+                this.mode = mode;
+                
+                // Generate 11 players for each team
+                const generatePlayers = (teamName) => {
+                    const players = [];
+                    const positions = [
+                        'Opener', 'Top Order', 'Middle Order', 'Finisher', 
+                        'All-Rounder', 'Wicket-Keeper', 'Spinner', 'Fast Bowler'
+                    ];
+                    
+                    for (let i = 1; i <= 11; i++) {
+                        const position = positions[Math.floor(Math.random() * positions.length)];
+                        players.push({
+                            name: `${teamName} Player ${i}`,
+                            position: position,
+                            runs: 0,
+                            wickets: 0,
+                            isOut: false
+                        });
+                    }
+                    
+                    // Mark captain
+                    players[0].isCaptain = true;
+                    
+                    return players;
+                };
+                
+                this.teams = {
+                    'team1': {
+                        name: team1Name,
+                        captain: team1Captain,
+                        players: generatePlayers(team1Name),
+                        score: 0,
+                        wickets: 0,
+                        overs: 0
+                    },
+                    'team2': {
+                        name: team2Name,
+                        captain: team2Captain,
+                        players: generatePlayers(team2Name),
+                        score: 0,
+                        wickets: 0,
+                        overs: 0
+                    }
+                };
+                
+                this.matchSettings = {
+                    maxWickets: 10,
+                    totalOvers: 20,
+                    difficultyMultiplier: 0.8
+                };
+                
+                this.currentBattingTeam = 'team1';
+                this.currentBowlingTeam = 'team2';
+                this.matchStatus = 'not_started';
+                this.tossWinner = null;
+            }
+
+            // Existing methods remain the same...
+            
+            // Enhanced difficulty for challenge mode
+            adjustDifficulty(runs, isOut) {
+                if (this.mode === 'challenge') {
+                    // Increase difficulty by reducing scoring chances
+                    return Math.random() < this.matchSettings.difficultyMultiplier 
+                        ? Math.floor(runs * 0.7) 
+                        : runs;
+                }
+                return runs;
+            }
+
+            displayMatchSummary() {
+                const team1 = this.teams['team1'];
+                const team2 = this.teams['team2'];
+                
+                // Determine winner and loser
+                let winner, loser;
+                if (team1.score > team2.score) {
+                    winner = team1;
+                    loser = team2;
+                } else if (team2.score > team1.score) {
+                    winner = team2;
+                    loser = team1;
+                }
+                
+                // Create match summary modal
+                const summaryModal = document.createElement('div');
+                summaryModal.className = 'match-summary-modal';
+                summaryModal.innerHTML = `
+                    <div class="match-summary-content">
+                        <h2>Match Summary</h2>
+                        
+                        <div class="winners-losers-board">
+                            <div class="winners-section">
+                                <h3>🏆 Winners: ${winner ? winner.name : 'Draw'}</h3>
+                                ${winner ? this.createTeamPlayerList(winner) : ''}
+                            </div>
+                            
+                            ${loser ? `
+                            <div class="losers-section">
+                                <h3>😔 Losers: ${loser.name}</h3>
+                                ${this.createTeamPlayerList(loser)}
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="team-stats">
+                            <div class="team1-stats">
+                                <h3>${team1.name}</h3>
+                                <p>Runs: ${team1.score}</p>
+                                <p>Wickets: ${team1.wickets}/${this.matchSettings.maxWickets}</p>
+                                <p>Overs: ${team1.overs}/${this.matchSettings.totalOvers}</p>
+                            </div>
+                            <div class="team2-stats">
+                                <h3>${team2.name}</h3>
+                                <p>Runs: ${team2.score}</p>
+                                <p>Wickets: ${team2.wickets}/${this.matchSettings.maxWickets}</p>
+                                <p>Overs: ${team2.overs}/${this.matchSettings.totalOvers}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="match-result">
+                            ${this.determineMatchWinner()}
+                        </div>
+                        
+                        <button id="close-summary">Close</button>
+                    </div>
+                `;
+                
+                // Add styling for the modal
+                summaryModal.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(44, 62, 80, 0.9);
+                    color: white;
+                    padding: 20px;
+                    border-radius: 15px;
+                    z-index: 1000;
+                    text-align: center;
+                    width: 90%;
+                    max-width: 700px;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                `;
+                
+                // Add to body
+                document.body.appendChild(summaryModal);
+                
+                // Close button functionality
+                const closeButton = summaryModal.querySelector('#close-summary');
+                closeButton.addEventListener('click', () => {
+                    document.body.removeChild(summaryModal);
+                });
+            }
+            
+            // Helper method to create player list
+            createTeamPlayerList(team) {
+                return `
+                    <div class="team-players">
+                        ${team.players.map(player => `
+                            <div class="player-card ${player.isCaptain ? 'captain' : ''}">
+                                <span class="player-name">${player.name}${player.isCaptain ? ' (C)' : ''}</span>
+                                <span class="player-position">${player.position}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Existing determineMatchWinner method remains the same
+        }
+
+        // Global tournament instance
+        let tournament;
+
+        // Modify game initialization to include tournament
+        function initializeGame() {
+            // Create tournament instance
+            tournament = new CricketTournament();
+
+            // Conduct toss
+            const tossResult = tournament.conductToss();
+            
+            // Update commentary with toss details
+            elements.commentary.textContent = 
+                `${tossResult.winner} won the toss and chose to ${tossResult.decision}!`;
+
+            // Reset game
+            resetGame();
+        }
+
+        // Play Shot Mechanism
+        function playShot(shotType) {
+            if (gameState.isGameOver) return;
+
+            const shot = shotTypes[shotType];
+            const randomIndex = shot.runs.reduce((acc, _, i) => 
+                Math.random() < shot.probabilities[i] ? i : acc, 0);
+            
+            const runs = shot.runs[randomIndex];
+            const isOut = Math.random() < shot.wicketChance;
+
+            // Update commentary
+            const commentaries = shot.commentary;
+            elements.commentary.textContent = isOut 
+                ? 'OUT! Wicket fallen!' 
+                : commentaries[Math.floor(Math.random() * commentaries.length)] + 
+                  (runs > 0 ? ` ${runs} runs` : '');
+
+            // Initialize ball physics
+            const gameField = document.querySelector('.game-field');
+            const ballPhysics = new CricketBallPhysics(gameField);
+            ballPhysics.calculateTrajectory(shotType);
+
+            // Update game stats
+            const continueGame = updateGameStats(runs, isOut);
+
+            // Update tournament team stats
+            tournament.updateTeamStats(runs, isOut);
+
+            if (!continueGame) {
+                // Check if match is over
+                if (tournament.teams[tournament.currentBattingTeam].wickets >= tournament.matchSettings.maxWickets ||
+                    tournament.teams[tournament.currentBattingTeam].overs >= tournament.matchSettings.totalOvers) {
+                    tournament.switchInnings();
+                } else {
+                    tournament.displayMatchSummary();
+                }
+            }
+        }
+
+        // End Game Mechanism
+        function endGame(reason = 'Game Over') {
+            gameState.isGameOver = true;
+            elements.commentary.textContent = `${reason} | Final Score: ${gameState.score}/${gameState.wickets}`;
+            
+            setTimeout(() => {
+                if (confirm('Play again?')) {
+                    resetGame();
+                }
+            }, 2000);
+        }
+
+        // Reset Game
+        function resetGame() {
+            // Reset all game state
+            gameState.score = 0;
+            gameState.wickets = 0;
+            gameState.balls = 0;
+            gameState.overs = 0;
+            gameState.isGameOver = false;
+
+            // Set target in tournament mode
+            if (gameState.mode === 'tournament') {
+                gameState.target = Math.floor(Math.random() * 150) + 100;
+                elements.target.textContent = gameState.target;
+            } else {
+                gameState.target = null;
+                elements.target.textContent = 'N/A';
+            }
+
+            // Reset display
+            elements.score.textContent = '0/0';
+            elements.overs.textContent = '0.0';
+            elements.runRate.textContent = '0.00';
+            elements.commentary.textContent = `${tournament.teams[tournament.currentBattingTeam].name} is batting!`;
+
+            // Reset ball position
+            elements.ball.style.top = '30%';
+            elements.ball.style.left = '50%';
+            elements.ball.style.transform = 'translateX(-50%)';
+        }
+
+        // Team Selection Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('team-selection-modal');
+            const modeButtons = document.querySelectorAll('.mode-btn');
+            const teamSelection = document.querySelector('.team-selection');
+            const startGameBtn = document.getElementById('start-game-btn');
+
+            // Mode Selection
+            modeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    modeButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    teamSelection.style.display = 'block';
+                    
+                    // Store selected mode
+                    teamSelection.dataset.mode = button.dataset.mode;
+                });
+            });
+
+            // Start Game
+            startGameBtn.addEventListener('click', () => {
+                const team1Name = document.getElementById('team1-name').value || 'Team 1';
+                const team1Captain = document.getElementById('team1-captain').value || 'Captain 1';
+                const team2Name = document.getElementById('team2-name').value || 'Team 2';
+                const team2Captain = document.getElementById('team2-captain').value || 'Captain 2';
+                const mode = teamSelection.dataset.mode;
+
+                // Create tournament with custom teams
+                window.tournament = new CricketTournament(
+                    team1Name, team1Captain, 
+                    team2Name, team2Captain, 
+                    mode
+                );
+
+                // Hide modal
+                modal.style.display = 'none';
+
+                // Conduct toss and start game
+                const tossResult = tournament.conductToss();
+                elements.commentary.textContent = 
+                    `${tossResult.winner} won the toss and chose to ${tossResult.decision}!`;
+
+                // Reset game
+                resetGame();
+            });
+        });
+
+        // Initialize game on page load
+        window.onload = initializeGame;
+    </script>
+</body>
+</html>

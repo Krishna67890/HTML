@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Cricket Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1a4b4f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #ffffff;
+            perspective: 1000px;
+        }
+        .cricket-stadium {
+            width: 100%;
+            max-width: 1000px;
+            background-color: #2c3e50;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transform: rotateX(10deg);
+        }
+        .stadium-header {
+            background-color: #34495e;
+            padding: 15px;
+            text-align: center;
+        }
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            background-color: #2c3e50;
+            padding: 15px;
+            text-align: center;
+        }
+        .scoreboard-item {
+            flex: 1;
+            padding: 10px;
+            background-color: #3498db;
+            margin: 0 5px;
+            border-radius: 10px;
+        }
+        .game-field {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(to bottom, #27ae60 0%, #2ecc71 100%);
+            perspective: 500px;
+            overflow: hidden;
+        }
+        #cricket-pitch {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(to right, #8e44ad, #9b59b6);
+            transform: perspective(300px) rotateX(10deg);
+        }
+        #batsman {
+            position: absolute;
+            bottom: 150px;
+            left: 40%;
+            width: 100px;
+            height: 150px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200"><rect width="100" height="200" fill="%23e74c3c"/><rect x="40" y="0" width="20" height="200" fill="%23c0392b"/></svg>') no-repeat;
+            background-size: cover;
+            z-index: 10;
+            transform: perspective(300px) rotateY(-10deg);
+        }
+        #bowler {
+            position: absolute;
+            top: 50px;
+            right: 20%;
+            width: 80px;
+            height: 120px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200"><rect width="100" height="200" fill="%233498db"/><circle cx="50" cy="50" r="30" fill="%232980b9"/></svg>') no-repeat;
+            background-size: cover;
+            z-index: 5;
+            transform: perspective(300px) rotateY(10deg);
+        }
+        #ball {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #f1c40f);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            background-color: #34495e;
+            padding: 15px;
+        }
+        .shot-button {
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .shot-button:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        #commentary-box {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            text-align: center;
+            font-style: italic;
+        }
+        .crowd {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: repeating-linear-gradient(
+                45deg,
+                #2c3e50,
+                #2c3e50 10px,
+                #34495e 10px,
+                #34495e 20px
+            );
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="cricket-stadium">
+        <div class="stadium-header">
+            <h1>Ultimate Cricket Simulator</h1>
+        </div>
+
+        <div class="scoreboard">
+            <div class="scoreboard-item">
+                <h3>Score</h3>
+                <div id="score">0/0</div>
+            </div>
+            <div class="scoreboard-item">
+                <h3>Overs</h3>
+                <div id="overs">0.0</div>
+            </div>
+            <div class="scoreboard-item">
+                <h3>Run Rate</h3>
+                <div id="run-rate">0.00</div>
+            </div>
+        </div>
+
+        <div class="game-field">
+            <div class="crowd"></div>
+            <div id="cricket-pitch"></div>
+            <div id="batsman"></div>
+            <div id="bowler"></div>
+            <div id="ball"></div>
+        </div>
+
+        <div class="controls">
+            <button class="shot-button" onclick="playShot('drive')">Drive</button>
+            <button class="shot-button" onclick="playShot('cut')">Cut</button>
+            <button class="shot-button" onclick="playShot('pull')">Pull</button>
+            <button class="shot-button" onclick="playShot('defense')">Defense</button>
+        </div>
+
+        <div id="commentary-box">Welcome to the Ultimate Cricket Simulator!</div>
+    </div>
+
+    <script>
+        // Game State
+        const gameState = {
+            score: 0,
+            wickets: 0,
+            balls: 0,
+            overs: 0,
+            isGameOver: false
+        };
+
+        // DOM Elements
+        const elements = {
+            score: document.getElementById('score'),
+            wickets: document.getElementById('wickets'),
+            overs: document.getElementById('overs'),
+            ball: document.getElementById('ball'),
+            batsman: document.getElementById('batsman'),
+            commentary: document.getElementById('commentary-box')
+        };
+
+        // Shot Types and Their Probabilities
+        const shotTypes = {
+            drive: { 
+                runs: [0, 1, 2, 3, 4, 6],
+                probabilities: [0.3, 0.2, 0.15, 0.1, 0.15, 0.1],
+                wicketChance: 0.05
+            },
+            cut: { 
+                runs: [0, 1, 2, 3, 4],
+                probabilities: [0.3, 0.2, 0.2, 0.15, 0.15],
+                wicketChance: 0.1
+            },
+            pull: { 
+                runs: [0, 1, 2, 4, 6],
+                probabilities: [0.2, 0.2, 0.2, 0.2, 0.2],
+                wicketChance: 0.15
+            },
+            defense: { 
+                runs: [0],
+                probabilities: [1],
+                wicketChance: 0.02
+            }
+        };
+
+        // Update Game Statistics
+        function updateGameStats(runs, isOut) {
+            if (isOut) {
+                gameState.wickets++;
+                elements.wickets.textContent = gameState.wickets;
+                
+                if (gameState.wickets >= 10) {
+                    endGame('All out!');
+                    return false;
+                }
+            }
+
+            gameState.score += runs;
+            elements.score.textContent = gameState.score;
+
+            // Update overs
+            gameState.balls++;
+            gameState.overs = Math.floor(gameState.balls / 6) + 
+                              (gameState.balls % 6 / 10);
+            elements.overs.textContent = gameState.overs.toFixed(1);
+
+            return true;
+        }
+
+        // Animate Ball Trajectory
+        function animateBallTrajectory(shotType) {
+            const ball = elements.ball;
+            const gameField = ball.parentElement;
+            const fieldWidth = gameField.clientWidth;
+            const fieldHeight = gameField.clientHeight;
+
+            // Reset ball position
+            ball.style.top = '50px';
+            ball.style.left = '50%';
+            ball.style.transform = 'translateX(-50%)';
+
+            // Random trajectory based on shot type
+            const trajectories = {
+                drive: () => ({
+                    angle: Math.random() * 30 + 30,
+                    distance: Math.random() * fieldWidth * 0.7
+                }),
+                cut: () => ({
+                    angle: Math.random() * 30 + 120,
+                    distance: Math.random() * fieldWidth * 0.6
+                }),
+                pull: () => ({
+                    angle: Math.random() * 30 + 210,
+                    distance: Math.random() * fieldWidth * 0.5
+                }),
+                defense: () => ({
+                    angle: 90,
+                    distance: 50
+                })
+            };
+
+            const trajectory = trajectories[shotType]();
+
+            // Animate ball movement
+            const radians = trajectory.angle * Math.PI / 180;
+            const endX = fieldWidth / 2 + trajectory.distance * Math.cos(radians);
+            const endY = fieldHeight - trajectory.distance * Math.sin(radians);
+
+            ball.animate([
+                { transform: 'translate(-50%, 0)' },
+                { transform: `translate(${endX}px, ${endY}px)` }
+            ], {
+                duration: 1000,
+                easing: 'cubic-bezier(0.42, 0, 0.58, 1)'
+            });
+        }
+
+        // Play a Shot
+        function playShot(shotType) {
+            if (gameState.isGameOver) return;
+
+            const shot = shotTypes[shotType];
+            const randomIndex = shot.runs.reduce((acc, _, i) => 
+                Math.random() < shot.probabilities[i] ? i : acc, 0);
+            
+            const runs = shot.runs[randomIndex];
+            const isOut = Math.random() < shot.wicketChance;
+
+            // Update commentary
+            const commentaries = {
+                drive: ['Beautiful drive!', 'Excellent shot!', 'Textbook drive!'],
+                cut: ['Sharp cut shot!', 'Precision cut!', 'Skillful shot!'],
+                pull: ['Powerful pull!', 'Massive hit!', 'Great pull shot!'],
+                defense: ['Solid defense', 'Defensive block', 'Careful shot']
+            };
+
+            elements.commentary.textContent = isOut 
+                ? 'OUT! Wicket fallen!' 
+                : commentaries[shotType][Math.floor(Math.random() * commentaries[shotType].length)] + 
+                  (runs > 0 ? ` ${runs} runs` : '');
+
+            // Animate ball trajectory
+            animateBallTrajectory(shotType);
+
+            // Update game stats
+            const continueGame = updateGameStats(runs, isOut);
+
+            if (!continueGame) {
+                endGame();
+            }
+        }
+
+        // End Game
+        function endGame(reason = 'Game Over') {
+            gameState.isGameOver = true;
+            elements.commentary.textContent = `${reason} | Final Score: ${gameState.score}/${gameState.wickets}`;
+            
+            // Optional: Show restart button or modal
+            setTimeout(() => {
+                if (confirm('Play again?')) {
+                    resetGame();
+                }
+            }, 2000);
+        }
+
+        // Reset Game
+        function resetGame() {
+            gameState.score = 0;
+            gameState.wickets = 0;
+            gameState.balls = 0;
+            gameState.overs = 0;
+            gameState.isGameOver = false;
+
+            elements.score.textContent = '0/0';
+            elements.wickets.textContent = '0';
+            elements.overs.textContent = '0.0';
+            elements.commentary.textContent = 'New game started. Take your shot!';
+
+            // Reset ball position
+            elements.ball.style.top = '50px';
+            elements.ball.style.left = '50%';
+            elements.ball.style.transform = 'translateX(-50%)';
+        }
+
+        // Initialize Game
+        resetGame();
+
+        // Enhanced Visualization for Ball Trajectory
+        function animateBallTrajectoryEnhanced(shotType) {
+            const ball = document.getElementById('ball');
+            const gameField = ball.parentElement;
+            const fieldWidth = gameField.clientWidth;
+            const fieldHeight = gameField.clientHeight;
+
+            // Reset ball position near bowler
+            ball.style.top = '100px';
+            ball.style.left = '50%';
+            ball.style.transform = 'translateX(-50%)';
+
+            // Trajectory configurations
+            const trajectories = {
+                drive: () => ({
+                    angle: Math.random() * 30 + 30,
+                    distance: Math.random() * fieldWidth * 0.7,
+                    height: fieldHeight * 0.4
+                }),
+                cut: () => ({
+                    angle: Math.random() * 30 + 120,
+                    distance: Math.random() * fieldWidth * 0.6,
+                    height: fieldHeight * 0.3
+                }),
+                pull: () => ({
+                    angle: Math.random() * 30 + 210,
+                    distance: Math.random() * fieldWidth * 0.5,
+                    height: fieldHeight * 0.5
+                }),
+                defense: () => ({
+                    angle: 90,
+                    distance: 50,
+                    height: fieldHeight * 0.2
+                })
+            };
+
+            const trajectory = trajectories[shotType]();
+
+            // Advanced ball animation
+            const keyframes = [
+                { transform: 'translate(-50%, 0) scale(1)' },
+                { 
+                    transform: `translate(${trajectory.distance}px, ${-trajectory.height}px) scale(0.7)`,
+                    offset: 0.7
+                },
+                { 
+                    transform: `translate(${trajectory.distance}px, 0) scale(0.5)`,
+                    offset: 1
+                }
+            ];
+
+            const animation = ball.animate(keyframes, {
+                duration: 1500,
+                easing: 'cubic-bezier(0.42, 0, 0.58, 1)',
+                fill: 'forwards'
+            });
+
+            // Optional: Add sound effect or vibration
+            try {
+                navigator.vibrate(50);
+            } catch {}
+        }
+
+        // Update run rate calculation
+        function calculateRunRate() {
+            const overs = gameState.overs;
+            const score = gameState.score;
+            const runRate = overs > 0 ? (score / overs).toFixed(2) : '0.00';
+            document.getElementById('run-rate').textContent = runRate;
+        }
+
+        // Override existing update methods to include run rate
+        const originalUpdateGameStats = updateGameStats;
+        updateGameStats = function(runs, isOut) {
+            const result = originalUpdateGameStats(runs, isOut);
+            calculateRunRate();
+            return result;
+        };
+
+        // Override existing playShot method to use enhanced animation
+        const originalPlayShot = playShot;
+        playShot = function(shotType) {
+            originalPlayShot(shotType);
+            animateBallTrajectoryEnhanced(shotType);
+        };
+    </script>
+</body>
+</html>
