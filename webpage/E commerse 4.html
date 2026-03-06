@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 E-Commerce Platform</title>
+    <style>
+        /* Add the CSS from your original code here */
+        /* New styles for the cart modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .modal-header, .modal-footer {
+            padding: 1rem;
+            background: #007bff;
+            color: white;
+            text-align: center;
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+
+        .modal-body ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modal-body li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .modal-body li button {
+            background: red;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-body p {
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        .modal-footer button {
+            background: #ffc107;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            color: #333;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .modal-footer button:hover {
+            background: #ffdd57;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+
+
+
+
+
+
+
+
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f4f4f4, #e6e6e6);
+            color: #333;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffdd57;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            padding: 0.6rem;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            width: 200px;
+            outline: none;
+        }
+
+        .search-box button {
+            background: #ffdd57;
+            color: #333;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-box button:hover {
+            background: #ffc107;
+        }
+
+        .cart-box {
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-box img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .cart-box span {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff0000;
+            color: white;
+            font-size: 12px;
+            border-radius: 50%;
+            padding: 4px 8px;
+        }
+
+        .hero-bg {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .hero-bg img {
+            width: 90%;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .category-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover {
+            transform: scale(1.05);
+        }
+
+        .category-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .category-card h3 {
+            margin: 1rem;
+            font-size: 1.5rem;
+            text-align: center;
+            color: #007bff;
+        }
+
+        .category-card button {
+            display: block;
+            width: 80%;
+            margin: 0.5rem auto;
+            padding: 0.8rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .category-card button:hover {
+            background: #0056b3;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .search-box input {
+                width: 150px;
+            }
+
+            .hero-bg img {
+                width: 100%;
+            }
+
+            .category-card {
+                width: 90%;
+            }
+        }
+
+
+                /*---------------------------------------------------------------*/
+
+                .container {
+            width: 90%;
+            margin: auto;
+        }
+        header {
+            background: #007bff;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .card img {
+            max-width: 100%;
+            height: auto;
+        }
+        .card button {
+            margin: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .add-to-cart {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .buy-now {
+            background-color: #ffc107;
+            color: #fff;
+        }
+        .add-card {
+            background-color: #007bff;
+            color: #fff;
+        }
+        #product-form {
+            background: #fff;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #product-form input, #product-form button {
+            display: block;
+            width: 100%;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Krishna-Shop</div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Shop</a>
+            <a href="#">Contact</a>
+        </nav>
+        <div class="search-box">
+            <input type="text" placeholder="Search items...">
+            <button>Search</button>
+        </div>
+        <div class="cart-box" onclick="toggleCartModal()">
+            <img src="cart.png" alt="Cart">
+            <span id="cart-count">0</span>
+        </div>
+    </header>
+
+    <div class="hero-bg">
+        <img src="bg0.gif" alt="Hero Background">
+    </div>
+
+    <div class="container">
+        <form id="product-form">
+            <h2>Add Product</h2>
+            <input type="text" id="product-name" placeholder="Product Name" required>
+            <input type="text" id="product-price" placeholder="Price" required>
+            <input type="text" id="product-contact" placeholder="Contact Number" required>
+            <input type="file" id="product-image" accept="image/*">
+            <button type="submit">Add Product</button>
+        </form>
+        <div id="products"></div>
+    </div>
+
+    <div class="overlay" onclick="toggleCartModal()"></div>
+    <div class="modal">
+        <div class="modal-header">Your Cart</div>
+        <div class="modal-body">
+            <ul id="cart-items"></ul>
+            <p>Total: $<span id="cart-total">0.00</span></p>
+        </div>
+        <div class="modal-footer">
+            <button onclick="checkout()">Buy Now</button>
+        </div>
+    </div>
+
+    <footer>&copy; 2024 Krishna-Shop | All Rights Reserved</footer>
+
+    <script>
+        const productsContainer = document.getElementById('products');
+        const cartItemsElement = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        const cartCountElement = document.getElementById('cart-count');
+        const modal = document.querySelector('.modal');
+        const overlay = document.querySelector('.overlay');
+
+        const globalCart = [];
+
+        document.getElementById('product-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const contact = document.getElementById('product-contact').value;
+            const imageFile = document.getElementById('product-image').files[0];
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const product = { name, price, contact, image: event.target.result };
+                addProductCard(product);
+            };
+            if (imageFile) {
+                reader.readAsDataURL(imageFile);
+            } else {
+                const product = { name, price, contact, image: null };
+                addProductCard(product);
+            }
+
+            this.reset();
+        });
+
+        function addProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                ${product.image ? `<img src="${product.image}" alt="${product.name}">` : ''}
+                <h3>${product.name}</h3>
+                <p>Price: $${product.price.toFixed(2)}</p>
+                <p>Contact: ${product.contact}</p>
+                <button class="add-to-cart">Add to Cart</button>
+                <button class="buy-now">Buy Now</button>
+            `;
+
+            card.querySelector('.add-to-cart').addEventListener('click', () => {
+                globalCart.push(product);
+                updateCartView();
+            });
+
+            card.querySelector('.buy-now').addEventListener('click', () => {
+                alert(`Thank you for buying ${product.name}!`);
+            });
+
+            productsContainer.appendChild(card);
+        }
+
+        function updateCartView() {
+            cartItemsElement.innerHTML = '';
+            let total = 0;
+
+            globalCart.forEach((item, index) => {
+                total += item.price;
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${item.name} - $${item.price.toFixed(2)}
+                    <button onclick="removeFromCart(${index})">Remove</button>
+                `;
+                cartItemsElement.appendChild(li);
+            });
+
+            cartTotalElement.textContent = total.toFixed(2);
+            cartCountElement.textContent = globalCart.length;
+        }
+
+        function removeFromCart(index) {
+            globalCart.splice(index, 1);
+            updateCartView();
+        }
+
+        function toggleCartModal() {
+            const isVisible = modal.style.display === 'block';
+            modal.style.display = isVisible ? 'none' : 'block';
+            overlay.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function checkout() {
+            if (globalCart.length > 0) {
+                alert('Thank you for your purchase!');
+                globalCart.length = 0; // Clear the cart
+                updateCartView();
+                toggleCartModal();
+            } else {
+                alert('Your cart is empty!');
+            }
+        }
+    </script>
+</body>
+</html>

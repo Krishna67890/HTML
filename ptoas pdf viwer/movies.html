@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Movie Collection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .form-container {
+            margin-bottom: 20px;
+        }
+        .movie-form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .movie-form input, .movie-form button {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .movie-list {
+            margin-top: 30px;
+        }
+        .movie-list table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .movie-list th, .movie-list td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .movie-list th {
+            background-color: #f2f2f2;
+        }
+        .movie-list tr:hover {
+            background-color: #f1f1f1;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            max-width: 700px;
+            margin: 20px auto;
+        }
+        #fullscreenBtn {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #fullscreenBtn:disabled {
+            background-color: #ccc;
+        }
+        #loadingSpinner {
+            display: none;
+            font-size: 20px;
+            color: #333;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>My Movie Collection</h1>
+
+    <div class="form-container">
+        <div class="movie-form">
+            <input type="file" id="movieFile" accept="video/*" required>
+            <button onclick="addMovie()">Add Movie</button>
+        </div>
+    </div>
+
+    <div class="movie-list">
+        <h2>Your Movie Collection</h2>
+        <table id="movieTable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Year</th>
+                    <th>View</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Movies will be listed here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="videoContainer" style="display: none;">
+        <video id="videoPlayer" controls></video>
+        <button id="fullscreenBtn" onclick="toggleFullscreen()">Go Fullscreen</button>
+    </div>
+
+    <div id="loadingSpinner">Loading movies...</div>
+
+    <script>
+        // Load stored movies from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMovies();
+        });
+
+        // Function to add a movie
+        function addMovie() {
+            const fileInput = document.getElementById('movieFile');
+            const file = fileInput.files[0];
+            if (file) {
+                const title = file.name.split('.')[0]; // Default title as file name without extension
+                const genre = "Unknown Genre"; // You can expand this feature
+                const year = "Unknown Year"; // You can expand this feature
+                
+                const movie = { title, genre, year, fileUrl: URL.createObjectURL(file) };
+                let movies = JSON.parse(localStorage.getItem('movies')) || [];
+                movies.push(movie);
+                localStorage.setItem('movies', JSON.stringify(movies));
+                loadMovies();
+            }
+        }
+
+        // Function to load movies from localStorage
+        function loadMovies() {
+            document.getElementById('loadingSpinner').style.display = 'block'; // Show loading spinner
+            setTimeout(() => {
+                const movies = JSON.parse(localStorage.getItem('movies')) || [];
+                const movieTable = document.getElementById('movieTable').getElementsByTagName('tbody')[0];
+                movieTable.innerHTML = '';
+
+                movies.forEach((movie, index) => {
+                    const row = movieTable.insertRow();
+                    row.innerHTML = `
+                        <td>${movie.title}</td>
+                        <td>${movie.genre}</td>
+                        <td>${movie.year}</td>
+                        <td><button onclick="viewMovie('${movie.fileUrl}')">View</button></td>
+                        <td><button onclick="deleteMovie(${index})">Delete</button></td>
+                    `;
+                });
+
+                document.getElementById('loadingSpinner').style.display = 'none'; // Hide loading spinner
+            }, 300); // Simulate loading delay for better UX
+        }
+
+        // Function to view a movie
+        function viewMovie(fileUrl) {
+            const videoContainer = document.getElementById('videoContainer');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            
+            videoPlayer.src = fileUrl;
+            videoContainer.style.display = 'block';
+            videoPlayer.play();
+            fullscreenBtn.disabled = false;
+        }
+
+        // Function to delete a movie
+        function deleteMovie(index) {
+            let movies = JSON.parse(localStorage.getItem('movies')) || [];
+            movies.splice(index, 1);
+            localStorage.setItem('movies', JSON.stringify(movies));
+            loadMovies();
+        }
+
+        // Function to toggle fullscreen mode for the video
+        function toggleFullscreen() {
+            const videoPlayer = document.getElementById('videoPlayer');
+            if (videoPlayer.requestFullscreen) {
+                videoPlayer.requestFullscreen();
+            } else if (videoPlayer.mozRequestFullScreen) { // Firefox
+                videoPlayer.mozRequestFullScreen();
+            } else if (videoPlayer.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                videoPlayer.webkitRequestFullscreen();
+            } else if (videoPlayer.msRequestFullscreen) { // IE/Edge
+                videoPlayer.msRequestFullscreen();
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grubiks-style Cube Solver</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kociemba@1.1.1/dist/kociemba.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        h1 {
+            color: #3a7bd5;
+            margin-bottom: 10px;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .cube-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .cube-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #3a7bd5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #2c5fb3;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .solution {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            min-height: 60px;
+        }
+        
+        .move {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 3px;
+            background-color: #e1e9f5;
+            border-radius: 3px;
+            font-family: monospace;
+            cursor: pointer;
+        }
+        
+        .move:hover {
+            background-color: #d0ddf1;
+        }
+        
+        .move.current {
+            background-color: #3a7bd5;
+            color: white;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ddd;
+        }
+        
+        .color.selected {
+            border-color: #3a7bd5;
+            transform: scale(1.1);
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #3a7bd5;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .cube-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Rubik's Cube Solver</h1>
+            <p>Interactive 3D Rubik's Cube with solver functionality</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="cube-section">
+                <h2>Interactive Cube</h2>
+                <p>Drag to rotate the cube. Click buttons below to scramble or solve.</p>
+                
+                <div class="cube-container">
+                    <canvas id="interactive-cube"></canvas>
+                </div>
+                
+                <div class="controls">
+                    <button id="scramble-btn">Scramble</button>
+                    <button id="solve-btn">Solve</button>
+                    <button id="reset-btn">Reset</button>
+                    <button id="hint-btn">Hint</button>
+                </div>
+                
+                <div class="solution" id="solution"></div>
+                
+                <div class="instructions">
+                    <h3>How to use:</h3>
+                    <ul>
+                        <li>Drag the cube to rotate your view</li>
+                        <li>Click "Scramble" to randomize the cube</li>
+                        <li>Click "Solve" to generate a solution</li>
+                        <li>Click moves in the solution to jump to that step</li>
+                        <li>Click "Hint" for a suggested move</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="cube-section">
+                <h2>Custom Cube Builder</h2>
+                <p>Select a color and click on the cube to paint it.</p>
+                
+                <div class="color-picker">
+                    <div class="color selected" style="background: white;" data-color="white"></div>
+                    <div class="color" style="background: yellow;" data-color="yellow"></div>
+                    <div class="color" style="background: red;" data-color="red"></div>
+                    <div class="color" style="background: orange;" data-color="orange"></div>
+                    <div class="color" style="background: blue;" data-color="blue"></div>
+                    <div class="color" style="background: green;" data-color="green"></div>
+                </div>
+                
+                <div class="cube-container">
+                    <canvas id="custom-cube"></canvas>
+                </div>
+                
+                <div class="controls">
+                    <button id="custom-scramble-btn">Scramble</button>
+                    <button id="custom-solve-btn">Solve</button>
+                    <button id="custom-reset-btn">Reset</button>
+                </div>
+                
+                <div class="solution" id="custom-solution"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Cube State Management ---
+        function solvedCubeState() {
+            return {
+                U: Array(9).fill('white'),
+                D: Array(9).fill('yellow'),
+                F: Array(9).fill('red'),
+                B: Array(9).fill('orange'),
+                L: Array(9).fill('green'),
+                R: Array(9).fill('blue')
+            };
+        }
+        
+        function cloneCubeState(state) {
+            return {
+                U: [...state.U], D: [...state.D], F: [...state.F],
+                B: [...state.B], L: [...state.L], R: [...state.R]
+            };
+        }
+        
+        // Color mapping
+        const colorMap = {
+            white: 0xffffff, yellow: 0xffff00, red: 0xff0000,
+            orange: 0xff8800, blue: 0x0000ff, green: 0x00ff00,
+            black: 0x000000
+        };
+        
+        const faceOrder = ['U', 'R', 'F', 'D', 'L', 'B'];
+        
+        // --- 3D Cube Rendering ---
+        function createRubiksCube3D(config) {
+            const canvas = config.canvas;
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+            
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf5f5f5);
+            
+            const camera = new THREE.PerspectiveCamera(
+                50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000
+            );
+            camera.position.set(5, 5, 5);
+            camera.lookAt(0, 0, 0);
+            
+            // Controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.rotateSpeed = 0.8;
+            controls.enableZoom = true;
+            controls.enablePan = false;
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7);
+            scene.add(directionalLight);
+            
+            // Cube group
+            const cubeGroup = new THREE.Group();
+            scene.add(cubeGroup);
+            
+            // Cube state
+            let cubeState = config.initialState || solvedCubeState();
+            const cubeletSize = 0.95;
+            const gap = 0.05;
+            
+            // Create cubelets
+            function createCubelets() {
+                // Clear existing cubelets
+                while (cubeGroup.children.length) {
+                    cubeGroup.remove(cubeGroup.children[0]);
+                }
+                
+                // Create new cubelets
+                for (let x = -1; x <= 1; x++) {
+                    for (let y = -1; y <= 1; y++) {
+                        for (let z = -1; z <= 1; z++) {
+                            // Skip the center cube
+                            if (x === 0 && y === 0 && z === 0) continue;
+                            
+                            // Get facelets for this cubelet
+                            const facelets = [];
+                            if (y === 1) facelets.push({ face: 'U', index: (2 - z) * 3 + (x + 1) });
+                            if (y === -1) facelets.push({ face: 'D', index: (z + 1) * 3 + (x + 1) });
+                            if (z === 1) facelets.push({ face: 'F', index: (y + 1) * 3 + (2 - (x + 1)) });
+                            if (z === -1) facelets.push({ face: 'B', index: (y + 1) * 3 + (x + 1) });
+                            if (x === 1) facelets.push({ face: 'R', index: (y + 1) * 3 + (z + 1) });
+                            if (x === -1) facelets.push({ face: 'L', index: (y + 1) * 3 + (2 - (z + 1)) });
+                            
+                            // Create materials for each face
+                            const materials = [];
+                            for (let i = 0; i < 6; i++) {
+                                const face = faceOrder[i];
+                                const facelet = facelets.find(f => f.face === face);
+                                const color = facelet ? colorMap[cubeState[face][facelet.index]] : colorMap.black;
+                                materials.push(new THREE.MeshStandardMaterial({ 
+                                    color, 
+                                    roughness: 0.1,
+                                    metalness: 0.05
+                                }));
+                            }
+                            
+                            // Create cubelet mesh
+                            const geometry = new THREE.BoxGeometry(cubeletSize, cubeletSize, cubeletSize);
+                            const mesh = new THREE.Mesh(geometry, materials);
+                            mesh.position.set(
+                                x * (cubeletSize + gap),
+                                y * (cubeletSize + gap),
+                                z * (cubeletSize + gap)
+                            );
+                            mesh.userData = { x, y, z, facelets };
+                            cubeGroup.add(mesh);
+                        }
+                    }
+                }
+            }
+            
+            // Update cubelet colors from state
+            function updateCubeletColors() {
+                cubeGroup.children.forEach(cubelet => {
+                    cubelet.userData.facelets.forEach(facelet => {
+                        const faceIndex = faceOrder.indexOf(facelet.face);
+                        cubelet.material[faceIndex].color.setHex(colorMap[cubeState[facelet.face][facelet.index]]);
+                    });
+                });
+            }
+            
+            // Initial creation
+            createCubelets();
+            
+            // Handle facelet clicks if configured
+            if (config.onFaceletClick) {
+                const raycaster = new THREE.Raycaster();
+                const pointer = new THREE.Vector2();
+                
+                canvas.addEventListener('pointerdown', (event) => {
+                    pointer.x = (event.offsetX / canvas.clientWidth) * 2 - 1;
+                    pointer.y = -(event.offsetY / canvas.clientHeight) * 2 + 1;
+                    
+                    raycaster.setFromCamera(pointer, camera);
+                    const intersects = raycaster.intersectObjects(cubeGroup.children);
+                    
+                    if (intersects.length > 0) {
+                        const cubelet = intersects[0].object;
+                        const faceIndex = intersects[0].face.materialIndex;
+                        const face = faceOrder[faceIndex];
+                        const facelet = cubelet.userData.facelets.find(f => f.face === face);
+                        
+                        if (facelet) {
+                            config.onFaceletClick(face, facelet.index, cubelet);
+                        }
+                    }
+                });
+            }
+            
+            // Handle face rotations if configured
+            if (config.onFaceRotate) {
+                let isDragging = false;
+                let startPosition = null;
+                let dragFace = null;
+                const threshold = 20; // pixels
+                
+                function getPosition(event) {
+                    const rect = canvas.getBoundingClientRect();
+                    return {
+                        x: event.clientX - rect.left,
+                        y: event.clientY - rect.top
+                    };
+                }
+                
+                function handleStart(event) {
+                    const pos = getPosition(event);
+                    startPosition = pos;
+                    
+                    // Find which face was touched
+                    const pointer = new THREE.Vector2(
+                        (pos.x / canvas.clientWidth) * 2 - 1,
+                        -(pos.y / canvas.clientHeight) * 2 + 1
+                    );
+                    
+                    const raycaster = new THREE.Raycaster();
+                    raycaster.setFromCamera(pointer, camera);
+                    const intersects = raycaster.intersectObjects(cubeGroup.children);
+                    
+                    if (intersects.length > 0) {
+                        const cubelet = intersects[0].object;
+                        const faceIndex = intersects[0].face.materialIndex;
+                        dragFace = faceOrder[faceIndex];
+                        isDragging = true;
+                    }
+                }
+                
+                function handleMove(event) {
+                    if (!isDragging) return;
+                    
+                    const pos = getPosition(event);
+                    const dx = pos.x - startPosition.x;
+                    const dy = pos.y - startPosition.y;
+                    
+                    // Check if drag exceeds threshold
+                    if (Math.abs(dx) + Math.abs(dy) > threshold) {
+                        // Determine move direction
+                        const direction = Math.abs(dx) > Math.abs(dy) ? 
+                            (dx > 0 ? 1 : -1) : (dy > 0 ? -1 : 1);
+                        
+                        config.onFaceRotate(dragFace, direction);
+                        isDragging = false;
+                    }
+                }
+                
+                function handleEnd() {
+                    isDragging = false;
+                }
+                
+                canvas.addEventListener('mousedown', handleStart);
+                canvas.addEventListener('mousemove', handleMove);
+                canvas.addEventListener('mouseup', handleEnd);
+                canvas.addEventListener('touchstart', (e) => handleStart(e.touches[0]));
+                canvas.addEventListener('touchmove', (e) => handleMove(e.touches[0]));
+                canvas.addEventListener('touchend', handleEnd);
+            }
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+            
+            // Handle window resize
+            function handleResize() {
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+            }
+            
+            window.addEventListener('resize', handleResize);
+            
+            // Public API
+            return {
+                getState: () => cloneCubeState(cubeState),
+                setState: (newState) => {
+                    cubeState = cloneCubeState(newState);
+                    updateCubeletColors();
+                },
+                applyMove: (move) => {
+                    applyMoveToState(cubeState, move);
+                    updateCubeletColors();
+                },
+                redraw: createCubelets
+            };
+        }
+        
+        // --- Cube Move Logic ---
+        function applyMoveToState(state, move) {
+            const m = move.match(/^([UDFBLR])([2'])?$/);
+            if (!m) return;
+            
+            const face = m[1];
+            const suffix = m[2];
+            const times = suffix === '2' ? 2 : 1;
+            const prime = suffix === "'";
+            
+            for (let i = 0; i < times; i++) {
+                rotateFace(state, face, prime);
+            }
+        }
+        
+        function rotateFace(state, face, prime = false) {
+            // Rotate the face stickers
+            const faceStickers = [...state[face]];
+            const rotationMap = [6, 3, 0, 7, 4, 1, 8, 5, 2]; // Clockwise rotation
+            
+            if (!prime) {
+                // Clockwise
+                for (let i = 0; i < 9; i++) {
+                    state[face][i] = faceStickers[rotationMap[i]];
+                }
+            } else {
+                // Counter-clockwise
+                for (let i = 0; i < 9; i++) {
+                    state[face][rotationMap[i]] = faceStickers[i];
+                }
+            }
+            
+            // Rotate the adjacent edge stickers
+            const adjacentFaces = {
+                U: [['B', 0, 1, 2], ['R', 0, 1, 2], ['F', 0, 1, 2], ['L', 0, 1, 2]],
+                D: [['F', 6, 7, 8], ['R', 6, 7, 8], ['B', 6, 7, 8], ['L', 6, 7, 8]],
+                F: [['U', 6, 7, 8], ['R', 0, 3, 6], ['D', 2, 1, 0], ['L', 8, 5, 2]],
+                B: [['U', 2, 1, 0], ['L', 0, 3, 6], ['D', 6, 7, 8], ['R', 8, 5, 2]],
+                L: [['U', 0, 3, 6], ['F', 0, 3, 6], ['D', 0, 3, 6], ['B', 8, 5, 2]],
+                R: [['U', 8, 5, 2], ['B', 0, 3, 6], ['D', 8, 5, 2], ['F', 8, 5, 2]]
+            }[face];
+            
+            // Get the current edge stickers
+            const edgeStickers = adjacentFaces.map(([f, ...indices]) => 
+                indices.map(i => state[f][i])
+            );
+            
+            // Rotate the edges
+            if (!prime) {
+                // Clockwise - move last to first
+                edgeStickers.unshift(edgeStickers.pop());
+            } else {
+                // Counter-clockwise - move first to last
+                edgeStickers.push(edgeStickers.shift());
+            }
+            
+            // Apply the rotated edges back to the state
+            for (let i = 0; i < adjacentFaces.length; i++) {
+                const [f, ...indices] = adjacentFaces[i];
+                for (let j = 0; j < indices.length; j++) {
+                    state[f][indices[j]] = edgeStickers[i][j];
+                }
+            }
+        }
+        
+        function generateScramble(length = 20) {
+            const faces = ['U', 'D', 'L', 'R', 'F', 'B'];
+            const suffixes = ['', "'", '2'];
+            let scramble = [];
+            let lastFace = '';
+            
+            while (scramble.length < length) {
+                const face = faces[Math.floor(Math.random() * faces.length)];
+                if (face !== lastFace) {
+                    const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+                    scramble.push(face + suffix);
+                    lastFace = face;
+                }
+            }
+            
+            return scramble;
+        }
+        
+        // --- Interactive Cube ---
+        const interactiveCube = createRubiksCube3D({
+            canvas: document.getElementById('interactive-cube'),
+            initialState: solvedCubeState(),
+            onFaceRotate: function(face, direction) {
+                const move = face + (direction === -1 ? "'" : '');
+                interactiveCube.applyMove(move);
+                
+                // Update solution display if we're in the middle of solving
+                if (currentSolution && currentStep > 0) {
+                    currentSolution = null;
+                    currentStep = 0;
+                    document.getElementById('solution').innerHTML = '';
+                }
+            }
+        });
+        
+        let currentSolution = null;
+        let currentStep = 0;
+        let isSolving = false;
+        
+        // Scramble button
+        document.getElementById('scramble-btn').addEventListener('click', () => {
+            const scramble = generateScramble();
+            scramble.forEach(move => {
+                interactiveCube.applyMove(move);
+            });
+            
+            currentSolution = null;
+            currentStep = 0;
+            document.getElementById('solution').innerHTML = '';
+        });
+        
+        // Solve button
+        document.getElementById('solve-btn').addEventListener('click', () => {
+            if (isSolving) return;
+            
+            const state = interactiveCube.getState();
+            const facelets = faceOrder.map(face => 
+                state[face].map(color => color[0].toUpperCase()).join('')
+            ).join('');
+            
+            document.getElementById('solution').textContent = 'Solving...';
+            
+            setTimeout(() => {
+                try {
+                    const solution = window.kociemba.solve(facelets).split(' ');
+                    currentSolution = solution;
+                    currentStep = 0;
+                    displaySolution(solution, 'solution');
+                    
+                    // Execute the solution step by step
+                    isSolving = true;
+                    executeSolution(interactiveCube, solution, 0, () => {
+                        isSolving = false;
+                    }, 'solution', (step) => {
+                        currentStep = step;
+                    });
+                } catch (e) {
+                    document.getElementById('solution').textContent = 'Error: ' + e.message;
+                }
+            }, 100);
+        });
+        
+        // Reset button
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            interactiveCube.setState(solvedCubeState());
+            currentSolution = null;
+            currentStep = 0;
+            document.getElementById('solution').innerHTML = '';
+        });
+        
+        // Hint button
+        document.getElementById('hint-btn').addEventListener('click', () => {
+            if (currentSolution && currentStep < currentSolution.length) {
+                // If we have a solution, show the next step
+                const move = currentSolution[currentStep];
+                interactiveCube.applyMove(move);
+                currentStep++;
+                
+                // Update solution display
+                displaySolution(currentSolution, 'solution', currentStep);
+            } else {
+                // Otherwise generate a random move hint
+                const moves = ['U', 'U\'', 'D', 'D\'', 'L', 'L\'', 'R', 'R\'', 'F', 'F\'', 'B', 'B\''];
+                const move = moves[Math.floor(Math.random() * moves.length)];
+                
+                const solutionElement = document.getElementById('solution');
+                solutionElement.innerHTML = `<span class="move">Hint: ${move}</span>`;
+                
+                // Make the hint clickable to apply it
+                solutionElement.querySelector('.move').addEventListener('click', () => {
+                    interactiveCube.applyMove(move);
+                    solutionElement.innerHTML = '';
+                });
+            }
+        });
+        
+        // --- Custom Cube ---
+        let selectedColor = 'white';
+        const customCube = createRubiksCube3D({
+            canvas: document.getElementById('custom-cube'),
+            initialState: solvedCubeState(),
+            onFaceletClick: function(face, index) {
+                const state = customCube.getState();
+                state[face][index] = selectedColor;
+                customCube.setState(state);
+            }
+        });
+        
+        let currentCustomSolution = null;
+        let currentCustomStep = 0;
+        let isCustomSolving = false;
+        
+        // Color picker
+        document.querySelectorAll('.color-picker .color').forEach(colorElement => {
+            colorElement.addEventListener('click', () => {
+                document.querySelectorAll('.color-picker .color').forEach(el => 
+                    el.classList.remove('selected')
+                );
+                colorElement.classList.add('selected');
+                selectedColor = colorElement.dataset.color;
+            });
+        });
+        
+        // Scramble button
+        document.getElementById('custom-scramble-btn').addEventListener('click', () => {
+            const scramble = generateScramble();
+            scramble.forEach(move => {
+                customCube.applyMove(move);
+            });
+            
+            currentCustomSolution = null;
+            currentCustomStep = 0;
+            document.getElementById('custom-solution').innerHTML = '';
+        });
+        
+        // Solve button
+        document.getElementById('custom-solve-btn').addEventListener('click', () => {
+            if (isCustomSolving) return;
+            
+            const state = customCube.getState();
+            const facelets = faceOrder.map(face => 
+                state[face].map(color => color[0].toUpperCase()).join('')
+            ).join('');
+            
+            document.getElementById('custom-solution').textContent = 'Solving...';
+            
+            setTimeout(() => {
+                try {
+                    const solution = window.kociemba.solve(facelets).split(' ');
+                    currentCustomSolution = solution;
+                    currentCustomStep = 0;
+                    displaySolution(solution, 'custom-solution');
+                    
+                    // Execute the solution step by step
+                    isCustomSolving = true;
+                    executeSolution(customCube, solution, 0, () => {
+                        isCustomSolving = false;
+                    }, 'custom-solution', (step) => {
+                        currentCustomStep = step;
+                    });
+                } catch (e) {
+                    document.getElementById('custom-solution').textContent = 'Error: ' + e.message;
+                }
+            }, 100);
+        });
+        
+        // Reset button
+        document.getElementById('custom-reset-btn').addEventListener('click', () => {
+            customCube.setState(solvedCubeState());
+            currentCustomSolution = null;
+            currentCustomStep = 0;
+            document.getElementById('custom-solution').innerHTML = '';
+        });
+        
+        // --- Common Functions ---
+        function displaySolution(solution, elementId, currentStep = 0) {
+            const solutionElement = document.getElementById(elementId);
+            solutionElement.innerHTML = '';
+            
+            solution.forEach((move, index) => {
+                const moveElement = document.createElement('span');
+                moveElement.className = 'move' + (index === currentStep - 1 ? ' current' : '');
+                moveElement.textContent = move;
+                
+                // Make moves clickable to jump to that step
+                moveElement.addEventListener('click', () => {
+                    if (elementId === 'solution') {
+                        if (isSolving) return;
+                        
+                        // Reset cube to initial state
+                        interactiveCube.setState(solvedCubeState());
+                        
+                        // Apply all moves up to this point
+                        for (let i = 0; i <= index; i++) {
+                            interactiveCube.applyMove(solution[i]);
+                        }
+                        
+                        currentStep = index + 1;
+                        displaySolution(solution, elementId, currentStep);
+                    } else {
+                        if (isCustomSolving) return;
+                        
+                        // Reset cube to initial state
+                        customCube.setState(solvedCubeState());
+                        
+                        // Apply all moves up to this point
+                        for (let i = 0; i <= index; i++) {
+                            customCube.applyMove(solution[i]);
+                        }
+                        
+                        currentCustomStep = index + 1;
+                        displaySolution(solution, elementId, currentCustomStep);
+                    }
+                });
+                
+                solutionElement.appendChild(moveElement);
+            });
+        }
+        
+        function executeSolution(cube, solution, step, callback, solutionElementId, stepCallback) {
+            if (step >= solution.length) {
+                callback();
+                return;
+            }
+            
+            cube.applyMove(solution[step]);
+            displaySolution(solution, solutionElementId, step + 1);
+            stepCallback(step + 1);
+            
+            setTimeout(() => {
+                executeSolution(cube, solution, step + 1, callback, solutionElementId, stepCallback);
+            }, 500);
+        }
+    </script>
+</body>
+</html>

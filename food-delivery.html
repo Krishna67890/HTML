@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodExpress - Quick & Delicious Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-gradient {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+        }
+        
+        .restaurant-card {
+            transition: all 0.3s ease;
+        }
+        
+        .restaurant-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .dish-card {
+            transition: transform 0.3s ease;
+        }
+
+        .dish-card:hover {
+            transform: scale(1.02);
+        }
+
+        .rating-badge {
+            background: #22C55E;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .delivery-time {
+            background: #F3F4F6;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .category-pill {
+            transition: all 0.3s ease;
+        }
+
+        .category-pill:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-utensils text-2xl text-red-500"></i>
+                    <span class="ml-2 text-2xl font-bold text-gray-800">FoodExpress</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-600 hover:text-red-500">Home</a>
+                    <a href="#restaurants" class="text-gray-600 hover:text-red-500">Restaurants</a>
+                    <a href="#offers" class="text-gray-600 hover:text-red-500">Offers</a>
+                    <a href="#cart" class="relative">
+                        <i class="fas fa-shopping-cart text-gray-600 hover:text-red-500"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">3</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <h1 class="text-5xl font-bold mb-6">Delicious Food Delivered To Your Door</h1>
+                    <p class="text-xl mb-8">Order from your favorite restaurants with just a few clicks</p>
+                    <div class="bg-white rounded-full p-2 flex items-center">
+                        <i class="fas fa-map-marker-alt text-red-500 mx-3"></i>
+                        <input type="text" placeholder="Enter your delivery address" class="w-full outline-none text-gray-700">
+                        <button class="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600">Find Food</button>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836" alt="Food" class="rounded-lg shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex overflow-x-auto space-x-4 pb-4">
+                <button class="category-pill flex-shrink-0 bg-red-500 text-white px-6 py-2 rounded-full">All</button>
+                <button class="category-pill flex-shrink-0 bg-white text-gray-700 px-6 py-2 rounded-full hover:bg-red-500 hover:text-white">Pizza</button>
+                <button class="category-pill flex-shrink-0 bg-white text-gray-700 px-6 py-2 rounded-full hover:bg-red-500 hover:text-white">Burgers</button>
+                <button class="category-pill flex-shrink-0 bg-white text-gray-700 px-6 py-2 rounded-full hover:bg-red-500 hover:text-white">Sushi</button>
+                <button class="category-pill flex-shrink-0 bg-white text-gray-700 px-6 py-2 rounded-full hover:bg-red-500 hover:text-white">Indian</button>
+                <button class="category-pill flex-shrink-0 bg-white text-gray-700 px-6 py-2 rounded-full hover:bg-red-500 hover:text-white">Chinese</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Restaurants -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-8">Featured Restaurants</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Restaurant Card -->
+                <div class="restaurant-card bg-white rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4" alt="Restaurant" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-xl font-bold">The Pizza House</h3>
+                            <span class="rating-badge">4.5 ★</span>
+                        </div>
+                        <p class="text-gray-600 mb-2">Italian • Pizza • Pasta</p>
+                        <div class="flex justify-between items-center">
+                            <span class="delivery-time">
+                                <i class="fas fa-clock mr-2"></i>30-45 min
+                            </span>
+                            <span class="text-gray-600">$$ • Free delivery</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add more restaurant cards here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offers -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-8">Special Offers</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-6 text-white">
+                    <h3 class="text-xl font-bold mb-2">50% OFF</h3>
+                    <p class="mb-4">On your first order</p>
+                    <button class="bg-white text-red-500 px-4 py-2 rounded-full hover:bg-gray-100">Order Now</button>
+                </div>
+                <!-- Add more offer cards -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">FoodExpress</h3>
+                    <p class="text-gray-400">Delivering happiness to your doorstep</p>
+                </div>
+                <!-- Add more footer sections -->
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

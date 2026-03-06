@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishna Blogger</title>
+    <style>
+        /* Root Variables for Theme Colors */
+        :root {
+            --clr-primary: #007bff; /* Primary blue */
+            --clr-accent: #ffc107; /* Accent yellow */
+            --clr-dark: #333333; /* Dark gray */
+            --clr-light: #ffffff; /* White */
+            --clr-bg: #f3f4f6; /* Background gray */
+        }
+
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--clr-bg);
+            color: var(--clr-dark);
+            height: 100vh; /* Full height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem 1rem;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: var(--clr-primary);
+            text-transform: uppercase;
+            animation: bounceIn 2s infinite;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--clr-dark);
+            margin: 1rem 0;
+            animation: colorShift 5s infinite;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: var(--clr-dark);
+            margin-bottom: 1.5rem;
+            animation: bounceIn 2s ease-in-out infinite;
+        }
+
+        /* Animated Button */
+        .button {
+            font-size: 1.2rem;
+            padding: 1rem 2rem;
+            color: var(--clr-light);
+            background-color: var(--clr-primary);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            animation: pulse 1.5s infinite;
+        }
+
+        .button:hover {
+            background-color: var(--clr-accent);
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Interactive Card */
+        .card {
+            background-color: var(--clr-light);
+            margin: 2rem auto;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            animation: popUp 2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--clr-primary);
+            color: var(--clr-light);
+            padding: 1rem;
+            text-align: center;
+            animation: fadeIn 3s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes colorShift {
+            0%, 100% {
+                color: var(--clr-primary);
+            }
+            50% {
+                color: var(--clr-accent);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes popUp {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .button {
+                font-size: 1rem;
+                padding: 0.8rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Krishna Blogger</h1>
+        <br>
+        <h2>Follow for Games, Fun & Cybersecurity!</h2>
+        <br>
+        <p>You are getting games and fun with codes, cybersecurity, and other types of information.</p>
+        <br>
+        <!-- Animated Button -->
+        <button class="button" onclick="window.location.href='https://krishnablogy.blogspot.com';">Explore Now</button>
+        <br><br>
+
+        <!-- Interactive Card -->
+        <div class="card">
+            <h3>Interactive Content</h3>
+            <p>Learn, play, and explore with our exciting collection of resources and games.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        © 2024 Krishnablogy.blogspot.com - All Rights Reserved.
+    </footer>
+
+</body>
+</html>

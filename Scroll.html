@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="List">
+        <li>Krishna</li>
+        <li>Youraj</li>
+        <li>Manraj</li>
+        <li>Shudhanshu</li>
+        <li>Nilesh</li>
+    </ul>
+    <script>
+        const listofitemsElement = document.getElementById("list");
+        const KrishnaElement = document.getElementById("li");
+        const YourajElement = document.createElement("li");
+        YourajElement.innerText = "Youraj";
+        listofitemsElement.append(YourajElement); 
+        listofitemsElement.innerHTML += " <li> Youraj</li>";
+    </script>
+</body>
+</html>

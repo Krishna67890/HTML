@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerse</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    body {
+        width: 100%;
+        height: 100%;
+
+    }
+
+
+
+    .nav {
+        width: 100%;
+        height: 150%;
+        box-shadow: 0px 4pc 10px rgba(0, 0, 0, 0.534);
+
+    }
+
+    .top-nav {
+        width: 100%;
+        height: 75%;
+        background-color: rgb(25, 30, 34);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 30px;
+
+    }
+
+    .bottom-nav {
+        height: 25%;
+        width: 100%;
+        background-color: rgb(38, 45, 51);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        color: white;
+        list-style: none;
+        font-size: 18px;
+    }
+
+    .top-nav .logo {
+        color: white;
+        font-size: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .top-nav .search-box {
+        width: 60%;
+        height: 60%;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .top-nav .search-box input {
+        width: 70%;
+        height: 100%;
+        padding: 10px 20px;
+        border: none;
+        outline: none;
+        font-size: 18px;
+    }
+
+    .top-nav .search-box button {
+        width: 30%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        font-size: 30px;
+        background-color: white;
+        border: none;
+        padding-right: 20px;
+    }
+
+    .cart-box {
+        position: relative;
+    }
+
+    .cart-box png {
+        color: white;
+        width: 40px;
+        height: 40px;
+    }
+
+    .cart-box span {
+        color: white;
+        position: absolute;
+        top: -14px;
+        font-size: 18px;
+    }
+
+    @media(max-width:750px) {
+        .search-box {
+            display: none;
+        }
+    }
+
+
+
+
+
+    .home {
+        width: 100%;
+        min-height: 100vh;
+        background-color: white;
+    }
+
+    .hero-bg {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .hero-bg img {
+        width: 90%;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.457);
+        border-radius: 20px;
+    }
+    .category-section{
+        width: 100%;
+        height: 500%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap:wrap;
+        margin-top: 30px;
+    }
+    .category-card{
+        width: 200px;
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+        background-color: aqua;
+        border-radius: 20px;
+        transition: all 0.4s;
+        padding: 10px;
+        cursor: pointer;
+    }
+    .category-card:hover{
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.422);
+    }
+    .category-card img{
+        width: 100%;
+        height: 70%;
+    }
+
+
+
+
+
+
+
+
+</style>
+
+<body>
+    <div class="top-nav">
+        <div class="logo">
+            <span>Krishna-shop</span>
+            <form class="search-box">
+                <input type="text" placeholder="Search items..." />
+                <button>
+                    <img src="loupe.png" alt="Search Icon" height="16" width="16">
+                </button>
+            </form>
+            <div class="cart-box">
+                <img src="All.png" alt="Search Icon" height="16" width="16">
+                <span>0</span>
+            </div>
+        </div>
+        <div class="bottom-Nav">
+            <li>Home</li>
+            <li>Shop</li>
+            <li>Cart</li>
+            <li>Contact</li>
+
+        </div>
+
+        <div class="home">
+            <div class="hero-bg">
+                <img src="bg0.gif" alt="Search Icon">
+            </div>
+
+
+
+
+
+            <div class="category-section">
+                <div class="category-card">
+                  <img src="electronics.png" alt="Electronics">
+                  <h3>Electronics</h3>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur massa sed tincidunt lobortis.</p>
+                  <button>Shop Now</button>
+                </div>
+              
+                <div class="category-card">
+                  <img src="fashion.png" alt="Fashion">
+                  <h3>Fashion</h3>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur massa sed tincidunt lobortis.</p>
+                  <button>Shop Now</button>
+                </div>
+              
+                <div class="category-card">
+                  <img src="beauty.jpg" alt="Beauty">
+                  <h3>Beauty</h3>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur massa sed tincidunt lobortis.</p>
+                  <button>Shop Now</button>
+                </div>
+              
+                <div class="category-card">
+                  <img src="home.jpg" alt="Home">
+                  <h3>Home</h3>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur massa sed tincidunt lobortis.</p>
+                  <button>Shop Now</button>
+                </div>
+              
+                <div class="category-card">
+                  <img src="sports.jpg" alt="Sports">
+                  <h3>Sports</h3>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur massa sed tincidunt lobortis.</p>
+                  <button>Shop Now</button>
+                </div>
+              
+                <div class="category-card">
+                  <img src="All.png" alt="All">
+                  <h3>All Categories</h3>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur massa sed tincidunt lobortis.</p>
+                  <button>Shop Now</button>
+                </div>
+              </div>
+              
+
+
+
+
+            </div>
+        </div>
+</body>
+<script>
+
+    export const category = [
+        {
+            id: 1,
+            name: 'Electronics',
+            image:elec
+        },
+        {
+            id: 2,
+            name: 'Fashion',
+            image:Fashion
+        },
+        {
+            id: 3,
+            name: 'Beauty',
+            image:Beauty
+        },
+        {
+            id: 4,
+            name: 'Home & Kitchen',
+            image:Hk
+        },
+        {
+            id: 5,
+            name: 'Sports',
+            image:sports
+        },
+        {
+            id: 56,
+            name: 'All',
+            image:elec
+        },
+    ]
+</script>
+
+</html>

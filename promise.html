@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local storage</title>
+</head>
+
+<body>
+    <script>
+        //local storage for website if you have 
+        localStorage.setItem("age", 19);
+        localStorage.setItem("name", "krihna ");
+        localStorage.setItem("school", "kk wagh");
+
+        localStorage.removeItem("school");
+
+        localStorage.getItem("college", "matoshri");
+
+        let krihna = {
+            name: "krishna",
+            age: 18,
+            school: "kk wagh",
+            college: "matoshri",
+
+        }
+
+        localStorage.setItem("krihna", JSON.stringify(krihna));
+        let data = JSON.parse(localStorage.getItem("krihna"));
+        console.log(data);
+
+        //why it is shows [object object1], without json.stringify ?
+        //because localStorage stores data as string. if we want to store object, we need to convert it into json format using JSON.stringify() method.
+        //and to retrieve it, we need to parse it back into object using JSON.parse() method.
+
+        //clear all data from local storage
+        //  localStorage.clear();
+
+        //-------------------------- Session storage --------------------
+
+        // Correctly store a JSON object in sessionStorage
+        sessionStorage.setItem("name", JSON.stringify({ session1: "value1", session2: "value2" }));
+
+        // Store a string value in sessionStorage
+        sessionStorage.setItem("name2", "session2");
+
+        //------------------------ IndexDB --------------------
+        // Create an indexedDB database
+        var db;
+        var request = indexedDB.open("myDatabase", 1);
+
+        request.onupgradeneeded = function (event) {
+            db = event.target.result;
+            // Create an objectStore
+            var objectStore = db.createObjectStore("myObjectStore", { keyPath: "id" });
+            // Create an index
+            objectStore.createIndex("name", "name", { unique: false });
+        };
+
+        //----------------------------------------------------------------
+        // Define the object to store
+        const myObjectStoreData = [
+            {
+                id: 1,
+                name: "John Doe",
+                relationshipType: "dataType",
+                value: "dataType"
+            }
+        ];
+
+
+        localStorage.setItem("myObjectStoreData", JSON.stringify(myObjectStoreData));
+
+        const retrievedData = JSON.parse(localStorage.getItem("myObjectStoreData"));
+        console.log(retrievedData);
+
+
+        //---------------------------------------------------------------------------------------
+
+
+        const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        const filteredArr = arr.filter(item => {
+            if (item > 3) {
+                return true;
+            } else {
+                return false;
+            }
+
+        });
+
+        console.log('filteredArr', filteredArr, arr)
+
+        if (!Array.prototype.myfilter) {
+            Array.prototype.myfilter = function (callback) {
+                const newArr = [];
+                console.log(this, 'filter this');
+                return newArr;
+            }
+        }
+
+        const myfilteredArr = arr.myfilter(Item => {
+            if (item > 3) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+
+        const abc = {
+            name: 'krihna',
+            age: 19,
+            school: 'kk wagh',
+            college: 'matoshri',
+
+        }
+        abc = null;
+
+        //----------------------------------------------------------------  --------------------------------    
+
+        function foo() {
+            setTimeout(foo, 0);
+        }
+        foo();
+
+
+https://github.com/utkarshthakur22
+
+
+
+for (let i = 10; i >= 1; i--) {
+    console.log(i);
+}
+
+
+
+
+
+
+
+
+// POLLYFILLS
+/**
+ * 
+ * 
+ * https://github.com/abhishekthakurak/JsThings/blob/master/polyfills/promise/promise.js
+ */
+
+
+
+// ---------  call ----------
+
+/*
+function sum(a,b) {
+    return a + b;
+}
+
+console.log(sum(1,2));
+
+console.log(sum.call(null, 1,2), 'call');
+
+
+if(!Function.prototype.myCall) {
+    Function.prototype.myCall = function(context, ...args) {
+        // context -> this // sum
+        const fun = this;
+        return fun(...args);
+    }
+}
+
+console.log(sum.myCall(null, 1,2), 'mycall'); // is this a call site ? YES 
+// have i provided any extra info // yes ? sum 
+
+*/
+
+// TIPS
+/**
+ * 1. see what function takes as an input 
+ * 2. see what function returns
+ */
+
+
+ const arre = [1,2,3,4,5,6,7,8,9,10];
+
+const filteredArre = arr.filter(item => {
+    if(item > 3) {
+        return true;
+    } else {
+        return false;
+    }
+});
+
+console.log('filtredarr',filteredArr )
+
+
+
+if(!Array.prototype.myFilter) {
+    Array.prototype.myFilter = function (callback) {
+        const newArr = [];
+        console.log(this, 'filter this');;
+        const workingArr = this; // [1,2,3,4,5,6,7,8,9,10]
+
+        for(let item of workingArr) {
+            const result = callback(item);
+            if(result) {
+                newArr.push(item);
+            }
+        }
+
+        return newArr;
+    }
+}
+
+const myFilteredArr = arr.myFilter(item => {
+    if(item > 3) {
+        return true;
+    } else {
+        return false;
+    }
+}); // is this call site ? yes 
+// do i have any extra info yes ? //arr 
+
+console.log(myFilteredArr, 'myFilteredArr')
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Data Structures MCQ Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timer {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            background-color: #f9f9f9;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .start-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .start-btn:hover {
+            background-color: #2ecc71;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .options {
+            margin-left: 20px;
+        }
+        
+        .option {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #e9ecef;
+        }
+        
+        .option.selected {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .prev-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .next-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .nav-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #17a2b8;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .result-modal {
+            display: none;
+        }
+        
+        .result-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .score {
+            font-size: 36px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .summary {
+            margin-bottom: 30px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .review-btn {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .close-result-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .question-status {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            gap: 5px;
+        }
+        
+        .status-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .answered {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .unanswered {
+            background-color: #ffc107;
+            color: black;
+        }
+        
+        .current {
+            border: 2px solid #007bff;
+            box-sizing: border-box;
+        }
+        
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                margin: 20px auto;
+            }
+            
+            .question {
+                font-size: 16px;
+            }
+            
+            .options {
+                margin-left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Data Structures MCQ Test</h1>
+            <p>Test your knowledge of data structures with this comprehensive 100-question exam</p>
+            <div class="timer" id="overall-timer">01:00:00</div>
+        </div>
+        
+        <button class="start-btn" id="start-btn">Start Test</button>
+    </div>
+    
+    <!-- Test Modal -->
+    <div class="modal" id="test-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                <div class="timer" id="test-timer">01:00:00</div>
+            </div>
+            
+            <div class="question-status" id="question-status"></div>
+            
+            <div class="question-container">
+                <div class="question" id="question-text">Question will appear here</div>
+                <div class="options" id="options-container">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-btn prev-btn" id="prev-btn">Previous</button>
+                <button class="nav-btn next-btn" id="next-btn">Next</button>
+                <button class="nav-btn submit-btn" id="submit-btn">Submit Test</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Result Modal -->
+    <div class="modal result-modal" id="result-modal">
+        <div class="result-content">
+            <div class="result-header">
+                <h2>Test Results</h2>
+                <div class="score" id="score-display">Score: 0/100</div>
+                <div id="performance-message"></div>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-item">
+                    <span>Total Questions:</span>
+                    <span id="total-questions">100</span>
+                </div>
+                <div class="summary-item">
+                    <span>Correct Answers:</span>
+                    <span id="correct-answers">0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Wrong Answers:</span>
+                    <span id="wrong-answers">0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Unanswered:</span>
+                    <span id="unanswered">100</span>
+                </div>
+                <div class="summary-item">
+                    <span>Time Taken:</span>
+                    <span id="time-taken">00:00:00</span>
+                </div>
+            </div>
+            
+            <div>
+                <h3>Question Review</h3>
+                <div id="question-review">
+                    <!-- Questions and answers will be inserted here -->
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="review-btn" id="review-btn">Review All Questions</button>
+                <button class="close-result-btn" id="close-result-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Data Structures Questions Database (100 questions)
+        const questions = [
+            {
+                question: "Which of the following is a linear data structure?",
+                options: ["Array", "Tree", "Graph", "Heap"],
+                answer: 0,
+                explanation: "Arrays are linear data structures where elements are stored in contiguous memory locations."
+            },
+            {
+                question: "What is the time complexity of accessing an element in an array?",
+                options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
+                answer: 0,
+                explanation: "Array elements can be accessed directly using their index, resulting in constant time complexity O(1)."
+            },
+            {
+                question: "Which data structure uses FIFO (First-In-First-Out) principle?",
+                options: ["Stack", "Queue", "Tree", "Graph"],
+                answer: 1,
+                explanation: "Queue follows the FIFO principle where the first element added is the first one to be removed."
+            },
+            {
+                question: "What is the time complexity of inserting an element at the beginning of a singly linked list?",
+                options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
+                answer: 0,
+                explanation: "Inserting at the beginning of a singly linked list is O(1) as it only requires updating the head pointer."
+            },
+            {
+                question: "Which of the following is NOT a type of linked list?",
+                options: ["Singly linked list", "Doubly linked list", "Circular linked list", "Linear linked list"],
+                answer: 3,
+                explanation: "There is no standard data structure called 'Linear linked list'. The other three are valid types."
+            },
+            {
+                question: "What is the worst-case time complexity of binary search?",
+                options: ["O(1)", "O(n)", "O(log n)", "O(n log n)"],
+                answer: 2,
+                explanation: "Binary search has a worst-case time complexity of O(log n) as it halves the search space in each iteration."
+            },
+            {
+                question: "Which data structure is typically used to implement recursion?",
+                options: ["Queue", "Stack", "Tree", "Graph"],
+                answer: 1,
+                explanation: "Stacks are used to implement recursion as they store function calls and their local variables in LIFO order."
+            },
+            {
+                question: "What is the maximum number of children a node can have in a binary tree?",
+                options: ["1", "2", "3", "Unlimited"],
+                answer: 1,
+                explanation: "By definition, a binary tree node can have at most 2 children - left and right."
+            },
+            {
+                question: "Which traversal gives nodes in non-decreasing order in a BST?",
+                options: ["Pre-order", "In-order", "Post-order", "Level-order"],
+                answer: 1,
+                explanation: "In-order traversal of a BST visits nodes in ascending order (left, root, right)."
+            },
+            {
+                question: "What is the time complexity of heapify operation in a binary heap?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                answer: 1,
+                explanation: "Heapify operation has a time complexity of O(log n) as it may need to traverse the height of the heap."
+            },
+            {
+                question: "Which of the following is a self-balancing binary search tree?",
+                options: ["AVL Tree", "Binary Heap", "Trie", "Hash Table"],
+                answer: 0,
+                explanation: "AVL Tree is a self-balancing BST where the heights of the two child subtrees of any node differ by at most one."
+            },
+            {
+                question: "What is the space complexity of a depth-first search on a graph with n vertices and m edges?",
+                options: ["O(n)", "O(m)", "O(n + m)", "O(n²)"],
+                answer: 0,
+                explanation: "DFS space complexity is O(n) due to the stack used for recursion/backtracking (worst case is storing all vertices)."
+            },
+            {
+                question: "Which hashing technique handles collisions by placing the item in the next available slot?",
+                options: ["Chaining", "Linear Probing", "Quadratic Probing", "Double Hashing"],
+                answer: 1,
+                explanation: "Linear probing handles collisions by searching for the next available slot in a linear manner."
+            },
+            {
+                question: "What is the time complexity of Dijkstra's algorithm with a binary heap?",
+                options: ["O(V)", "O(V log V)", "O(V log V + E log V)", "O(V²)"],
+                answer: 2,
+                explanation: "With a binary heap, Dijkstra's algorithm runs in O((V + E) log V) time, which simplifies to O(E log V) for a connected graph."
+            },
+            {
+                question: "Which data structure is most efficient for finding the minimum element in constant time?",
+                options: ["Stack", "Queue", "Min-Heap", "Binary Search Tree"],
+                answer: 2,
+                explanation: "In a min-heap, the minimum element is always at the root and can be accessed in O(1) time."
+            },
+            {
+                question: "What is the worst-case time complexity of quicksort?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+                answer: 2,
+                explanation: "In the worst case (when the pivot is always the smallest or largest element), quicksort has O(n²) time complexity."
+            },
+            {
+                question: "Which of the following is NOT a stable sorting algorithm?",
+                options: ["Merge Sort", "Bubble Sort", "Insertion Sort", "Heap Sort"],
+                answer: 3,
+                explanation: "Heap sort is not stable as it doesn't guarantee the relative order of equal elements."
+            },
+            {
+                question: "What is the time complexity of inserting an element into a hash table?",
+                options: ["O(1)", "O(n)", "O(log n)", "Depends on load factor"],
+                answer: 3,
+                explanation: "Hash table insertion is generally O(1) but can degrade to O(n) in worst case due to collisions, depending on the load factor."
+            },
+            {
+                question: "Which data structure is used for implementing a LRU cache?",
+                options: ["Queue", "Stack", "Doubly Linked List with Hash Map", "Binary Search Tree"],
+                answer: 2,
+                explanation: "LRU cache is typically implemented using a doubly linked list (to maintain order) and a hash map (for O(1) access)."
+            },
+            {
+                question: "What is the height of a complete binary tree with n nodes?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                answer: 1,
+                explanation: "The height of a complete binary tree is ⌊log₂n⌋, which is O(log n)."
+            },
+            {
+                question: "Which of the following is an application of stack?",
+                options: ["CPU Scheduling", "Balancing of symbols", "BFS of a graph", "All of the above"],
+                answer: 1,
+                explanation: "Stack is used for balancing symbols (like parentheses) in expressions. CPU scheduling uses queues, and BFS uses queues."
+            },
+            {
+                question: "What is the time complexity of BFS on a graph with n vertices and m edges?",
+                options: ["O(n)", "O(m)", "O(n + m)", "O(n²)"],
+                answer: 2,
+                explanation: "BFS visits each vertex and edge exactly once, resulting in O(n + m) time complexity."
+            },
+            {
+                question: "Which data structure is used in the implementation of a printer's job scheduling?",
+                options: ["Stack", "Queue", "Tree", "Graph"],
+                answer: 1,
+                explanation: "Printer job scheduling typically uses a queue to process jobs in the order they are received (FIFO)."
+            },
+            {
+                question: "What is the minimum number of queues needed to implement a stack?",
+                options: ["1", "2", "3", "4"],
+                answer: 1,
+                explanation: "A stack can be implemented using two queues by either making push or pop operation costly."
+            },
+            {
+                question: "Which of the following is NOT a collision resolution technique in hashing?",
+                options: ["Separate Chaining", "Open Addressing", "Linear Probing", "Binary Probing"],
+                answer: 3,
+                explanation: "Binary probing is not a standard collision resolution technique. The others are valid methods."
+            },
+            {
+                question: "What is the time complexity of building a heap from an unsorted array?",
+                options: ["O(n)", "O(n log n)", "O(log n)", "O(n²)"],
+                answer: 0,
+                explanation: "Building a heap from an unsorted array can be done in O(n) time using the heapify method."
+            },
+            {
+                question: "Which of the following trees allows duplicate values?",
+                options: ["Binary Search Tree", "AVL Tree", "B-Tree", "All of the above"],
+                answer: 2,
+                explanation: "B-Trees allow duplicate values, while standard BSTs and AVL trees typically don't (though implementations may vary)."
+            },
+            {
+                question: "What is the space complexity of merge sort?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                answer: 2,
+                explanation: "Merge sort requires O(n) additional space for the temporary arrays used during merging."
+            },
+            {
+                question: "Which data structure is used for implementing recursion?",
+                options: ["Queue", "Stack", "Tree", "Graph"],
+                answer: 1,
+                explanation: "The system stack is used to manage function calls and returns during recursion."
+            },
+            {
+                question: "What is the time complexity of searching in a skip list with n elements?",
+                options: ["O(1)", "O(n)", "O(log n)", "O(n log n)"],
+                answer: 2,
+                explanation: "Skip lists provide O(log n) search complexity on average, similar to balanced trees."
+            },
+            {
+                question: "Which of the following is NOT a graph traversal algorithm?",
+                options: ["Depth First Search", "Breadth First Search", "Dijkstra's Algorithm", "Merge Sort"],
+                answer: 3,
+                explanation: "Merge Sort is a sorting algorithm, not a graph traversal algorithm."
+            },
+            {
+                question: "What is the maximum number of edges in a directed graph with n vertices?",
+                options: ["n", "n²", "n(n-1)", "n(n-1)/2"],
+                answer: 2,
+                explanation: "A directed graph can have at most n(n-1) edges (each vertex can connect to every other vertex in both directions)."
+            },
+            {
+                question: "Which data structure is used in the implementation of a undo feature?",
+                options: ["Queue", "Stack", "Tree", "Graph"],
+                answer: 1,
+                explanation: "The undo feature is typically implemented using a stack to keep track of operations in LIFO order."
+            },
+            {
+                question: "What is the time complexity of the Floyd-Warshall algorithm?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(n³)"],
+                answer: 3,
+                explanation: "The Floyd-Warshall algorithm for finding all pairs shortest paths has O(n³) time complexity."
+            },
+            {
+                question: "Which of the following is NOT a linear data structure?",
+                options: ["Array", "Linked List", "Stack", "Binary Tree"],
+                answer: 3,
+                explanation: "Binary Tree is a non-linear data structure where elements are arranged hierarchically."
+            },
+            {
+                question: "What is the time complexity of inserting an element in a priority queue implemented with a binary heap?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                answer: 1,
+                explanation: "Insertion in a binary heap-based priority queue takes O(log n) time due to the heapify operation."
+            },
+            {
+                question: "Which of the following is an advantage of linked lists over arrays?",
+                options: ["Random access", "Cache locality", "Dynamic size", "Less memory usage"],
+                answer: 2,
+                explanation: "Linked lists can grow and shrink dynamically, while arrays have fixed size (unless resized, which is costly)."
+            },
+            {
+                question: "What is the time complexity of the KMP string matching algorithm?",
+                options: ["O(m)", "O(n)", "O(m + n)", "O(mn)"],
+                answer: 2,
+                explanation: "The Knuth-Morris-Pratt algorithm has O(m + n) time complexity where m is pattern length and n is text length."
+            },
+            {
+                question: "Which of the following is NOT a type of binary tree?",
+                options: ["Complete Binary Tree", "Perfect Binary Tree", "Balanced Binary Tree", "Circular Binary Tree"],
+                answer: 3,
+                explanation: "There is no standard 'Circular Binary Tree'. The other three are valid types of binary trees."
+            },
+            {
+                question: "What is the time complexity of finding the predecessor or successor in a BST?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                answer: 1,
+                explanation: "In a balanced BST, finding predecessor/successor takes O(log n) time (height of the tree)."
+            },
+            {
+                question: "Which data structure is used for implementing a breadth-first search?",
+                options: ["Stack", "Queue", "Priority Queue", "Heap"],
+                answer: 1,
+                explanation: "BFS uses a queue to explore nodes level by level."
+            },
+            {
+                question: "What is the time complexity of the Bellman-Ford algorithm?",
+                options: ["O(V)", "O(V log V)", "O(VE)", "O(V²)"],
+                answer: 2,
+                explanation: "The Bellman-Ford algorithm for single-source shortest paths has O(VE) time complexity."
+            },
+            {
+                question: "Which of the following is NOT a hashing function?",
+                options: ["Division Method", "Multiplication Method", "Universal Hashing", "Binary Hashing"],
+                answer: 3,
+                explanation: "Binary Hashing is not a standard hashing technique. The others are valid hashing methods."
+            },
+            {
+                question: "What is the space complexity of the recursive Fibonacci algorithm without memoization?",
+                options: ["O(1)", "O(n)", "O(2ⁿ)", "O(n²)"],
+                answer: 1,
+                explanation: "The space complexity is O(n) due to the maximum depth of the recursion stack."
+            },
+            {
+                question: "Which data structure is used for implementing a dictionary with efficient lookups?",
+                options: ["Array", "Linked List", "Hash Table", "Stack"],
+                answer: 2,
+                explanation: "Hash tables provide average-case O(1) lookup time, making them ideal for dictionary implementations."
+            },
+            {
+                question: "What is the time complexity of the Rabin-Karp string matching algorithm in the average case?",
+                options: ["O(m)", "O(n)", "O(m + n)", "O(mn)"],
+                answer: 2,
+                explanation: "The Rabin-Karp algorithm has average-case O(m + n) time complexity, though worst case is O(mn)."
+            },
+            {
+                question: "Which of the following is NOT a dynamic programming problem?",
+                options: ["Fibonacci Series", "Knapsack Problem", "Tower of Hanoi", "Merge Sort"],
+                answer: 3,
+                explanation: "Merge Sort is a divide-and-conquer algorithm, not a dynamic programming problem."
+            },
+            {
+                question: "What is the time complexity of inserting n elements into an empty AVL tree?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+                answer: 1,
+                explanation: "Each insertion takes O(log n) time in an AVL tree, so n insertions take O(n log n) time."
+            },
+            {
+                question: "Which of the following is NOT a property of a B-tree?",
+                options: ["All leaves are at the same level", "Each node has at least m/2 children", "Keys are stored in non-decreasing order", "Each node has exactly two children"],
+                answer: 3,
+                explanation: "B-tree nodes can have more than two children. This property is specific to binary trees."
+            },
+            {
+                question: "What is the time complexity of deleting the minimum element from a min-heap?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                answer: 1,
+                explanation: "Deleting the minimum (root) from a min-heap takes O(log n) time due to the heapify operation."
+            },
+            {
+                question: "Which of the following sorting algorithms has the best worst-case time complexity?",
+                options: ["Quick Sort", "Merge Sort", "Insertion Sort", "Bubble Sort"],
+                answer: 1,
+                explanation: "Merge Sort has O(n log n) worst-case time complexity, while others can degrade to O(n²)."
+            },
+            {
+                question: "What is the time complexity of the union operation in the union-find data structure with path compression?",
+                options: ["O(1)", "O(α(n))", "O(log n)", "O(n)"],
+                answer: 1,
+                explanation: "With path compression and union by rank, the amortized time complexity is O(α(n)), where α is the inverse Ackermann function."
+            },
+            {
+                question: "Which of the following is NOT a graph representation?",
+                options: ["Adjacency Matrix", "Adjacency List", "Incidence Matrix", "Incidence Tree"],
+                answer: 3,
+                explanation: "Incidence Tree is not a standard graph representation. The other three are valid representations."
+            },
+            {
+                question: "What is the time complexity of the Prim's algorithm with adjacency matrix and linear search?",
+                options: ["O(V)", "O(V log V)", "O(V²)", "O(E log V)"],
+                answer: 2,
+                explanation: "Prim's algorithm with adjacency matrix and linear search for minimum key has O(V²) time complexity."
+            },
+            {
+                question: "Which data structure is used for implementing a browser's back button?",
+                options: ["Queue", "Stack", "Tree", "Graph"],
+                answer: 1,
+                explanation: "The back button functionality is implemented using a stack to keep track of visited pages in LIFO order."
+            },
+            {
+                question: "What is the time complexity of the counting sort algorithm?",
+                options: ["O(n)", "O(n log n)", "O(n + k)", "O(n²)"],
+                answer: 2,
+                explanation: "Counting sort has O(n + k) time complexity where k is the range of input values."
+            },
+            {
+                question: "Which of the following is NOT a characteristic of a red-black tree?",
+                options: ["Every node is either red or black", "The root is always black", "All leaves are black", "A red node can have red children"],
+                answer: 3,
+                explanation: "A red node cannot have red children in a red-black tree (no two red nodes in a row)."
+            },
+            {
+                question: "What is the time complexity of the Huffman coding algorithm?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+                answer: 1,
+                explanation: "Huffman coding using a priority queue (heap) has O(n log n) time complexity for n unique characters."
+            },
+            {
+                question: "Which data structure is used for implementing a call center queue system?",
+                options: ["Stack", "Queue", "Priority Queue", "Tree"],
+                answer: 1,
+                explanation: "Call center systems typically use queues to handle calls in the order they are received (FIFO)."
+            },
+            {
+                question: "What is the time complexity of the topological sort algorithm using DFS?",
+                options: ["O(V)", "O(E)", "O(V + E)", "O(V log E)"],
+                answer: 2,
+                explanation: "Topological sort using DFS has O(V + E) time complexity as it performs a DFS on the graph."
+            },
+            {
+                question: "Which of the following is NOT a divide and conquer algorithm?",
+                options: ["Merge Sort", "Quick Sort", "Binary Search", "Insertion Sort"],
+                answer: 3,
+                explanation: "Insertion Sort is an incremental algorithm, not a divide and conquer algorithm."
+            },
+            {
+                question: "What is the space complexity of the iterative binary search algorithm?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                answer: 0,
+                explanation: "Iterative binary search uses constant space as it doesn't require recursion stack space."
+            },
+            {
+                question: "Which data structure is used for implementing a priority queue most efficiently?",
+                options: ["Array", "Linked List", "Binary Heap", "Binary Search Tree"],
+                answer: 2,
+                explanation: "Binary heaps provide O(log n) time for insert/extract operations, making them ideal for priority queues."
+            },
+            {
+                question: "What is the time complexity of the Kosaraju's algorithm for strongly connected components?",
+                options: ["O(V)", "O(V + E)", "O(V log E)", "O(V²)"],
+                answer: 1,
+                explanation: "Kosaraju's algorithm performs two DFS traversals, resulting in O(V + E) time complexity."
+            },
+            {
+                question: "Which of the following is NOT a string matching algorithm?",
+                options: ["Knuth-Morris-Pratt", "Rabin-Karp", "Boyer-Moore", "Floyd-Warshall"],
+                answer: 3,
+                explanation: "Floyd-Warshall is an algorithm for finding shortest paths in a graph, not for string matching."
+            },
+            {
+                question: "What is the time complexity of the selection sort algorithm?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(n³)"],
+                answer: 2,
+                explanation: "Selection sort has O(n²) time complexity in all cases (best, average, and worst)."
+            },
+            {
+                question: "Which data structure is used for implementing a recursive algorithm's function calls?",
+                options: ["Queue", "Stack", "Tree", "Graph"],
+                answer: 1,
+                explanation: "The system stack is used to manage function calls and local variables during recursion."
+            },
+            {
+                question: "What is the time complexity of the Johnson's algorithm for all pairs shortest paths?",
+                options: ["O(V)", "O(V log V)", "O(V² log V)", "O(V² log V + VE)"],
+                answer: 3,
+                explanation: "Johnson's algorithm has O(V² log V + VE) time complexity, which is better than Floyd-Warshall for sparse graphs."
+            },
+            {
+                question: "Which of the following is NOT a characteristic of a B+ tree?",
+                options: ["All data is stored in the leaf nodes", "Leaf nodes are linked together", "Internal nodes contain copies of keys", "Each node has exactly two children"],
+                answer: 3,
+                explanation: "B+ tree nodes can have more than two children. This property is specific to binary trees."
+            },
+            {
+                question: "What is the time complexity of the radix sort algorithm for n numbers with maximum d digits?",
+                options: ["O(n)", "O(dn)", "O(n log n)", "O(n²)"],
+                answer: 1,
+                explanation: "Radix sort has O(dn) time complexity where d is the number of digits in the maximum number."
+            },
+            {
+                question: "Which data structure is used for implementing a job scheduler with priorities?",
+                options: ["Stack", "Queue", "Priority Queue", "Linked List"],
+                answer: 2,
+                explanation: "Priority queues are used in job schedulers to always execute the highest priority job first."
+            },
+            {
+                question: "What is the time complexity of the A* search algorithm with a good heuristic?",
+                options: ["O(b)", "O(bd)", "O(b^d)", "O(d)"],
+                answer: 1,
+                explanation: "With a good heuristic, A* search has O(bd) time complexity where b is branching factor and d is solution depth."
+            },
+            {
+                question: "Which of the following is NOT a type of heap?",
+                options: ["Binary Heap", "Fibonacci Heap", "Binomial Heap", "Ternary Heap"],
+                answer: 3,
+                explanation: "Ternary Heap is not a standard heap type. The others are valid heap implementations."
+            },
+            {
+                question: "What is the time complexity of the Kruskal's algorithm with union-find and path compression?",
+                options: ["O(E)", "O(E log V)", "O(E α(V))", "O(E log E)"],
+                answer: 2,
+                explanation: "Kruskal's algorithm with union-find and path compression has O(E α(V)) time complexity where α is the inverse Ackermann function."
+            },
+            {
+                question: "Which data structure is used for implementing a spell checker?",
+                options: ["Hash Table", "Trie", "Bloom Filter", "All of the above"],
+                answer: 3,
+                explanation: "Spell checkers can use hash tables (for exact matches), tries (for prefix searches), and bloom filters (for space efficiency)."
+            },
+            {
+                question: "What is the time complexity of the Boyer-Moore string matching algorithm in the best case?",
+                options: ["O(n/m)", "O(m)", "O(n + m)", "O(nm)"],
+                answer: 0,
+                explanation: "In the best case, Boyer-Moore can achieve O(n/m) time complexity where n is text length and m is pattern length."
+            },
+            {
+                question: "Which of the following is NOT a balanced binary search tree?",
+                options: ["AVL Tree", "Red-Black Tree", "Splay Tree", "Binary Heap"],
+                answer: 3,
+                explanation: "Binary Heap is a complete binary tree but not a binary search tree (doesn't maintain BST property)."
+            },
+            {
+                question: "What is the time complexity of the Floyd's cycle detection algorithm?",
+                options: ["O(1)", "O(n)", "O(n log n)", "O(n²)"],
+                answer: 1,
+                explanation: "Floyd's Tortoise and Hare algorithm for cycle detection has O(n) time complexity."
+            },
+            {
+                question: "Which data structure is used for implementing a least recently used (LRU) cache?",
+                options: ["Queue", "Stack", "Doubly Linked List with Hash Map", "Binary Search Tree"],
+                answer: 2,
+                explanation: "LRU cache is typically implemented with a doubly linked list (for order) and hash map (for O(1) access)."
+            },
+            {
+                question: "What is the time complexity of the insertion operation in a skip list?",
+                options: ["O(1)", "O(n)", "O(log n)", "O(n log n)"],
+                answer: 2,
+                explanation: "Insertion in a skip list has O(log n) time complexity on average."
+            },
+            {
+                question: "Which of the following is NOT a dynamic programming algorithm?",
+                options: ["Floyd-Warshall", "Knapsack Problem", "Longest Common Subsequence", "Depth First Search"],
+                answer: 3,
+                explanation: "Depth First Search is a graph traversal algorithm, not a dynamic programming algorithm."
+            },
+            {
+                question: "What is the time complexity of the bucket sort algorithm with uniformly distributed input?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(n + k)"],
+                answer: 0,
+                explanation: "With uniformly distributed input, bucket sort has average-case O(n) time complexity."
+            },
+            {
+                question: "Which data structure is used for implementing a navigation system's shortest path algorithm?",
+                options: ["Stack", "Queue", "Priority Queue", "Linked List"],
+                answer: 2,
+                explanation: "Navigation systems typically use Dijkstra's algorithm with a priority queue to find shortest paths."
+            },
+            {
+                question: "What is the time complexity of the Tarjan's algorithm for strongly connected components?",
+                options: ["O(V)", "O(V + E)", "O(V log E)", "O(V²)"],
+                answer: 1,
+                explanation: "Tarjan's algorithm performs a single DFS, resulting in O(V + E) time complexity."
+            },
+            {
+                question: "Which of the following is NOT a property of a min-heap?",
+                options: ["Complete binary tree", "Parent is smaller than children", "Root is the minimum element", "Left child is smaller than right child"],
+                answer: 3,
+                explanation: "In a min-heap, there's no ordering constraint between left and right children, only between parent and children."
+            },
+            {
+                question: "What is the time complexity of the interpolation search algorithm in the average case?",
+                options: ["O(1)", "O(log log n)", "O(log n)", "O(n)"],
+                answer: 1,
+                explanation: "Interpolation search has O(log log n) average-case time complexity for uniformly distributed data."
+            },
+            {
+                question: "Which data structure is used for implementing a text editor's undo-redo feature?",
+                options: ["Single Stack", "Two Stacks", "Queue", "Tree"],
+                answer: 1,
+                explanation: "Text editors typically use two stacks - one for undo and one for redo operations."
+            },
+            {
+                question: "What is the time complexity of the shell sort algorithm in the best case?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(n^(3/2))"],
+                answer: 1,
+                explanation: "With certain gap sequences, shell sort can achieve O(n log n) time complexity in the best case."
+            },
+            {
+                question: "Which of the following is NOT a graph coloring algorithm?",
+                options: ["Welsh-Powell", "DSATUR", "Backtracking", "Floyd-Warshall"],
+                answer: 3,
+                explanation: "Floyd-Warshall is an algorithm for shortest paths, not for graph coloring."
+            },
+            {
+                question: "What is the time complexity of the counting inversions algorithm using merge sort?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(n log² n)"],
+                answer: 1,
+                explanation: "Counting inversions using a modified merge sort has O(n log n) time complexity."
+            },
+            {
+                question: "Which data structure is used for implementing a web browser's history feature?",
+                options: ["Stack", "Queue", "Doubly Linked List", "Tree"],
+                answer: 2,
+                explanation: "Browser history is often implemented with a doubly linked list for efficient forward/backward navigation."
+            },
+            {
+                question: "What is the time complexity of the Strassen's matrix multiplication algorithm?",
+                options: ["O(n²)", "O(n² log n)", "O(n³)", "O(n^log₂7)"],
+                answer: 3,
+                explanation: "Strassen's algorithm has O(n^log₂7) ≈ O(n^2.807) time complexity, better than the standard O(n³)."
+            },
+            {
+                question: "Which of the following is NOT a substring search algorithm?",
+                options: ["Naive", "Knuth-Morris-Pratt", "Rabin-Karp", "Dijkstra"],
+                answer: 3,
+                explanation: "Dijkstra's algorithm is for finding shortest paths in graphs, not for substring search."
+            },
+            {
+                question: "What is the time complexity of the activity selection greedy algorithm?",
+                options: ["O(1)", "O(n)", "O(n log n)", "O(n²)"],
+                answer: 2,
+                explanation: "The activity selection problem requires sorting (O(n log n)) followed by a linear scan (O(n))."
+            },
+            {
+                question: "Which data structure is used for implementing a file system directory structure?",
+                options: ["Graph", "Tree", "Hash Table", "Linked List"],
+                answer: 1,
+                explanation: "File systems typically use tree structures to represent directory hierarchies."
+            },
+            {
+                question: "What is the time complexity of the longest increasing subsequence (LIS) DP solution?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(n³)"],
+                answer: 2,
+                explanation: "The dynamic programming solution for LIS has O(n²) time complexity."
+            },
+            {
+                question: "Which of the following is NOT a stable sorting algorithm?",
+                options: ["Bubble Sort", "Insertion Sort", "Merge Sort", "Heap Sort"],
+                answer: 3,
+                explanation: "Heap Sort is not stable as it doesn't guarantee the relative order of equal elements."
+            },
+            {
+                question: "What is the time complexity of the binary exponentiation algorithm?",
+                options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+                answer: 1,
+                explanation: "Binary exponentiation (exponentiation by squaring) has O(log n) time complexity."
+            },
+            {
+                question: "Which data structure is used for implementing a symbol table in compilers?",
+                options: ["Hash Table", "Binary Search Tree", "Both A and B", "Stack"],
+                answer: 2,
+                explanation: "Compilers may use either hash tables or BSTs (or both) for implementing symbol tables."
+            },
+            {
+                question: "What is the time complexity of the Graham scan algorithm for convex hull?",
+                options: ["O(n)", "O(n log n)", "O(n²)", "O(n³)"],
+                answer: 1,
+                explanation: "Graham scan requires sorting (O(n log n)) followed by a linear scan (O(n))."
+            },
+            {
+                question: "Which of the following is NOT a minimum spanning tree algorithm?",
+                options: ["Prim's", "Kruskal's", "Borůvka's", "Dijkstra's"],
+                answer: 3,
+                explanation: "Dijkstra's algorithm finds shortest paths, not minimum spanning trees."
+            },
+            {
+                question: "What is the time complexity of the Karatsuba algorithm for multiplication?",
+                options: ["O(n)", "O(n log n)", "O(n^log₂3)", "O(n²)"],
+                answer: 2,
+                explanation: "Karatsuba algorithm has O(n^log₂3) ≈ O(n^1.585) time complexity, better than the standard O(n²)."
+            },
+            {
+                question: "Which data structure is used for implementing a waiting list for a popular event?",
+                options: ["Stack", "Queue", "Priority Queue", "Tree"],
+                answer: 1,
+                explanation: "Waiting lists typically use queues to process people in the order they joined (FIFO)."
+            },
+            {
+                question: "What is the time complexity of the sieve of Eratosthenes algorithm?",
+                options: ["O(n)", "O(n log log n)", "O(n log n)", "O(n²)"],
+                answer: 1,
+                explanation: "The sieve of Eratosthenes has O(n log log n) time complexity for finding primes up to n."
+            },
+            {
+                question: "Which of the following is NOT a hashing technique?",
+                options: ["Division Method", "Multiplication Method", "Universal Hashing", "Binary Hashing"],
+                answer: 3,
+                explanation: "Binary Hashing is not a standard hashing technique. The others are valid methods."
+            },
+            {
+                question: "What is the time complexity of the fractional knapsack greedy algorithm?",
+                options: ["O(1)", "O(n)", "O(n log n)", "O(n²)"],
+                answer: 2,
+                explanation: "The fractional knapsack problem requires sorting (O(n log n)) followed by a linear scan (O(n))."
+            },
+            {
+                question: "Which data structure is used for implementing a music playlist with next/previous functionality?",
+                options: ["Stack", "Queue", "Doubly Linked List", "Binary Search Tree"],
+                answer: 2,
+                explanation: "Music players use doubly linked lists for efficient forward/backward traversal."
+            }
+        ];
+
+        // Shuffle the questions array to randomize question order
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Shuffle the questions and select first 100 (in case we have more)
+        const shuffledQuestions = shuffleArray([...questions]).slice(0, 100);
+        
+        // Variables to track test state
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(shuffledQuestions.length).fill(null);
+        let testStartTime = null;
+        let timerInterval = null;
+        let testSubmitted = false;
+        
+        // DOM Elements
+        const startBtn = document.getElementById('start-btn');
+        const testModal = document.getElementById('test-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const testTimer = document.getElementById('test-timer');
+        const overallTimer = document.getElementById('overall-timer');
+        const questionStatus = document.getElementById('question-status');
+        const resultModal = document.getElementById('result-modal');
+        const scoreDisplay = document.getElementById('score-display');
+        const totalQuestionsDisplay = document.getElementById('total-questions');
+        const correctAnswersDisplay = document.getElementById('correct-answers');
+        const wrongAnswersDisplay = document.getElementById('wrong-answers');
+        const unansweredDisplay = document.getElementById('unanswered');
+        const timeTakenDisplay = document.getElementById('time-taken');
+        const performanceMessage = document.getElementById('performance-message');
+        const questionReview = document.getElementById('question-review');
+        const reviewBtn = document.getElementById('review-btn');
+        const closeResultBtn = document.getElementById('close-result-btn');
+        
+        // Event Listeners
+        startBtn.addEventListener('click', startTest);
+        closeModalBtn.addEventListener('click', confirmCloseTest);
+        prevBtn.addEventListener('click', showPreviousQuestion);
+        nextBtn.addEventListener('click', showNextQuestion);
+        submitBtn.addEventListener('click', confirmSubmitTest);
+        reviewBtn.addEventListener('click', reviewAllQuestions);
+        closeResultBtn.addEventListener('click', closeResultModal);
+        
+        // Start the test
+        function startTest() {
+            testStartTime = new Date();
+            startTimer();
+            testModal.style.display = 'block';
+            showQuestion(currentQuestionIndex);
+            updateQuestionStatus();
+        }
+        
+        // Timer functions
+        function startTimer() {
+            const endTime = new Date(testStartTime.getTime() + 60 * 60 * 1000); // 1 hour
+            
+            timerInterval = setInterval(() => {
+                const now = new Date();
+                const remainingTime = endTime - now;
+                
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    submitTest();
+                    return;
+                }
+                
+                updateTimerDisplay(remainingTime);
+            }, 1000);
+        }
+        
+        function updateTimerDisplay(ms) {
+            const hours = Math.floor(ms / (1000 * 60 * 60));
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+            
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            testTimer.textContent = timeString;
+            overallTimer.textContent = timeString;
+        }
+        
+        // Display question
+        function showQuestion(index) {
+            if (index < 0 || index >= shuffledQuestions.length) return;
+            
+            currentQuestionIndex = index;
+            const question = shuffledQuestions[index];
+            
+            questionText.textContent = `${index + 1}. ${question.question}`;
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, i) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (userAnswers[index] === i) {
+                    optionElement.classList.add('selected');
+                }
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(i));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update navigation buttons
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === shuffledQuestions.length - 1;
+            
+            // Update progress bar
+            progressBar.style.width = `${((index + 1) / shuffledQuestions.length) * 100}%`;
+            
+            // Update current question in status
+            updateQuestionStatus();
+        }
+        
+        // Select an option
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Update UI
+            const options = optionsContainer.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.toggle('selected', i === optionIndex);
+            });
+            
+            // Update question status
+            updateQuestionStatus();
+        }
+        
+        // Navigation functions
+        function showPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                showQuestion(currentQuestionIndex - 1);
+            }
+        }
+        
+        function showNextQuestion() {
+            if (currentQuestionIndex < shuffledQuestions.length - 1) {
+                showQuestion(currentQuestionIndex + 1);
+            }
+        }
+        
+        // Update question status indicators
+        function updateQuestionStatus() {
+            questionStatus.innerHTML = '';
+            
+            shuffledQuestions.forEach((_, i) => {
+                const statusBtn = document.createElement('div');
+                statusBtn.className = 'status-btn';
+                
+                if (userAnswers[i] !== null) {
+                    statusBtn.classList.add('answered');
+                } else {
+                    statusBtn.classList.add('unanswered');
+                }
+                
+                if (i === currentQuestionIndex) {
+                    statusBtn.classList.add('current');
+                }
+                
+                statusBtn.textContent = i + 1;
+                statusBtn.addEventListener('click', () => showQuestion(i));
+                questionStatus.appendChild(statusBtn);
+            });
+        }
+        
+        // Confirm before closing test
+        function confirmCloseTest() {
+            if (testSubmitted) {
+                testModal.style.display = 'none';
+                return;
+            }
+            
+            if (confirm('Are you sure you want to close the test? Your progress will be lost.')) {
+                clearInterval(timerInterval);
+                testModal.style.display = 'none';
+                resetTest();
+            }
+        }
+        
+        // Confirm before submitting test
+        function confirmSubmitTest() {
+            if (confirm('Are you sure you want to submit the test? You will not be able to make changes after submission.')) {
+                submitTest();
+            }
+        }
+        
+        // Submit the test
+        function submitTest() {
+            clearInterval(timerInterval);
+            testSubmitted = true;
+            testModal.style.display = 'none';
+            showResults();
+        }
+        
+        // Show test results
+        function showResults() {
+            const endTime = new Date();
+            const timeTaken = endTime - testStartTime;
+            
+            // Calculate score
+            let correct = 0;
+            let wrong = 0;
+            let unanswered = 0;
+            
+            userAnswers.forEach((answer, i) => {
+                if (answer === null) {
+                    unanswered++;
+                } else if (answer === shuffledQuestions[i].answer) {
+                    correct++;
+                } else {
+                    wrong++;
+                }
+            });
+            
+            // Calculate percentage
+            const percentage = (correct / shuffledQuestions.length) * 100;
+            
+            // Update result display
+            totalQuestionsDisplay.textContent = shuffledQuestions.length;
+            correctAnswersDisplay.textContent = correct;
+            wrongAnswersDisplay.textContent = wrong;
+            unansweredDisplay.textContent = unanswered;
+            scoreDisplay.textContent = `Score: ${correct}/${shuffledQuestions.length} (${percentage.toFixed(1)}%)`;
+            
+            // Update time taken
+            const hours = Math.floor(timeTaken / (1000 * 60 * 60));
+            const minutes = Math.floor((timeTaken % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeTaken % (1000 * 60)) / 1000);
+            timeTakenDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Performance message
+            let message = '';
+            if (percentage >= 90) {
+                message = 'Outstanding performance! You have excellent knowledge of Data Structures.';
+            } else if (percentage >= 75) {
+                message = 'Great job! You have a strong understanding of Data Structures.';
+            } else if (percentage >= 60) {
+                message = 'Good effort! You have a decent grasp of Data Structures but could improve in some areas.';
+            } else if (percentage >= 40) {
+                message = 'Keep practicing! Review the concepts you missed to strengthen your understanding.';
+            } else {
+                message = 'Consider reviewing the fundamentals of Data Structures. Practice will help improve your scores.';
+            }
+            performanceMessage.textContent = message;
+            
+            // Show result modal
+            resultModal.style.display = 'block';
+            
+            // Generate question review
+            generateQuestionReview();
+        }
+        
+        // Generate detailed question review
+        function generateQuestionReview() {
+            questionReview.innerHTML = '';
+            
+            shuffledQuestions.forEach((q, i) => {
+                const questionElement = document.createElement('div');
+                questionElement.style.marginBottom = '20px';
+                questionElement.style.padding = '15px';
+                questionElement.style.borderRadius = '5px';
+                questionElement.style.backgroundColor = '#f8f9fa';
+                
+                const questionText = document.createElement('div');
+                questionText.style.fontWeight = 'bold';
+                questionText.style.marginBottom = '10px';
+                questionText.textContent = `${i + 1}. ${q.question}`;
+                questionElement.appendChild(questionText);
+                
+                const optionsList = document.createElement('div');
+                q.options.forEach((opt, j) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.style.padding = '5px';
+                    optionElement.style.margin = '5px 0';
+                    optionElement.style.borderRadius = '3px';
+                    
+                    if (j === q.answer) {
+                        optionElement.style.backgroundColor = '#d4edda';
+                        optionElement.style.borderLeft = '4px solid #28a745';
+                    } else if (userAnswers[i] === j && userAnswers[i] !== q.answer) {
+                        optionElement.style.backgroundColor = '#f8d7da';
+                        optionElement.style.borderLeft = '4px solid #dc3545';
+                    }
+                    
+                    if (userAnswers[i] === j) {
+                        opt = `✓ ${opt}`;
+                    }
+                    
+                    optionElement.textContent = opt;
+                    optionsList.appendChild(optionElement);
+                });
+                questionElement.appendChild(optionsList);
+                
+                if (userAnswers[i] !== q.answer) {
+                    const explanation = document.createElement('div');
+                    explanation.style.marginTop = '10px';
+                    explanation.style.fontStyle = 'italic';
+                    explanation.style.color = '#6c757d';
+                    explanation.textContent = `Explanation: ${q.explanation}`;
+                    questionElement.appendChild(explanation);
+                }
+                
+                questionReview.appendChild(questionElement);
+            });
+        }
+        
+        // Review all questions
+        function reviewAllQuestions() {
+            resultModal.style.display = 'none';
+            testModal.style.display = 'block';
+            currentQuestionIndex = 0;
+            showQuestion(currentQuestionIndex);
+            
+            // Mark all questions as answered for review
+            userAnswers = userAnswers.map((ans, i) => ans === null ? -1 : ans);
+            updateQuestionStatus();
+        }
+        
+        // Close result modal
+        function closeResultModal() {
+            resultModal.style.display = 'none';
+            resetTest();
+        }
+        
+        // Reset test state
+        function resetTest() {
+            currentQuestionIndex = 0;
+            userAnswers = new Array(shuffledQuestions.length).fill(null);
+            testStartTime = null;
+            clearInterval(timerInterval);
+            timerInterval = null;
+            testSubmitted = false;
+            overallTimer.textContent = '01:00:00';
+        }
+    </script>
+</body>
+</html>

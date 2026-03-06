@@ -1,0 +1,548 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Selector</title>
+    <style>
+        #colorcontainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            width: 300px;
+            margin: auto;
+        }
+
+        .color-box p {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .color {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ddd;
+            transition: transform 0.2s;
+        }
+
+        .color:hover {
+            transform: scale(1.1);
+        }
+
+        .red { background-color: red; }
+        .blue { background-color: blue; }
+        .green { background-color: green; }
+        .yellow { background-color: yellow; }
+
+        #target-container {
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background-color: #e0e0e0;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<div id="target-container">Click a color!</div>
+
+<div id="colorcontainer" class="color-box">
+    <p>Select a color:</p>
+    <div class="color red" data-color="red"></div>
+    <div class="color blue" data-color="blue"></div>
+    <div class="color green" data-color="green"></div>
+    <div class="color yellow" data-color="yellow"></div>
+</div>
+
+<script>
+    document.querySelectorAll('.color').forEach(colorElement => {
+        colorElement.addEventListener('click', (e) => {
+            const selectedColor = e.target.dataset.color;
+            const targetContainer = document.getElementById('target-container');
+            targetContainer.style.backgroundColor = selectedColor;
+            targetContainer.innerHTML = `Selected color: ${selectedColor}`;
+        });
+    });
+</script>
+
+</body>
+</html>
+ -->
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // const issunHot = true;
+        // const isMoonHot = false;
+
+        // console.log(isSunHot, 'isSunHot');
+        // console.log(isMoonHot, 'isMoonHot');
+
+
+        // const str1 = "";
+        // console.log(boolen(str1), 'Blank string');
+        // console.log(boolen(str2), 'Non Blank string');
+
+
+        const num1 = 0
+        const num2 = -100
+        const num3 = 5
+
+        console.log(boolen(num1), '0');//false
+        console.log(boolen(num2), '-100'); //true
+        console.log(boolen(num3), '5'); //true
+        console.log(boolen(num4), '3.14'); //true
+        //inside if condition block the condition try to result true and false 
+        if (num1){
+           console.log("if part")
+        }else{
+           console.log("else part")
+        }
+
+       // ----------------------null and undefined ----------------------
+       const val1 = null; //
+       const val2 = undefined; //
+
+       console.log(boolen(val1), 'null'); //false
+       console.log(boolen(val2), 'undefined'); //false
+
+      // ---------------------- objects --------------------
+       const obj1 = {};
+       const obj2 = {};
+
+    console.log(boolen(obj1), 'Obj1'); //false
+    console.log(boolen(obj2), 'Obj2'); //false
+
+    // ---------------------- clogers --------------------
+//where to usr this: conditions
+// if(num1){
+
+// }
+// while(){
+// }
+// for(){
+
+// }
+
+let a = 12;
+ 
+function foo(){
+    const b = 9;
+    function bar(){
+        let c = 12  
+        console.log(a + b + c + d); // 12
+    }
+    return bar;
+}
+const d= 100;
+
+const resultoffoo = foo();
+
+resultoffoo();//133
+
+//example 4
+// Counter function with closure
+function createCounter() {
+    let count = 0;
+    return function() {
+        count++;
+        return count;
+    };
+}
+
+const counter = createCounter();
+// Increment and log the counter
+console.log(counter()); // 1
+console.log(counter()); // 2
+console.log(counter()); // 3
+
+// Conditional logic to check counter behavior
+if (typeof counter === 'function') {
+    console.log('Counter:', counter()); 
+} else {
+    console.log('Not a function');
+}
+const counter1 = someFunction();
+const counter2 = someFunction();
+
+counter1() //1
+counter1() //2
+counter2() //1
+counter2() //2
+counter1() //3
+counter2() //3
+
+
+function foo(){
+    let count = 0;
+    function bar(){
+        count++;
+        console.log(count);
+    }
+    
+    return bar
+}
+
+const counter3 = foo();
+const counter4 = foo()
+console.log(counter3())
+console.log(counter3())
+
+console.log(counter4())
+console.log(counter4())
+
+console.log(counter3())
+console.log(counter4())
+
+const obj = {
+    name: "krishna",
+    standard: 12,
+    rollnumber: 41
+};
+
+const nameDescriptor = Object.getOwnPropertyDescriptor(obj, "name");
+
+console.log(nameDescriptor); // {value: "krishna", writable: true, enumerable: true, configurable: true}
+
+//---------------------- Selling an abject propertys --------property descriptors------------
+
+object.preventExtensions(obj);
+
+//object.seal(obj); //
+
+console.log(Object.isExtensible(obj)); // false
+console.log(Object.isSealed(obj)); // false
+
+delete obj.name;
+console.log(obj.name); // undefined
+console.log(Object.keys(obj)); // ["standard", "rollnumber"]
+console.log(Object.getOwnPropertyNames(obj)); // ["name", "standard", "rollnumber"]
+console.log(Object.getOwnPropertyDescriptor(obj, "name")); // {value: "krishna", writable: true, enumerable: true, configurable: true}
+
+// object.freeze //
+
+console.log(Object.isFrozen(obj)); // false
+
+// -----------------call sites----------------
+
+function foo(){
+    console.log("Hello"); // true
+}
+
+foo(); // call site is a place preference of function 
+
+const foocopy = foo(); // call site is a place preference of function
+
+foocopy() // this is a call site 
+
+// TODO: read more from youdontknowjsyet book (later on in life)
+
+//----------------  this keyword -------------
+
+//Default binding
+const  defaultBindings ={
+    name: "krishna",
+    class: "12",
+    Hobbies: "chess, coding",
+    showDetails: function(){
+        console.log(`Name: ${this.name}, Class: ${this.class}, Hobbies: ${this.hobbies}`);
+    }
+}
+
+// this => contect at which the function is called
+
+function foo(){
+     console.log("hello");
+     console.log(this)
+}
+foo()
+
+
+const object ={
+    name: "ramesh",
+    class: "12",
+    hobbies: ["cycling", "bicycling","chess"],
+    study: function(){
+       console.log(this)    
+    }
+}
+
+const stuycopy = object.study;
+
+studyCopy();
+
+const objects = {
+    name: "akash",
+    rollnumber: 99,
+    obj2: obj2
+}
+obj1.obj2.func()
+
+//----------------  explisive Binding -------------
+
+settimeout(() => {
+    console.log("Hello! how are you?");
+}, 5000);
+
+function abc(){
+    console.log("Hello world!");
+    console.log(this)
+}
+
+const abcWithContextAttached = abc.bind(obj1)
+setTimeout(abcWithContextAttached, 5000);
+
+function person(name, age){
+    this.name = name;
+    this.age = age;
+}
+const krishnaperson= new person("krishna",25);
+const akashperson = new person("akash",22);
+
+const ankushperson = {
+    name: "ankush",
+    age: 26,
+    introduce: function(){
+        console.log(`Hi, I am ${this.name}. I am ${this.age} years old.`);
+    }
+}
+console.log("Hi, I am ${this.name .introduce()// Hi, I am ankush. I am 26 years old.");
+
+
+
+
+
+//Eplicit binding    
+
+function printThis(params) {
+    console.log(this);
+}
+
+let Object1 = {
+
+    a: 10,
+    b: 20,
+    c: printThis,
+    d: function (params) {
+        console.log(this) 
+        printThis(); // gives window obj]
+        let x = this.c;
+        x();
+        this.c();
+        console.log(this.c == printThis);
+        // this.c(); // gives obj 
+        // console.log(this.c == printThis);
+    }
+}
+
+object1.d()
+
+function printThis(params) {
+    console.log(this);
+}
+
+let object2 = {
+
+    a: 10,
+    b: 20,
+    c: printThis,
+    d: function (params) {
+        console.log(this)
+        printThis(); 
+        let x = this.c;
+        x();
+        this.c(); 
+        console.log(this.c == printThis);
+    }
+}
+object2.d();
+
+//example 3 bind
+
+const person = {
+    name: "krishna",
+    age: 25
+}
+
+const printPersonDetails = function (name, age) {
+    console.log(`Name: ${name}, Age: ${age}`);
+}.bind(person);
+
+printPersonDetails("ramesh", 26);
+
+person()
+
+// example 4 call
+
+const person = {
+    name: "krishna",
+    age: 25
+}
+
+const printPersonDetailss = function (name, age) {
+    console.log(`Name: ${name}, Age: ${age}`);
+}
+
+printPersonDetails.call(person, "ramesh", 26);
+
+person()
+
+// example 5 apply
+
+const obj5 = {
+    name: "krishna",
+    age: 20
+}
+
+const personDetails = function (name, age) {
+    console.log(`Name: ${name}, Age: ${age}`);
+}
+
+personDetails.apply(obj5, ["ramesh", 26]);
+
+person()
+
+// example 6 bind, call, apply with arrow functions
+
+const person = {
+    name: "Ramesh",
+    age: 26,
+    printDetails: function () {
+        console.log(`Name: ${this.name}, Age: ${this.age}`);
+    }
+};
+
+// Using bind
+const printPersonDetailsss = person.printDetails.bind(person);
+printPersonDetails(); // Output: Name: Ramesh, Age: 26
+
+// Using call
+person.printDetails.call(person); // Output: Name: Ramesh, Age: 26
+
+
+let Object2 = {
+    a: 10,
+    b: 20,
+    c: printThis,
+    d: function (params) {
+        console.log(this); // Logs `Object1` because `d` is called as a method of `Object1`
+        printThis();       // Logs the global object (`window` or `undefined` in strict mode) because it's a standalone function call
+        let x = this.c;    // `x` is now a reference to `printThis`
+        x();               // Logs the global object because `x` is invoked as a standalone function
+        this.c();          // Logs `Object1` because `c` is invoked as a method of `Object1`
+        console.log(this.c == printThis); // Logs `true` because `this.c` and `printThis` reference the same function
+    }
+};
+
+Object2.d();
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- '''//----- DOM Manipulation ----------------
+DocumentFragment.addEventListener("DOMContaintloaded",() => {
+   const colorcontainer = document.getElementById("colorcontainer");
+   console.log(colorcontainer);
+})
+
+// .targetcontainer .hover{
+//     background-color: yellow;
+// }
+
+//if i say not to put script tag and using of async and defer 
+//2. load
+
+document.addEventListener("load", () => {
+   console.log("after the media loaded");
+})
+
+window.addEventListener("beforeunload", () => {
+     localStorage.setItem("secret", "my name is xyz");
+});
+
+const redclickhandeler = () => {
+     targetcontainer.style.backgroundColor = "green";
+     target.containerElement.innerHTML = "selected color:green"
+}
+
+settimeout(() => {
+    readElement.removeEventListener("click",redClickHandeler);
+
+}, 5000)
+
+window.addEventListener("beforeunload", () => {
+    redElement.removeEventListener("redClickHandeler");
+}); ''' -->

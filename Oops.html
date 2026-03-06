@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oops</title>
+</head>
+
+<body>
+    <script>
+
+        //  Oops-> object oriented programming
+        // oops is prime focus  of the languages=
+        //Js scripting language (js) the prime focus is functions 
+        // js by default is a functional language
+        // main thing in Opps and functional  language.
+
+        /* Oops
+           1. object
+           2. class
+           3. inheritance
+        
+           4. polymorphism 
+           5. Abstraction
+           6. Encapsulation
+        
+        */
+        //-----------how to create onjects in Js -----------//
+
+        function Person(name, age) {
+            this.name = name;
+            this.age = age;
+            this.introduce = function () {
+                console.log(`Hi, I am ${this.name}. I am ${this.age} years old.`);
+            }
+            this.getDetails = function () {
+                return `Name: ${this.name}, Age: ${this.age}`;
+            }
+            this.setAge = function (newAge) {
+                this.age = newAge;
+
+            }
+
+        }
+
+        //---class----
+
+        class Person {
+            constructor(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+        }
+
+        // Example usage
+        const person1 = new Person("Alice", 25);
+        console.log(person1.name); // Output: Alice
+        console.log(person1.age);  // Output: 25
+
+        class person {
+            name;
+            age;
+            constructor(name, age) {
+                this.name = name;
+                this.age = age;
+
+                this.country = "Indian"
+            }
+            canwalk() {
+                console.log("yes I can talk", this.name);
+            }
+        }
+
+        const krishnaperson = new personclass("krishna", 20);
+        console.log(krishnaclassperson);
+
+        ///----------------------conclusion ----------------------------------------------------------------\\
+        //1. class are supirior as the methods are shared  between the object throgh prototype
+        // Quetion: having this limited knowledge tell me what is better ? constructor function of normal object 
+        //Answer see above (console.log(krishnaclassperson.canwalk === arunclassperson.canwalk)
+
+        class parent {
+            property = 12;
+
+            constructor() { }
+        }
+
+        class child {
+            name;
+            toys;
+            constructor(name, toys) {
+                this.name = name;
+                this.toys = toys;
+            }
+        }
+
+        const child1 = new child("child1", 1);
+        console.log(child1);
+
+
+
+        //Example 2
+
+        class student {
+            name;
+            standard;
+
+            constructor(name, standard) {
+                this.name = name;
+                this.standard = standard;
+            }
+
+
+            markAtendence() {
+                console.log("hey there " + this.name + " is present :: NORMAL ATTENDENCE");
+            }
+            grades() {
+                console.log("grades are nice");
+            }
+        }
+
+
+class Star{
+    name;
+    weight;
+    years;
+
+    constructor(name, weight, years) {
+        this.name = name;
+        this.weight = weight;
+        this.years = years;
+    }
+}
+        
+const sun = new  Star("Sun", 1000000, 400);
+console.log(sun);
+
+
+
+
+
+class Circle{
+    radius;
+    constructor(r){
+        this.radius = r;
+    }
+
+    draw(){
+        console.log("Drawing Circle for radius ", this.radius);
+    }
+
+static parse(){
+    console.log("parsing Circle ");
+}
+}
+
+
+class student{
+    name;
+    standard;
+
+    constructor(name, standard) {
+        this.name = name;
+        this.standard = standard;
+    }
+
+    markAtendence() {
+        console.log("hey there " + this.name + " is present :: NORMAL ATTENDENCE");
+    }
+grade() {
+    console.log("grades for " + this.name + " :: are nice");
+}
+
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// MARK----------------------------------------------------------------
+// ----------------------------------------------------------------- -     -   - - - - - - - - - - - - - - - - 
+
+
+// FavTool Class
+class FavTool {
+    constructor() {
+        this.tools = []; // Initialize an empty array to store tools
+    }
+
+    // Add a new tool to the list
+    addTool(toolName) {
+        if (!this.tools.includes(toolName)) {
+            this.tools.push(toolName);
+            console.log(`Tool "${toolName}" added to your favorites.`);
+        } else {
+            console.log(`Tool "${toolName}" is already in your favorites.`);
+        }
+    }
+
+    // Display all favorite tools
+    displayTools() {
+        if (this.tools.length > 0) {
+            console.log("Your favorite tools:");
+            this.tools.forEach((tool, index) => console.log(`${index + 1}. ${tool}`));
+        } else {
+            console.log("No favorite tools yet.");
+        }
+    }
+
+    // Remove a tool from the list
+    removeTool(toolName) {
+        const index = this.tools.indexOf(toolName);
+        if (index !== -1) {
+            this.tools.splice(index, 1);
+            console.log(`Tool "${toolName}" removed from your favorites.`);
+        } else {
+            console.log(`Tool "${toolName}" is not in your favorites.`);
+        }
+    }
+
+    // Check if a tool is in the list
+    hasTool(toolName) {
+        if (this.tools.includes(toolName)) {
+            console.log(`Tool "${toolName}" is in your favorites.`);
+            return true;
+        } else {
+            console.log(`Tool "${toolName}" is not in your favorites.`);
+            return false;
+        }
+    }
+}
+
+// Usage
+const myFavTool = new FavTool();
+
+// Add tools
+myFavTool.addTool("Visual Studio Code");
+myFavTool.addTool("GitHub");
+myFavTool.addTool("Figma");
+
+// Display tools
+myFavTool.displayTools();
+
+// Remove a tool
+myFavTool.removeTool("GitHub");
+
+// Check for a tool
+myFavTool.hasTool("Figma");
+
+// Display tools again
+myFavTool.displayTools();
+
+// Display--------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------- ------------------------
+//----------------------------------------------------------------- ------------------------
+
+//------------------------------------Inheritance Before 2015 ------------------------
+
+
+class SportsCaptain extends student{
+      favTool;
+
+      construction(name, standard, FavTool){
+        super(name, standard);
+        this.favTool = favTool;
+      }
+      markAtendence(name){ 
+        console.log(`${name} is present :: SPORTS ATTENDENCE`);
+      }
+      grades(name){
+        console.log(`grades for ${this.name} are nice.`)
+      }
+}
+
+
+
+function Student(name, standard, division, rollNumber){
+    this.name = name;
+    this.standard = standard;
+    this.division = division;
+    this.rollNumber = rollNumber;
+
+  this.markAttendance = function (){
+    console.log(`hey marking attendance for ${this.name} :: Normal attendance`);
+  };
+  
+  this.grades = function(){
+    console.log(`grades for ${this.name} are nice.`)
+  };
+}
+const student1 = new Student("John Doe", "10th", "A", 23);
+student1.markAttendance(); // Output: Hey, marking attendance for John Doe :: Normal attendance
+student1.grades(); // Output: Grades for John Doe are nice.
+
+//Child
+
+function SportsCaptainconstructor(name,standard, FavTools) {
+
+    studentConstructor.call(this,name,standard)
+
+//     Student.call(this, name, standard, "A", 23);
+   this.favTools = favTools;
+}
+{name,standard, favTool}
+const viratConstructor = new SportsCaptainconstructor("virat", 12, "bat");
+console.log(viratConstructor);
+
+function myExtends(){
+    const viratConstructor = new SportsCaptainconstructor("viratsss", 12, "bat");
+    console.log(viratConstructor);
+}
+
+
+
+
+
+
+//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+// Constructor for Student
+function Student(name, standard, division, rollNumber) {
+    this.name = name;
+    this.standard = standard;
+    this.division = division;
+    this.rollNumber = rollNumber;
+}
+
+// Adding methods to the prototype
+Student.prototype.markAttendance = function () {
+    console.log(`Hey, marking attendance for ${this.name} :: Normal attendance`);
+};
+
+Student.prototype.grades = function () {
+    console.log(`Grades for ${this.name} are excellent.`);
+};
+
+Student.prototype.favTool = function (tool) {
+    console.log(`${this.name}'s favorite tool is ${tool}.`);
+};
+
+// Sportsman constructor (Child of Student)
+function Sportsman(name, sport, achievements) {
+    Student.call(this, name, "N/A", "N/A", "N/A"); // Inheriting from Student
+    this.sport = sport;
+    this.achievements = achievements;
+}
+
+// Inheriting prototype methods from Student
+Sportsman.prototype = Object.create(Student.prototype);
+Sportsman.prototype.constructor = Sportsman;
+
+// Adding a parent-specific method
+Sportsman.prototype.parentInfo = function () {
+    console.log(`${this.name} is a famous sportsman who excels in ${this.sport}.`);
+};
+
+// Adding a child-specific method
+Sportsman.prototype.childInfo = function () {
+    console.log(`Achievements of ${this.name}: ${this.achievements.join(", ")}.`);
+};
+
+// Example Usage
+const virat = new Sportsman("Virat Kohli", "Cricket", [
+    "2011 ICC World Cup",
+    "Multiple IPL Championships",
+    "Ranked No. 1 in ODI and Test cricket",
+]);
+
+// Using inherited methods
+virat.markAttendance();
+virat.grades();
+virat.favTool("Cricket Bat");
+
+// Using Sportsman-specific methods
+virat.parentInfo();
+virat.childInfo();
+//------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+//----------------------------------------------------Dates--------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

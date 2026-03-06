@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Zone Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(45deg, #08001f, #30197d);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            text-align: center;
+        }
+
+        .container {
+            width: 350px;
+            height: 350px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .clock {
+            font-size: 48px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin: 20px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            background: #fff;
+            color: #000;
+        }
+
+        .container::before,
+        .container::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: rotate 10s infinite linear;
+        }
+
+        .container::before {
+            width: 250px;
+            height: 250px;
+            top: -75px;
+            left: -75px;
+        }
+
+        .container::after {
+            width: 200px;
+            height: 200px;
+            bottom: -50px;
+            right: -50px;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="clock" id="clock">
+            12:00:00 AM
+        </div>
+        <select id="timezone">
+            <option value="UTC">UTC</option>
+            <option value="IST">IST (Indian Standard Time)</option>
+            <option value="PST">PST (Pacific Standard Time)</option>
+            <option value="CET">CET (Central European Time)</option>
+            <option value="EST">EST (Eastern Standard Time)</option>
+            <option value="JST">JST (Japan Standard Time)</option>
+            <option value="AEST">AEST (Australian Eastern Standard Time)</option>
+            <!-- Add more time zones as needed -->
+        </select>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const selectedTimeZone = document.getElementById('timezone').value;
+
+            let offset = 0; // default to UTC
+            let offsetMinutes = 0;
+
+            switch (selectedTimeZone) {
+                case 'IST':
+                    offset = 5; // IST is UTC+5:30
+                    offsetMinutes = 30;
+                    break;
+                case 'PST':
+                    offset = -8; // PST is UTC-8
+                    break;
+                case 'CET':
+                    offset = 1; // CET is UTC+1
+                    break;
+                case 'EST':
+                    offset = -5; // EST is UTC-5
+                    break;
+                case 'JST':
+                    offset = 9; // JST is UTC+9
+                    break;
+                case 'AEST':
+                    offset = 10; // AEST is UTC+10
+                    break;
+                // Add more time zone offsets as needed
+            }
+
+            // Convert current time to UTC
+            const utcHours = now.getUTCHours();
+            const utcMinutes = now.getUTCMinutes();
+            const utcSeconds = now.getUTCSeconds();
+
+            // Apply time zone offset
+            let hours = utcHours + offset;
+            let minutes = utcMinutes + offsetMinutes;
+            let seconds = utcSeconds;
+
+            if (minutes >= 60) {
+                hours += Math.floor(minutes / 60);
+                minutes = minutes % 60;
+            } else if (minutes < 0) {
+                hours -= Math.ceil(Math.abs(minutes) / 60);
+                minutes = (60 + (minutes % 60)) % 60;
+            }
+
+            hours = (hours + 24) % 24;
+
+            // Format to 12-hour time with AM/PM
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12; // the hour '0' should be '12'
+
+            // Format the time
+            const formattedHours = String(displayHours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(seconds).padStart(2, '0');
+
+            document.getElementById('clock').textContent = `${formattedHours}:${formattedMinutes}:${formattedSeconds} ${period}`;
+        }
+
+        document.getElementById('timezone').addEventListener('change', updateClock);
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+
+</html>

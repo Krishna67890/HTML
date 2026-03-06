@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Parking Challenge</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            flex-direction: column;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        #launch-btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+            margin: 20px 0;
+        }
+        #launch-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
+        }
+        .game-features {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            text-align: left;
+        }
+        .feature-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <h1>Infinite Parking Challenge</h1>
+    <button id="launch-btn">START GAME</button>
+    
+    <div class="game-features">
+        <h2>Game Features</h2>
+        <div class="feature">
+            <span class="feature-icon">∞</span>
+            <div>Infinite procedurally generated levels with increasing difficulty</div>
+        </div>
+        <div class="feature">
+            <span class="feature-icon">🚗</span>
+            <div>Moving traffic cars that follow patterns</div>
+        </div>
+        <div class="feature">
+            <span class="feature-icon">⏱️</span>
+            <div>Time challenges and bonus multipliers</div>
+        </div>
+        <div class="feature">
+            <span class="feature-icon">✨</span>
+            <div>Special power-ups like time freeze and invincibility</div>
+        </div>
+        <div class="feature">
+            <span class="feature-icon">🧩</span>
+            <div>Puzzle elements like one-way roads and moving obstacles</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('launch-btn').addEventListener('click', function() {
+            const gameWindow = window.open('', 'ParkingGame', 'width=1100,height=750,top=50,left=50');
+            
+            gameWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Infinite Parking Challenge</title>
+                    <style>
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            overflow: hidden;
+                            font-family: 'Arial', sans-serif;
+                            background-color: #2c3e50;
+                        }
+                        #game-container {
+                            position: relative;
+                            width: 1100px;
+                            height: 750px;
+                            overflow: hidden;
+                        }
+                        #parking-lot {
+                            position: relative;
+                            width: 100%;
+                            height: 100%;
+                        }
+                        .parking-spot {
+                            position: absolute;
+                            width: 100px;
+                            height: 60px;
+                            background-color: #34495e;
+                            border: 2px dashed #ecf0f1;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            color: white;
+                            font-weight: bold;
+                            z-index: 3;
+                            transition: all 0.3s;
+                        }
+                        #player-car {
+                            position: absolute;
+                            width: 60px;
+                            height: 100px;
+                            background-color: #3498db;
+                            border: 3px solid #2980b9;
+                            border-radius: 8px;
+                            z-index: 10;
+                            transition: transform 0.1s;
+                            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+                        }
+                        #player-car::before {
+                            content: '';
+                            position: absolute;
+                            top: 20px;
+                            left: 5px;
+                            width: 50px;
+                            height: 60px;
+                            background: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+                            border-radius: 5px;
+                        }
+                        .hud-container {
+                            position: absolute;
+                            top: 10px;
+                            left: 10px;
+                            z-index: 100;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
+                        }
+                        .hud-item {
+                            color: white;
+                            font-size: 18px;
+                            background-color: rgba(0, 0, 0, 0.7);
+                            padding: 10px 15px;
+                            border-radius: 8px;
+                            min-width: 150px;
+                        }
+                        #message-display {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            color: white;
+                            font-size: 28px;
+                            background-color: rgba(0, 0, 0, 0.8);
+                            padding: 20px 40px;
+                            border-radius: 10px;
+                            display: none;
+                            z-index: 100;
+                            text-align: center;
+                            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+                        }
+                        .obstacle {
+                            position: absolute;
+                            background-color: #e74c3c;
+                            border: 3px solid #c0392b;
+                            z-index: 2;
+                            border-radius: 5px;
+                        }
+                        .road {
+                            position: absolute;
+                            background-color: #7f8c8d;
+                            z-index: 0;
+                        }
+                        .grass {
+                            position: absolute;
+                            background-color: #27ae60;
+                            z-index: 0;
+                        }
+                        .traffic-car {
+                            position: absolute;
+                            width: 60px;
+                            height: 100px;
+                            background-color: #e67e22;
+                            border: 3px solid #d35400;
+                            border-radius: 8px;
+                            z-index: 5;
+                            transition: transform 0.1s;
+                        }
+                        .power-up {
+                            position: absolute;
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 50%;
+                            z-index: 4;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            color: white;
+                            font-weight: bold;
+                            font-size: 20px;
+                            animation: pulse 1.5s infinite;
+                        }
+                        @keyframes pulse {
+                            0% { transform: scale(1); }
+                            50% { transform: scale(1.1); }
+                            100% { transform: scale(1); }
+                        }
+                        .one-way {
+                            position: absolute;
+                            z-index: 1;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            color: white;
+                            font-weight: bold;
+                            font-size: 24px;
+                        }
+                        #controls {
+                            position: absolute;
+                            bottom: 10px;
+                            left: 10px;
+                            color: white;
+                            font-size: 14px;
+                            background-color: rgba(0, 0, 0, 0.7);
+                            padding: 10px 15px;
+                            border-radius: 8px;
+                            z-index: 100;
+                        }
+                        #multiplier-display {
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            color: gold;
+                            font-size: 24px;
+                            z-index: 100;
+                            background-color: rgba(0, 0, 0, 0.7);
+                            padding: 10px 15px;
+                            border-radius: 8px;
+                            display: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div id="game-container">
+                        <div id="parking-lot"></div>
+                        
+                        <div class="hud-container">
+                            <div class="hud-item">Score: <span id="score">0</span></div>
+                            <div class="hud-item">Level: <span id="level">1</span></div>
+                            <div class="hud-item">Time: <span id="time">60</span>s</div>
+                            <div class="hud-item">Parked: <span id="parked">0</span></div>
+                        </div>
+                        
+                        <div id="multiplier-display">x<span id="multiplier">1</span></div>
+                        <div id="message-display"></div>
+                        <div id="controls">
+                            <strong>Controls:</strong> Arrows to drive, Space to brake, R to reset, P to pause
+                        </div>
+                    </div>
+
+                    <script>
+                        // Game variables
+                        const gameContainer = document.getElementById('game-container');
+                        const parkingLot = document.getElementById('parking-lot');
+                        const scoreDisplay = document.getElementById('score');
+                        const levelDisplay = document.getElementById('level');
+                        const timeDisplay = document.getElementById('time');
+                        const parkedDisplay = document.getElementById('parked');
+                        const multiplierDisplay = document.getElementById('multiplier-display');
+                        const multiplierValue = document.getElementById('multiplier');
+                        const messageDisplay = document.getElementById('message-display');
+                        
+                        const gameWidth = gameContainer.offsetWidth;
+                        const gameHeight = gameContainer.offsetHeight;
+                        
+                        let score = 0;
+                        let level = 1;
+                        let parkedCount = 0;
+                        let multiplier = 1;
+                        let timeLeft = 60;
+                        let gameActive = true;
+                        let isPaused = false;
+                        let gameLoopId;
+                        let trafficInterval;
+                        let powerUpInterval;
+                        let timer;
+                        
+                        // Car variables
+                        const playerCar = document.createElement('div');
+                        playerCar.id = 'player-car';
+                        parkingLot.appendChild(playerCar);
+                        
+                        let carX = 100;
+                        let carY = gameHeight - 150;
+                        let carAngle = 0;
+                        let carSpeed = 0;
+                        let carRotationSpeed = 0;
+                        let isInvincible = false;
+                        let isTimeFrozen = false;
+                        
+                        // Physics constants
+                        const ACCELERATION = 0.1;
+                        const DECELERATION = 0.2;
+                        const MAX_SPEED = 4;
+                        const ROTATION_SPEED = 0.06;
+                        const FRICTION = 0.96;
+                        
+                        // Game objects
+                        let parkingSpots = [];
+                        let obstacles = [];
+                        let trafficCars = [];
+                        let powerUps = [];
+                        let oneWayRoads = [];
+                        let currentTarget = null;
+                        
+                        // Initialize game
+                        initGame();
+                        
+                        // Game loop
+                        function gameLoop() {
+                            if (!gameActive || isPaused) return;
+                            
+                            // Apply physics
+                            updateCarPhysics();
+                            updateCarPosition();
+                            updateTrafficCars();
+                            checkParking();
+                            checkPowerUpCollision();
+                            
+                            gameLoopId = requestAnimationFrame(gameLoop);
+                        }
+                        
+                        function updateCarPhysics() {
+                            // Apply friction
+                            carSpeed *= FRICTION;
+                            carRotationSpeed *= FRICTION;
+                            
+                            // Stop if speed is very low
+                            if (Math.abs(carSpeed) < 0.01) carSpeed = 0;
+                            if (Math.abs(carRotationSpeed) < 0.01) carRotationSpeed = 0;
+                            
+                            // Update angle
+                            carAngle += carRotationSpeed;
+                            
+                            // Calculate movement
+                            const moveX = Math.sin(carAngle) * carSpeed;
+                            const moveY = -Math.cos(carAngle) * carSpeed;
+                            
+                            // Check collisions before moving
+                            const newX = carX + moveX;
+                            const newY = carY + moveY;
+                            
+                            if (!checkCollision(newX, newY)) {
+                                carX = newX;
+                                carY = newY;
+                                
+                                // Keep car within bounds
+                                const carWidth = Math.abs(Math.sin(carAngle) * 100) + Math.abs(Math.cos(carAngle) * 60);
+                                const carHeight = Math.abs(Math.cos(carAngle) * 100) + Math.abs(Math.sin(carAngle) * 60);
+                                
+                                carX = Math.max(carWidth/2, Math.min(gameWidth - carWidth/2, carX));
+                                carY = Math.max(carHeight/2, Math.min(gameHeight - carHeight/2, carY));
+                            } else if (!isInvincible) {
+                                // Collision - bounce back
+                                carSpeed = -carSpeed * 0.4;
+                                showMessage('Collision!', 500);
+                            }
+                        }
+                        
+                        function initGame() {
+                            // Clear previous game
+                            parkingLot.innerHTML = '';
+                            parkingLot.appendChild(playerCar);
+                            parkingSpots = [];
+                            obstacles = [];
+                            trafficCars = [];
+                            powerUps = [];
+                            oneWayRoads = [];
+                            
+                            // Reset car
+                            resetCar();
+                            
+                            // Reset game state
+                            isInvincible = false;
+                            isTimeFrozen = false;
+                            multiplier = 1;
+                            updateMultiplierDisplay();
+                            
+                            // Create environment
+                            createEnvironment();
+                            
+                            // Set initial target
+                            setNewTarget();
+                            
+                            // Start timer
+                            timeLeft = Math.max(30, 60 - Math.floor(level / 3) * 10);
+                            updateTimerDisplay();
+                            clearInterval(timer);
+                            if (!isTimeFrozen) {
+                                timer = setInterval(updateTimer, 1000);
+                            }
+                            
+                            // Start traffic
+                            clearInterval(trafficInterval);
+                            trafficInterval = setInterval(addTrafficCar, 3000 - Math.min(2500, level * 100));
+                            
+                            // Start power-ups
+                            clearInterval(powerUpInterval);
+                            powerUpInterval = setInterval(addPowerUp, 10000);
+                            
+                            // Start game loop
+                            gameActive = true;
+                            isPaused = false;
+                            cancelAnimationFrame(gameLoopId);
+                            gameLoop();
+                        }
+                        
+                        function resetCar() {
+                            carX = 100;
+                            carY = gameHeight - 150;
+                            carAngle = 0;
+                            carSpeed = 0;
+                            carRotationSpeed = 0;
+                            updateCarPosition();
+                        }
+                        
+                        function createEnvironment() {
+                            // Add grass background
+                            const grass = document.createElement('div');
+                            grass.className = 'grass';
+                            grass.style.width = gameWidth + 'px';
+                            grass.style.height = gameHeight + 'px';
+                            parkingLot.appendChild(grass);
+                            
+                            // Create procedural level based on level number
+                            const rows = 3 + Math.floor(level / 3);
+                            const cols = 3 + Math.floor(level / 3);
+                            const cellWidth = gameWidth / (cols + 2);
+                            const cellHeight = gameHeight / (rows + 2);
+                            
+                            // Create grid roads
+                            for (let i = 1; i <= cols; i++) {
+                                addRoad(i * cellWidth, cellHeight, 30, gameHeight - 2*cellHeight);
+                                
+                                // Add one-way roads randomly
+                                if (level > 3 && Math.random() > 0.7) {
+                                    const direction = Math.random() > 0.5 ? '→' : '←';
+                                    addOneWayRoad(i * cellWidth + 15, gameHeight/2, direction);
+                                }
+                            }
+                            for (let i = 1; i <= rows; i++) {
+                                addRoad(cellWidth, i * cellHeight, gameWidth - 2*cellWidth, 30);
+                                
+                                // Add one-way roads randomly
+                                if (level > 3 && Math.random() > 0.7) {
+                                    const direction = Math.random() > 0.5 ? '↑' : '↓';
+                                    addOneWayRoad(gameWidth/2, i * cellHeight + 15, direction);
+                                }
+                            }
+                            
+                            // Add parking spots
+                            for (let i = 1; i <= cols; i++) {
+                                for (let j = 1; j <= rows; j++) {
+                                    if (Math.random() > 0.3 || (i === 1 && j === 1)) {
+                                        const direction = Math.floor(Math.random() * 4) * Math.PI/2;
+                                        addParkingSpot(
+                                            i * cellWidth + (direction % Math.PI === 0 ? -120 : 30),
+                                            j * cellHeight + (direction % Math.PI === Math.PI/2 ? -120 : 30),
+                                            direction
+                                        );
+                                    }
+                                }
+                            }
+                            
+                            // Add obstacles
+                            const obstacleCount = Math.min(10, Math.floor(level / 2) + 2);
+                            for (let i = 0; i < obstacleCount; i++) {
+                                const width = 50 + Math.random() * 100;
+                                const height = 50 + Math.random() * 100;
+                                addObstacle(
+                                    cellWidth + Math.random() * (gameWidth - 2*cellWidth - width),
+                                    cellHeight + Math.random() * (gameHeight - 2*cellHeight - height),
+                                    width,
+                                    height
+                                );
+                            }
+                            
+                            // Add moving obstacles for higher levels
+                            if (level > 5) {
+                                const movingObstacleCount = Math.min(3, Math.floor(level / 5));
+                                for (let i = 0; i < movingObstacleCount; i++) {
+                                    addMovingObstacle();
+                                }
+                            }
+                        }
+                        
+                        function addRoad(x, y, width, height) {
+                            const road = document.createElement('div');
+                            road.className = 'road';
+                            road.style.left = x + 'px';
+                            road.style.top = y + 'px';
+                            road.style.width = width + 'px';
+                            road.style.height = height + 'px';
+                            parkingLot.appendChild(road);
+                        }
+                        
+                        function addOneWayRoad(x, y, direction) {
+                            const oneWay = document.createElement('div');
+                            oneWay.className = 'one-way';
+                            oneWay.style.left = (x - 15) + 'px';
+                            oneWay.style.top = (y - 15) + 'px';
+                            oneWay.style.width = '30px';
+                            oneWay.style.height = '30px';
+                            oneWay.textContent = direction;
+                            oneWay.style.backgroundColor = direction === '→' || direction === '←' ? 
+                                'rgba(52, 152, 219, 0.7)' : 'rgba(155, 89, 182, 0.7)';
+                            parkingLot.appendChild(oneWay);
+                            oneWayRoads.push({x, y, direction, element: oneWay});
+                        }
+                        
+                        function addParkingSpot(x, y, direction) {
+                            const spot = document.createElement('div');
+                            spot.className = 'parking-spot';
+                            spot.style.left = x + 'px';
+                            spot.style.top = y + 'px';
+                            
+                            // Adjust size based on direction
+                            if (direction % Math.PI === 0) { // horizontal
+                                spot.style.width = '100px';
+                                spot.style.height = '60px';
+                            } else { // vertical
+                                spot.style.width = '60px';
+                                spot.style.height = '100px';
+                            }
+                            
+                            spot.dataset.x = x;
+                            spot.dataset.y = y;
+                            spot.dataset.direction = direction;
+                            spot.dataset.occupied = 'false';
+                            
+                            parkingLot.appendChild(spot);
+                            parkingSpots.push(spot);
+                        }
+                        
+                        function addObstacle(x, y, width, height) {
+                            const obstacle = document.createElement('div');
+                            obstacle.className = 'obstacle';
+                            obstacle.style.left = x + 'px';
+                            obstacle.style.top = y + 'px';
+                            obstacle.style.width = width + 'px';
+                            obstacle.style.height = height + 'px';
+                            parkingLot.appendChild(obstacle);
+                            obstacles.push({x, y, width, height, element: obstacle});
+                        }
+                        
+                        function addMovingObstacle() {
+                            const width = 60 + Math.random() * 60;
+                            const height = 60 + Math.random() * 60;
+                            const x = 100 + Math.random() * (gameWidth - 200 - width);
+                            const y = 100 + Math.random() * (gameHeight - 200 - height);
+                            const speedX = (Math.random() - 0.5) * 2;
+                            const speedY = (Math.random() - 0.5) * 2;
+                            
+                            const obstacle = document.createElement('div');
+                            obstacle.className = 'obstacle moving';
+                            obstacle.style.left = x + 'px';
+                            obstacle.style.top = y + 'px';
+                            obstacle.style.width = width + 'px';
+                            obstacle.style.height = height + 'px';
+                            parkingLot.appendChild(obstacle);
+                            
+                            const movingObstacle = {
+                                x, y, width, height, 
+                                speedX, speedY,
+                                element: obstacle
+                            };
+                            
+                            obstacles.push(movingObstacle);
+                            return movingObstacle;
+                        }
+                        
+                        function addTrafficCar() {
+                            if (trafficCars.length >= 3 + Math.floor(level / 2)) return;
+                            
+                            const patterns = ['horizontal', 'vertical', 'circular'];
+                            const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                            
+                            let x, y, angle, speedX, speedY;
+                            
+                            switch(pattern) {
+                                case 'horizontal':
+                                    y = 150 + Math.random() * (gameHeight - 300);
+                                    x = Math.random() > 0.5 ? -100 : gameWidth + 100;
+                                    angle = x < 0 ? 0 : Math.PI;
+                                    speedX = x < 0 ? 2 : -2;
+                                    speedY = 0;
+                                    break;
+                                case 'vertical':
+                                    x = 150 + Math.random() * (gameWidth - 300);
+                                    y = Math.random() > 0.5 ? -100 : gameHeight + 100;
+                                    angle = y < 0 ? Math.PI/2 : -Math.PI/2;
+                                    speedX = 0;
+                                    speedY = y < 0 ? 2 : -2;
+                                    break;
+                                case 'circular':
+                                    x = gameWidth/2 + (Math.random() > 0.5 ? -200 : 200);
+                                    y = gameHeight/2 + (Math.random() > 0.5 ? -200 : 200);
+                                    angle = Math.random() * Math.PI * 2;
+                                    speedX = (Math.random() - 0.5) * 3;
+                                    speedY = (Math.random() - 0.5) * 3;
+                                    break;
+                            }
+                            
+                            const trafficCar = document.createElement('div');
+                            trafficCar.className = 'traffic-car';
+                            trafficCar.style.left = x + 'px';
+                            trafficCar.style.top = y + 'px';
+                            trafficCar.style.transform = \`rotate(\${angle}rad)\`;
+                            parkingLot.appendChild(trafficCar);
+                            
+                            trafficCars.push({
+                                x, y, angle, speedX, speedY, 
+                                element: trafficCar,
+                                pattern
+                            });
+                        }
+                        
+                        function addPowerUp() {
+                            if (powerUps.length >= 2 || !gameActive) return;
+                            
+                            const types = ['time', 'invincible', 'multiplier'];
+                            const type = types[Math.floor(Math.random() * types.length)];
+                            let color, symbol;
+                            
+                            switch(type) {
+                                case 'time':
+                                    color = '#3498db';
+                                    symbol = '⏱️';
+                                    break;
+                                case 'invincible':
+                                    color = '#f1c40f';
+                                    symbol = '🛡️';
+                                    break;
+                                case 'multiplier':
+                                    color = '#9b59b6';
+                                    symbol = '✨';
+                                    break;
+                            }
+                            
+                            const x = 100 + Math.random() * (gameWidth - 200);
+                            const y = 100 + Math.random() * (gameHeight - 200);
+                            
+                            const powerUp = document.createElement('div');
+                            powerUp.className = 'power-up';
+                            powerUp.style.left = x + 'px';
+                            powerUp.style.top = y + 'px';
+                            powerUp.style.backgroundColor = color;
+                            powerUp.textContent = symbol;
+                            parkingLot.appendChild(powerUp);
+                            
+                            powerUps.push({
+                                x, y, type, symbol, color,
+                                element: powerUp,
+                                createdAt: Date.now()
+                            });
+                            
+                            // Remove power-up after 10 seconds if not collected
+                            setTimeout(() => {
+                                if (powerUp.parentNode) {
+                                    powerUp.remove();
+                                    powerUps = powerUps.filter(p => p.element !== powerUp);
+                                }
+                            }, 10000);
+                        }
+                        
+                        function updateTrafficCars() {
+                            trafficCars.forEach((car, index) => {
+                                // Update position based on pattern
+                                switch(car.pattern) {
+                                    case 'horizontal':
+                                        car.x += car.speedX;
+                                        if (car.x < -150 || car.x > gameWidth + 150) {
+                                            car.element.remove();
+                                            trafficCars.splice(index, 1);
+                                            return;
+                                        }
+                                        break;
+                                    case 'vertical':
+                                        car.y += car.speedY;
+                                        if (car.y < -150 || car.y > gameHeight + 150) {
+                                            car.element.remove();
+                                            trafficCars.splice(index, 1);
+                                            return;
+                                        }
+                                        break;
+                                    case 'circular':
+                                        car.x += car.speedX;
+                                        car.y += car.speedY;
+                                        
+                                        // Bounce off walls
+                                        if (car.x < 50 || car.x > gameWidth - 50) {
+                                            car.speedX = -car.speedX;
+                                            car.angle = -car.angle;
+                                        }
+                                        if (car.y < 50 || car.y > gameHeight - 50) {
+                                            car.speedY = -car.speedY;
+                                            car.angle = Math.PI - car.angle;
+                                        }
+                                        break;
+                                }
+                                
+                                // Update element position
+                                car.element.style.left = car.x + 'px';
+                                car.element.style.top = car.y + 'px';
+                                car.element.style.transform = \`rotate(\${car.angle}rad)\`;
+                                
+                                // Add to obstacles for collision detection
+                                if (!obstacles.some(o => o.element === car.element)) {
+                                    obstacles.push({
+                                        x: car.x, y: car.y, 
+                                        width: 60, height: 100,
+                                        element: car.element
+                                    });
+                                }
+                            });
+                        }
+                        
+                        function updateCarPosition() {
+                            playerCar.style.left = (carX - 30) + 'px';
+                            playerCar.style.top = (carY - 50) + 'px';
+                            playerCar.style.transform = \`rotate(\${carAngle}rad)\`;
+                            
+                            // Apply invincibility effect
+                            if (isInvincible) {
+                                const pulseValue = 0.5 + 0.5 * Math.sin(Date.now() / 200);
+                                playerCar.style.boxShadow = \`0 0 20px \${pulseValue * 10}px gold\`;
+                                playerCar.style.opacity = \`\${0.7 + pulseValue * 0.3}\`;
+                            } else {
+                                playerCar.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+                                playerCar.style.opacity = '1';
+                            }
+                        }
+                        
+                        function setNewTarget() {
+                            // Reset all spots
+                            parkingSpots.forEach(spot => {
+                                spot.style.backgroundColor = '#34495e';
+                                spot.dataset.occupied = 'false';
+                            });
+                            
+                            // Find available spots
+                            const availableSpots = parkingSpots.filter(spot => spot.dataset.occupied === 'false');
+                            if (availableSpots.length === 0) {
+                                levelComplete();
+                                return;
+                            }
+                            
+                            // Select random target
+                            currentTarget = availableSpots[Math.floor(Math.random() * availableSpots.length)];
+                            currentTarget.style.backgroundColor = '#2ecc71';
+                            currentTarget.style.boxShadow = '0 0 15px rgba(46, 204, 113, 0.7)';
+                        }
+                        
+                        function checkParking() {
+                            if (!currentTarget || !gameActive) return;
+                            
+                            const spotX = parseFloat(currentTarget.dataset.x) + (currentTarget.offsetWidth / 2);
+                            const spotY = parseFloat(currentTarget.dataset.y) + (currentTarget.offsetHeight / 2);
+                            const spotDirection = parseFloat(currentTarget.dataset.direction);
+                            
+                            // Car center
+                            const carCenterX = carX;
+                            const carCenterY = carY;
+                            
+                            // Check position
+                            const positionMatch = 
+                                Math.abs(carCenterX - spotX) < 40 && 
+                                Math.abs(carCenterY - spotY) < 40;
+                            
+                            // Check direction
+                            const directionDiff = Math.abs(carAngle - spotDirection);
+                            const directionMatch = directionDiff < 0.2 || directionDiff > Math.PI*2 - 0.2;
+                            
+                            // Check speed
+                            const speedMatch = Math.abs(carSpeed) < 0.5;
+                            
+                            if (positionMatch && directionMatch && speedMatch) {
+                                // Successful parking
+                                const pointsEarned = 100 * level * multiplier;
+                                score += pointsEarned;
+                                parkedCount++;
+                                scoreDisplay.textContent = score;
+                                parkedDisplay.textContent = parkedCount;
+                                
+                                currentTarget.dataset.occupied = 'true';
+                                currentTarget.style.backgroundColor = '#e74c3c';
+                                currentTarget.style.boxShadow = '0 0 15px rgba(231, 76, 60, 0.7)';
+                                
+                                showMessage(\`Perfect! +\${pointsEarned} points\`, 1000);
+                                setTimeout(setNewTarget, 1500);
+                                
+                                // Increase multiplier for consecutive parks
+                                if (multiplier < 5) {
+                                    multiplier += 0.2;
+                                    updateMultiplierDisplay();
+                                }
+                            }
+                        }
+                        
+                        function checkPowerUpCollision() {
+                            powerUps.forEach((powerUp, index) => {
+                                // Calculate distance between car and power-up
+                                const dx = carX - (powerUp.x + 20);
+                                const dy = carY - (powerUp.y + 20);
+                                const distance = Math.sqrt(dx * dx + dy * dy);
+                                
+                                if (distance < 50) { // Collision detected
+                                    // Apply power-up effect
+                                    switch(powerUp.type) {
+                                        case 'time':
+                                            timeLeft += 15;
+                                            updateTimerDisplay();
+                                            showMessage('+15 seconds!', 1000);
+                                            break;
+                                        case 'invincible':
+                                            isInvincible = true;
+                                            showMessage('Invincible!', 1000);
+                                            setTimeout(() => {
+                                                isInvincible = false;
+                                                showMessage('Invincibility ended', 1000);
+                                            }, 10000);
+                                            break;
+                                        case 'multiplier':
+                                            multiplier = Math.min(5, multiplier + 1);
+                                            updateMultiplierDisplay();
+                                            showMessage(\`Multiplier x\${multiplier}\`, 1000);
+                                            break;
+                                    }
+                                    
+                                    // Remove power-up
+                                    powerUp.element.remove();
+                                    powerUps.splice(index, 1);
+                                }
+                            });
+                        }
+                        
+                        function checkCollision(x, y) {
+                            // Car dimensions
+                            const carWidth = Math.abs(Math.sin(carAngle) * 100) + Math.abs(Math.cos(carAngle) * 60);
+                            const carHeight = Math.abs(Math.cos(carAngle) * 100) + Math.abs(Math.sin(carAngle) * 60);
+                            
+                            // Boundary check
+                            if (x - carWidth/2 < 0 || x + carWidth/2 > gameWidth ||
+                                y - carHeight/2 < 0 || y + carHeight/2 > gameHeight) {
+                                return true;
+                            }
+                            
+                            // One-way road check
+                            for (const oneWay of oneWayRoads) {
+                                const dx = x - oneWay.x;
+                                const dy = y - oneWay.y;
+                                const distance = Math.sqrt(dx * dx + dy * dy);
+                                
+                                if (distance < 30) {
+                                    const carDirection = Math.atan2(Math.sin(carAngle), Math.cos(carAngle));
+                                    let allowedDirection;
+                                    
+                                    switch(oneWay.direction) {
+                                        case '→': allowedDirection = 0; break;
+                                        case '←': allowedDirection = Math.PI; break;
+                                        case '↑': allowedDirection = Math.PI/2; break;
+                                        case '↓': allowedDirection = -Math.PI/2; break;
+                                    }
+                                    
+                                    const angleDiff = Math.abs(carDirection - allowedDirection);
+                                    if (angleDiff > 0.5 && angleDiff < Math.PI*2 - 0.5) {
+                                        showMessage('Wrong way!', 500);
+                                        return true;
+                                    }
+                                }
+                            }
+                            
+                            // Obstacle check
+                            for (const obstacle of obstacles) {
+                                if (x - carWidth/2 < obstacle.x + obstacle.width &&
+                                    x + carWidth/2 > obstacle.x &&
+                                    y - carHeight/2 < obstacle.y + obstacle.height &&
+                                    y + carHeight/2 > obstacle.y) {
+                                    return true;
+                                }
+                            }
+                            
+                            return false;
+                        }
+                        
+                        function updateMultiplierDisplay() {
+                            if (multiplier > 1) {
+                                multiplierDisplay.style.display = 'block';
+                                multiplierValue.textContent = multiplier.toFixed(1);
+                            } else {
+                                multiplierDisplay.style.display = 'none';
+                            }
+                        }
+                        
+                        function showMessage(text, duration) {
+                            messageDisplay.textContent = text;
+                            messageDisplay.style.display = 'block';
+                            
+                            setTimeout(() => {
+                                messageDisplay.style.display = 'none';
+                            }, duration);
+                        }
+                        
+                        function updateTimer() {
+                            if (!isTimeFrozen) {
+                                timeLeft--;
+                                updateTimerDisplay();
+                                
+                                if (timeLeft <= 0) {
+                                    gameOver();
+                                }
+                            }
+                        }
+                        
+                        function updateTimerDisplay() {
+                            timeDisplay.textContent = timeLeft;
+                            timeDisplay.style.color = timeLeft <= 10 ? '#e74c3c' : 'white';
+                        }
+                        
+                        function levelComplete() {
+                            gameActive = false;
+                            clearInterval(timer);
+                            clearInterval(trafficInterval);
+                            clearInterval(powerUpInterval);
+                            
+                            const timeBonus = timeLeft * 5 * multiplier;
+                            score += timeBonus;
+                            scoreDisplay.textContent = score;
+                            
+                            showMessage(
+                                \`Level \${level} Complete! Time Bonus: +\${timeBonus}\nNext level loading...\`, 
+                                3000
+                            );
+                            
+                            setTimeout(() => {
+                                level++;
+                                levelDisplay.textContent = level;
+                                initGame();
+                            }, 3500);
+                        }
+                        
+                        function gameOver() {
+                            gameActive = false;
+                            clearInterval(timer);
+                            clearInterval(trafficInterval);
+                            clearInterval(powerUpInterval);
+                            cancelAnimationFrame(gameLoopId);
+                            
+                            showMessage(
+                                \`Game Over! Final Score: \${score}\nParked: \${parkedCount} times\nPress R to restart\`, 
+                                999999
+                            );
+                        }
+                        
+                      function togglePause() {
+    isPaused = !isPaused;
+    
+    if (isPaused) {
+        clearInterval(timer);
+        cancelAnimationFrame(gameLoopId);
+        showMessage('PAUSED', 999999);
+    } else {
+        showMessage('', 0); // Clear pause message
+        if (!isTimeFrozen) {
+            timer = setInterval(updateTimer, 1000);
+        }
+        gameLoop();
+    }
+}
+    // Keyboard controls
+const keys = {
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false,
+    ' ': false
+};
+
+window.addEventListener('keydown', (e) => {
+    if (e.key in keys) {
+        keys[e.key] = true;
+        e.preventDefault();
+    }
+    
+    // Reset car
+    if (e.key.toLowerCase() === 'r') {
+        resetCar();
+    }
+    
+    // Pause game
+    if (e.key.toLowerCase() === 'p') {
+        togglePause();
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+    if (e.key in keys) {
+        keys[e.key] = false;
+        e.preventDefault();
+    }
+});
+
+// Process controls in game loop
+function processControls() {
+    if (keys.ArrowUp) {
+        carSpeed = Math.min(carSpeed + ACCELERATION, MAX_SPEED);
+    }
+    if (keys.ArrowDown) {
+        carSpeed = Math.max(carSpeed - ACCELERATION, -MAX_SPEED * 0.7); // Reverse is slower
+    }
+    if (keys[' ']) { // Brake
+        carSpeed *= 0.9; // Quick deceleration
+    }
+    if (keys.ArrowLeft) {
+        carRotationSpeed = -ROTATION_SPEED * (Math.abs(carSpeed) > 0.5 ? 1 : 0.5);
+    }
+    if (keys.ArrowRight) {
+        carRotationSpeed = ROTATION_SPEED * (Math.abs(carSpeed) > 0.5 ? 1 : 0.5);
+    }
+}
+
+function gameLoop() {
+    if (!gameActive || isPaused) return;
+    
+    // Process keyboard inputs
+    processControls();
+    
+    // Apply physics
+    updateCarPhysics();
+    updateCarPosition();
+    updateTrafficCars();
+    checkParking();
+    checkPowerUpCollision();
+    
+    gameLoopId = requestAnimationFrame(gameLoop);
+}
+
+// Game variables
+const gameContainer = document.getElementById('game-container');
+const parkingLot = document.getElementById('parking-lot');
+const scoreDisplay = document.getElementById('score');
+const levelDisplay = document.getElementById('level');
+const timeDisplay = document.getElementById('time');
+const parkedDisplay = document.getElementById('parked');
+const multiplierDisplay = document.getElementById('multiplier-display');
+const multiplierValue = document.getElementById('multiplier');
+const messageDisplay = document.getElementById('message-display');
+
+const gameWidth = gameContainer.offsetWidth;
+const gameHeight = gameContainer.offsetHeight;
+
+let score = 0;
+let level = 1;
+let parkedCount = 0;
+let multiplier = 1;
+let timeLeft = 60;
+let gameActive = true;
+let isPaused = false;
+let gameLoopId;
+let trafficInterval;
+let powerUpInterval;
+let timer;
+
+// Car variables
+const playerCar = document.createElement('div');
+playerCar.id = 'player-car';
+parkingLot.appendChild(playerCar);
+
+let carX = 100;
+let carY = gameHeight - 150;
+let carAngle = 0;
+let carSpeed = 0;
+let carRotationSpeed = 0;
+let isInvincible = false;
+let isTimeFrozen = false;
+
+// Physics constants
+const ACCELERATION = 0.1;
+const DECELERATION = 0.2;
+const MAX_SPEED = 4;
+const ROTATION_SPEED = 0.06;
+const FRICTION = 0.96;
+
+// Game objects
+let parkingSpots = [];
+let obstacles = [];
+let trafficCars = [];
+let powerUps = [];
+let oneWayRoads = [];
+let currentTarget = null;
+
+// Initialize game
+initGame();
+
+// Keyboard controls
+const keys = {
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false,
+    ' ': false
+};
+
+// Event listeners for keyboard controls
+window.addEventListener('keydown', (e) => {
+    if (e.key in keys) {
+        keys[e.key] = true;
+        e.preventDefault();
+    }
+    
+    // Reset car
+    if (e.key.toLowerCase() === 'r') {
+        resetCar();
+    }
+    
+    // Pause game
+    if (e.key.toLowerCase() === 'p') {
+        togglePause();
+    }
+    
+    // Restart game when game over
+    if (!gameActive && e.key.toLowerCase() === 'r') {
+        initGame();
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+    if (e.key in keys) {
+        keys[e.key] = false;
+        e.preventDefault();
+    }
+});
+
+// Process keyboard inputs
+function processControls() {
+    if (keys.ArrowUp) {
+        carSpeed = Math.min(carSpeed + ACCELERATION, MAX_SPEED);
+    }
+    if (keys.ArrowDown) {
+        carSpeed = Math.max(carSpeed - ACCELERATION, -MAX_SPEED * 0.7); // Reverse is slower
+    }
+    if (keys[' ']) { // Brake
+        carSpeed *= 0.9; // Quick deceleration
+    }
+    if (keys.ArrowLeft) {
+        carRotationSpeed = -ROTATION_SPEED * (Math.abs(carSpeed) > 0.5 ? 1 : 0.5);
+    }
+    if (keys.ArrowRight) {
+        carRotationSpeed = ROTATION_SPEED * (Math.abs(carSpeed) > 0.5 ? 1 : 0.5);
+    }
+}
+
+// Main game loop
+function gameLoop() {
+    if (!gameActive || isPaused) return;
+    
+    // Process keyboard inputs
+    processControls();
+    
+    // Apply physics
+    updateCarPhysics();
+    updateCarPosition();
+    updateTrafficCars();
+    checkParking();
+    checkPowerUpCollision();
+    
+    gameLoopId = requestAnimationFrame(gameLoop);
+}
+
+// Toggle pause state
+function togglePause() {
+    isPaused = !isPaused;
+    
+    if (isPaused) {
+        clearInterval(timer);
+        cancelAnimationFrame(gameLoopId);
+        showMessage('PAUSED', 999999);
+    } else {
+        showMessage('', 0); // Clear pause message
+        if (!isTimeFrozen) {
+            timer = setInterval(updateTimer, 1000);
+        }
+        gameLoop();
+    }
+}
+
+// Start the game loop
+gameLoop();
+
+                    `}
+<html>

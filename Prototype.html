@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // Function declaration
+        function addNumbers(a, b) {
+            return a + b;
+        }
+        
+        // Function call
+        console.log(addNumbers(5, 10)); // Output: 15
+        
+        // Function expression
+        var subtractNumbers = function(a, b) {
+            return a - b;
+        }
+        
+        // Function call
+        console.log(subtractNumbers(15, 10)); // Output: 5
+        
+        // Arrow function
+        var multiplyNumbers = (a, b) => a * b;
+        
+        // Function call
+        console.log(multiplyNumbers(3, 5)); // Output: 15
+        
+        // Immediately Invoked Function Expression (IIFE)
+        (function(message) {
+            console.log(message); // Output: Hello, World!
+        })("Hello, World!");
+        
+        // Function hoisting
+        console.log(greet()); // Output: Hello, World!
+        
+        function greet() {
+            console.log("Hello, World!");
+        }
+        
+        // Function hoisting with variable
+        console.log(greetMessage); // Output: undefined
+        
+        var greetMessage = "Hello, World!";
+        
+        // Function hoisting with function
+        console.log(greetWithParams("John")); // Output: Hello, John!
+        
+        function greetWithParams(name) {
+            console.log(`Hello, ${name}!`);
+        }
+        
+        // Function hoisting with nested function
+        console.log(greetWithNestedFunction()); // Output: Hello, World!
+        
+        function greetWithNestedFunction() {
+            var greetNested = function() {
+                console.log("Hello, World!");
+            }
+            greetNested();
+        }
+        
+        // Function hoisting with arrow function
+        console.log(greetWithArrowFunction()); // Output: Hello, World!
+        
+        var greetWithArrowFunction = () => console.log("Hello, World!");
+        
+        // Function hoisting with class
+        console.log(new Greeter().greet()); // Output: Hello, World!
+        
+        class Greeter {
+            greet() {
+                console.log("Hello, World!");
+            }
+        }
+        
+        // Function hoisting with generator function
+        console.log(greetWithGeneratorFunction().next().value); // Output: Hello, World!
+        
+        function* greetWithGeneratorFunction() {
+            yield "Hello, World!";
+        }
+        
+        // Function hoisting with async function
+        console.log(await greetWithAsyncFunction()); // Output: Hello, World!
+        
+        async function greetWithAsyncFunction() {
+            return "Hello, World!";
+        }
+        
+        // Function hoisting with promise
+        console.log(greetWithPromise().then(value => console.log(value))); // Output: Hello, World!
+        
+        function greetWithPromise() {
+            return new Promise(resolve => resolve("Hello, World!"));
+        }
+
+        
+    </script>
+</body>
+</html>

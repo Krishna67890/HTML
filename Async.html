@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic of Async</title>
+</head>
+
+<body>
+    <script>
+        //Do you want to say hello after 5s an landing one the page. now can you impliment 
+        /*
+        alert("Hello");
+        
+        
+        setTimeout(() => {}, 10000)
+        
+        setInterval(() => {
+            alert("Hello");
+        }, 5000)
+        */
+        //eg: 1
+        //console.log("a");
+        //console.log("b");
+
+        //eg: 2
+        //a,b letter (2 seconds)
+
+        // eg 3
+        /*
+        console.log("a");
+        
+        setTimeout(() => {
+            console.log("b");
+        }, 2000)
+        
+        console.log("c");
+        */
+        ////////microtask queue/////////
+
+        //eg: 4
+        /*
+        console.log("a");
+        
+        setTimeout(() => {
+            console.log("b");
+        }, 0)
+        
+        console.log("c");
+        
+        //eg: 5
+        
+        console.log("Start");
+        
+        setTimeout(() => {
+          console.log("Macrotask: setTimeout");
+        }, 0);
+        
+        Promise.resolve().then(() => {
+          console.log("Microtask: Promise.then");
+        });
+        
+        queueMicrotask(() => {
+          console.log("Microtask: queueMicrotask");
+        });
+        
+        console.log("End");
+        */
+        // eg.6
+        /*
+        console.log("a");
+        
+        setTimeout(() => {
+          console.log("c");
+        }, 2000);
+        
+        console.log("b"); // 0.5s
+        console.log("c"); // 0.5s
+        console.log("d"); // 0.5s
+        console.log("e");// 0.5s
+        console.log("f");// 0.5s
+        console.log("g"); // 0.5s
+        console.log("h");// 0.5s
+        */
+
+        ////////////////algorithm of eveny loop////////////////
+        /* 1. it send the callbackfunction to the web API section.
+           2. it starts the countdown for the dalay (in the web API)
+        
+           If the countdown is 0, it calls the callback function and removes it from the queue.
+           3. If the countdown is not 0, it continues to the next event loop.
+           4. It repeats the process until there are no more callbacks to call. 
+         */
+        ////web API SECTION
+        //AS soon as the clock become zero the associated callback function is go now to browser memory to macrotask
+
+
+
+
+
+
+
+        // console.log("a")
+        /*
+         setTimeout(() => {
+             console.log("c")
+         },2000);
+        setTimeout(() => {
+             console.log("d")
+         },2000);
+         setTimeout(() => {
+            console.log("e")
+         },2000);
+        
+        
+         console.log("b")
+        */
+
+
+
+
+        ////////////////////////////////////////////////////////////////////////
+        /*
+        console.log("a");
+        
+        setTimeout(() => {
+            console.log("c");
+        }, 5000);
+        
+        setTimeout(() => {
+            console.log("d");
+        }, 2000);
+        
+        setTimeout(() => {
+            console.log("e");
+        }, 1000);
+        setTimeout(() => {
+            console.log("f");
+        }, 3000);
+        
+            console.log("b");
+        
+        */
+        ////////////////////////////////////////////////////////////////////////
+        /*
+        console.log("a");
+        
+        setTimeout(() => {
+            console.log("c");
+        }, 0);
+        
+        console.log("b") //a b c
+        
+        */
+        /*
+        const id = setTimeout(() => {
+            console.log("c");
+        }, 5000);
+        
+        console.log("id, 'id of setTimeout")
+        
+        clearTimeout(id);
+        */
+
+
+        /*
+        console.log("a");
+        const intervalId = setTimeout(() => {
+            console.log("Hello");
+        }, 2000);
+        
+        console.log("b")
+        
+        
+        setTimeout(() => {
+            clearTimeout(intervalId)
+        
+        }, 7000);
+        */
+
+        /*
+        
+        for(let i=0; i<5 ; i++){
+            setTimeout(() => {
+                console.log(i);
+            }, i * 1000);
+        }
+        
+        */
+
+        for (var i = 0; i < 5; i++) {
+            setTimeout(() => {
+                console.log(i);
+            }, i * 1000);
+        }
+
+
+        /////////////////////////PROMISES//////////////////////////////////////
+
+
+
+
+        /*
+        const promise = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve("Success");
+            }, 2000);
+        */
+
+        for (var i = 0; i < 5; i++) {
+
+            ((val) => {
+                setTimeout(() => {
+                    console.log("Hello", val);
+                }, 0);
+            })(i)
+        }
+
+        console.log("a");
+        const pokeurl = "https://pokeapi.co/api/v2/pokemon/1/"
+        costurl = "ususususuussuu"
+        const promise = fetch(url)
+
+        console.log(promise);
+        console.log("b")
+
+
+
+        fecth(pokeurl)
+            .then(response)
+        console.log(response);
+        return response.json()
+
+        return response.json()
+
+        /*    --------------------------------------------------  */
+
+        console.log("a")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* ----------------------------  */
+
+        /*------------------------- PROMISE CHAINING ---------------------------- */
+
+        const pokeUrl = "https://pokeapi.co/api/v2/pokemon/ditte";
+        console.log("A");
+
+        fetch(pokeUrl)
+            .catch(error => {
+                console.log(error, 'LEVEL 1')
+            })
+            .then((response) => {
+                console.log(response, 'LEVEL 2');
+                return response.json()
+            })
+            .then(data => {
+                console.log(data.name, 'LEVEL 3');
+                return 100;
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 4');
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 5');
+                return data;
+            })
+
+        console.log("B");
+
+        /*---------------------------------------------------------------- */
+
+
+        //-----------------------------------///eg 2//--------------------------------
+
+        console.log("A");
+        const pokeUrls = "https://pokeapi.co/api/v2/pokemon/ditto";
+
+        fecth(url)
+            .then(response => {
+                console.log(response, 'LEVEL 1');
+                return response.json()
+                return data;
+            })
+            .then((data) => {
+                console.log(data.name, 'LEVEL 2 data')
+                return data;
+            }, (error) => {
+                console.log(error, 'LEVEL 2 error')
+                return "error";
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 3 data')
+                console.log(data);
+
+                throw new Error("Krishna created this error");
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 4 data', data)
+                return 1;
+            })
+            .catch(error => {
+                console.log(error, 'LEVEL 5 error', error)
+            })
+        console.log("B");
+
+        //-----------------------------//eg 3//-----------------------------------
+
+        console.log("A");
+
+        const pokeUrlssss = "https://pokeapi.co/api/v2/pokemon/ditto";
+
+        fetch(pokeUrls)
+            .then(response => {
+                console.log(response, 'LEVEL 1');
+                return response.json(); // Correct the return syntax
+            })
+            .then(data => {
+                console.log(data.name, 'LEVEL 2 data');
+                return data; // Return the data for the next `.then()`
+            }, error => {
+                console.log(error, 'LEVEL 2 error');
+                return "error"; // Handle the error
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 3 data');
+                console.log(data);
+
+                // Explicitly throwing an error to test the catch block
+                throw new Error("Krishna created this error");
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 4 data', data);
+                return 1;
+            })
+            .then(error => {
+                console.log(data, 'LEVEL 5 data', error);
+                return 1;
+            })
+            .catch(error => {
+                console.log(error, 'LEVEL 5 error', error);
+            });
+        then(data => {
+            console.log("level 5", data);
+        })
+
+
+        console.log("B");
+
+        //-----------------------------------///eg 4//--------------------------------
+
+        console.log("A");
+
+        const pokeUrlsss = "https://pokeapi.co/api/v2/pokemon/ditto";
+
+        fetch(pokeUrls)
+            .then(response => {
+                console.log(response, 'LEVEL 1');
+                return response.json(); // Parsing JSON
+            })
+            .then(data => {
+                console.log(data.name, 'LEVEL 2 data');
+                return data; // Passing data forward
+            }, error => {
+                console.log(error, 'LEVEL 2 error');
+                return "error"; // Handle the error
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 3 data');
+                console.log(data);
+
+                // Explicitly throwing an error to test the catch block
+                throw new Error("Krishna created this error");
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 4 data');
+                return 1;
+            })
+            .catch(error => {
+                console.log(error, 'LEVEL 5 error');
+                return "Handled in catch";
+            })
+            .then(data => {
+                console.log("level 6", data); // This runs after the catch block
+            });
+
+        console.log("B");
+
+        //-----------------------------------//eg 5//-----------------------------
+
+
+        console.log("A");
+
+        const pokeUrlss = "https://pokeapi.co/api/v2/pokemon/ditto";
+
+        fetch(pokeUrls)
+            .then(response => {
+                console.log(response, 'LEVEL 1', response.status)
+                const data = response.josn();
+                return data;
+
+            })
+            .then(data => {
+                console.log(data.name, 'LEVEL 2 data');
+                throw new Error("error at lv2");
+                return 10;
+            }, (error) => {
+                console.log('level 2 error')
+                return "error";
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 3 data');
+                // Explicitly throwing an error to test the catch block
+                throw new Error("Krishna created this error");
+            })
+            .then(data => {
+                console.log(data, 'LEVEL 4 data');
+                return 1;
+            })
+            .catch(error => {
+                console.log(error, 'LEVEL 4 error');
+                return "Handled in catch";
+            })
+            .then(data => {
+                console.log("level 5", data); // This runs after the catch block
+            });
+        catchs(data => {
+            console.log("level 6", data); // This runs after the catch block
+        });
+
+        console.log("B");
+
+        //------------------------//eg 6//------------------------
+
+        const krishnaFecth = new promise((resolve, reject) => {
+            const url = "xyzURL";
+
+            setTimeout(() => {
+                const data = 21;
+
+                if (data === 20) {
+                    resolve(data)
+                } else {
+                    reject("data is currepted")
+                }
+
+
+            }, 2000)
+
+        })
+
+        console.log("hello world!");
+
+        krishnaFecth
+            .then((data) => {
+                console.log("Data fetched successfully", data)
+            })
+            .catch((error) => {
+                console.log("Error fetching data", error)
+            })
+
+        //--------------------//eg 7//--------------------
+
+
+        function myfetch(url, options) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", url, true); // Asynchronous request
+
+                // Optional: Set headers from options if provided
+                if (options && options.headers) {
+                    for (const header in options.headers) {
+                        xhr.setRequestHeader(header, options.headers[header]);
+                    }
+                }
+
+                xhr.onload = function () {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        // Simulating a response object
+                        const responseObj = {
+                            status: xhr.status,
+                            url: url,
+                            data: xhr.responseText,
+                            type: xhr.responseType,
+                            ok: true
+                        };
+                        resolve(responseObj);
+                    } else {
+                        reject(`Error: ${xhr.status} - ${xhr.statusText}`);
+                    }
+                };
+
+                xhr.onerror = function () {
+                    reject("Network error or server timeout.");
+                };
+
+                xhr.send();
+            });
+        }
+
+        // Usage Example
+        myfetch("https://jsonplaceholder.typicode.com/posts", {})
+            .then(response => console.log("Success:", response))
+            .catch(error => console.error("Error:", error));
+
+
+        //-----------------------------//eg 8//----------------
+
+        function myfetch(url, options = {}) {
+            return new Promise((res, rej) => {
+                const xhttpReq = new XMLHttpRequest();
+
+                xhttpReq.open(options.method || "GET", url);
+
+                // Set headers if provided in options
+                if (options.headers) {
+                    Object.entries(options.headers).forEach(([key, value]) => {
+                        xhttpReq.setRequestHeader(key, value);
+                    });
+                }
+
+                // Handle response
+                xhttpReq.onload = () => {
+                    const responseObj = {
+                        status: xhttpReq.status,
+                        url: url,
+                        data: xhttpReq.responseText,
+                        ok: xhttpReq.status >= 200 && xhttpReq.status < 300,
+                        json: () => Promise.resolve(JSON.parse(xhttpReq.responseText)),
+                    };
+
+                    if (responseObj.ok) {
+                        res(responseObj);
+                    } else {
+                        rej(new Error(`HTTP error: ${xhttpReq.status}`));
+                    }
+                };
+
+                // Handle network errors
+                xhttpReq.onerror = () => {
+                    rej(new Error("Network Error"));
+                };
+
+                // Handle timeout (optional)
+                xhttpReq.timeout = options.timeout || 0; // No timeout by default
+                xhttpReq.ontimeout = () => {
+                    rej(new Error("Request Timed Out"));
+                };
+
+                // Send the request with body if provided
+                xhttpReq.send(options.body || null);
+            });
+        }
+
+        // Example usage:
+        myfetch("https://pokeapi.co/api/v2/pokemon/ditto")
+            .then(response => {
+                console.log("Response:", response);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Parsed JSON:", data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+
+
+        //-----------------------//eg 9 //--------------------------------
+
+        console.log("a");
+        console.log("b");
+        async function fetchpokemon() {
+            const response = await fetch(url);
+            const data = await response.json();
+        }
+
+        //------------------//eg 10//--------------------------------
+        console.log("a");
+        console.log("b");
+
+        async function fetchpokemon() {
+            const url = "http://pokeapi.co/api/v2/pokemon/ditto";
+            const response = await fetch(url);
+            const data = await response.json();
+            console.log(data, 'data by async await');
+
+        }
+
+        fetchpokemon();
+
+        //-----------------------------//eg 11//-----------------------------
+
+        const url = "http://api.kanye.rest/";
+
+        fetch(url)
+            .then(response => {
+                return response.json();
+
+            })
+            .then(data => {
+                console.log(data, 'lv2')
+
+                const containerElement = document.createElementById('container');
+                containerElement.innerText = quote;
+            })
+            .catch(error => {
+                console.log(error, 'lv3');
+            })
+
+        async function fetchKanyeQuote() {
+            const url = "https://api.kanye.rest/";
+            const response = await fetch(url);
+            const data = await response.json();
+            const { quote } = data;
+            return quote;
+        }
+
+        function displayQuotes(Quote) {
+            const containerElement = document.createElementById('container');
+            containerElement.innerText = quote;
+        }
+        function main() {
+            const quote = fetchkanyeQuote();
+            displayQuotes(quote);
+        }
+        main();
+
+
+        //------------------------//Promise creation//------------------------
+
+
+
+
+        //------------------------//Async Await repeat//------------------------
+
+        const urls = "https://api.kanye.rest/";
+
+        fetch(url)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                console.log(data, 'lv2')
+
+                const quote = data.quote;
+
+                const containerElement = document.getElementById('container');
+                containerElement.innerText = quote;
+
+            })
+            .catch(error => {
+                console.log(error, 'lv3');
+            })
+
+        //----------------------------------------------------------------//    
+        async function fetchDataSequentially(url) {
+            try {
+                const lv2 = await fetch(url).then(response => response.json());
+                console.log(lv2, 'lv2');
+
+                const lv3 = await fetch(url).then(response => response.json());
+                console.log(lv3, 'lv3');
+
+                const lv4 = await fetch(url).then(response => response.json());
+                console.log(lv4, 'lv4');
+
+                const lv5 = await fetch(url).then(response => response.json());
+                console.log(lv5, 'lv5');
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Usage
+        fetchDataSequentially('https://api.kanye.rest/');
+        //----------------------------------------------------------------//
+        // eg 2 Fetch pokemon api and display : DD both promise and async-await
+        const fetchPokemonWithAsyncAwait = async (pokemonName) => {
+            const url = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch Pokémon: ${response.statusText}`);
+                }
+                const data = await response.json();
+                console.log(`Pokemon Name: ${data.name}`);
+                console.log(`Base Experience: ${data.base_experience}`);
+                console.log(`Height: ${data.height}`);
+                console.log(`Weight: ${data.weight}`);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        // Example usage
+        fetchPokemonWithAsyncAwait('pikachu');
+
+
+        //------------------------------------------------------------------//
+        const urlss = "http://pokeapi.co/api/v2/pokemon/ditto";
+
+        fetch(url)
+            .then(response => {
+                return response.json();
+
+            })
+            .then(data => {
+                console.log(data, 'lv2');
+                const quote = data.quote;
+                return quote;
+            })
+            .catch(error => {
+                console.log(error, 'lv3');
+            })
+            .then(data => {
+                const containerElement = document.getElementById('container');
+                containerElement.innerText = data;
+            })
+            .catch(error => {
+                console.log(error, 'lv4');
+            });
+
+        //----------------------------------------------------------------
+        const pokeAPUrl = ("http://pokemon.ditto");
+
+        fetch(pokeAPUrl)
+            .then(resp => {
+                const data = resp.json();
+                return data;
+            })
+            .then(data => {
+                const { name, order } = data;
+                return {
+                    name,
+                    order
+                }
+            })
+            .then(data => {
+                const { name, order } = data;
+
+                const containerElement = document.getElementById("Container");
+                containerElement.innerText = `Name: ${name} ::: Order: ${order}`;
+
+
+
+
+                //------------------------//Fetch with timeout//------------------------
+
+                async function fetchApiINfo() {
+                    const url = 'https://api.example.com/data';
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    return data;
+                }
+
+                function display(data) {
+                    const (name, order) = data;
+                    const containerElement = document.getElementById('container');
+                    containerElement.innerText = `Name: ${name} ::: Order: ${order}`;
+                }
+
+                //----------------------------------------------------------------
+
+                async function fetchApiInfo() {
+                    const url = 'https://api.example.com/data'; // Replace with the actual API URL
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`API request failed with status: ${response.status}`);
+                    }
+                    return response.json();
+                }
+
+                function display(data) {
+                    if (typeof data === 'string') {
+                        console.log(data); // For error message
+                    } else {
+                        console.log('Data received:', data); // Display the fetched data
+                    }
+                }
+
+                async function main() {
+                    try {
+                        const data = await fetchApiInfo();
+                        display(data);
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                        display('Error fetching data');
+
+                        // Retry fetch after 5 seconds
+                        setTimeout(main, 5000);
+
+                        // Additional handling if multiple retries fail
+                        fetchApiInfo().catch(() => {
+                            console.error('Failed to fetch data after multiple attempts');
+                            display('Failed to fetch data after multiple attempts');
+                        });
+                    }
+                }
+
+                // Call the main function
+                main();
+
+                //--------------------// CALL BACK Function--------------------------------
+
+                function abc(fn) {
+
+                }
+                abc(() => { })
+//----------------------------------------------------------------
+function google(task, callback) {
+    if (task === "read email") {
+        console.log("Reading emails...");
+        
+        // Simulate sending replies
+        sendReplies("Hey there, what's up?", (status) => {
+            if (status === "success") {
+                success();
+            } else {
+                failure();
+            }
+        });
+    } else {
+        console.log("Task not recognized.");
+    }
+
+    function sendReplies(message, callback) {
+        console.log(`Sending reply: "${message}"`);
+        
+        // Simulate success or failure
+        const isSuccessful = Math.random() > 0.5; // Random success or failure
+        setTimeout(() => {
+            callback(isSuccessful ? "success" : "failure");
+        }, 1000); // Simulate async behavior
+    }
+
+    function success() {
+        console.log("Reply sent successfully.");
+        mailing();
+    }
+
+    function failure() {
+        console.error("Failed to send reply.");
+    }
+
+    function mailing() {
+        console.log("Preparing to handle mail...");
+        openReplies();
+    }
+
+    function openReplies() {
+        console.log("Opening replies...");
+        // Add logic here for opening replies
+    }
+}
+
+// Example usage
+google("read email", () => {
+    console.log("Task completed.");
+});
+
+
+
+
+
+//----------------------------------------------------------------
+google("read email")
+.then("send replies")
+.then("sucess or failure")
+.then("send more emails")
+
+//---------------------///promise vs settimeout-------------------------------------------
+const promises = new Promise((res, rej) => {
+    res(1);
+},5000)
+console.log("A");
+
+setTimeout(() => {
+    console.log("C")
+}, 1000)
+
+promise.then(data => console.log(data));
+
+console.log("B")
+//----------------------------------------------------------------
+
+
+
+const promise = new Promise((res, rej) => {
+            console.log("eager promise")
+            setTimeout(() => {
+                res(1);
+            },0);
+
+        })
+
+        console.log("eager promise");
+        promise.then(data => {
+            console.loga(A);
+
+            setTimeout(() => {
+                console.log("r");
+                console.log(A);
+                let A = 2;
+                console.log(A);
+                let B = 3;
+                console.log(B);
+
+            }, timeout);
+    
+        });
+        
+
+
+
+
+    </script>
+</body>
+
+</html>

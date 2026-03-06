@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Photo and File Storage</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background-color: #f4f7fc; }
+        .container { max-width: 1000px; margin: 50px auto; padding: 30px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; color: #333; font-size: 32px; margin-bottom: 20px; }
+        .folder { margin-bottom: 20px; border-radius: 10px; overflow: hidden; border: 1px solid #ddd; background-color: #f9f9f9; }
+        .folder-name { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background-color: #007BFF; color: white; font-size: 18px; font-weight: bold; cursor: pointer; border-top-left-radius: 10px; border-top-right-radius: 10px; transition: background-color 0.3s; }
+        .folder-name:hover { background-color: #0056b3; }
+        .folder-content { display: none; padding: 15px; background-color: #f9f9f9; }
+        .image-thumb-container { display: inline-block; margin: 10px; text-align: center; }
+        .file-preview { max-width: 200px; max-height: 200px; display: block; margin: 10px auto; cursor: pointer; transition: transform 0.3s; }
+        .file-preview:hover { transform: scale(1.05); }
+        .image-buttons { display: flex; justify-content: space-between; margin-top: 8px; }
+        .image-buttons button { background-color: #007BFF; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 5px; width: 48%; }
+        .image-buttons button.remove { background-color: red; }
+        button { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 18px; width: 100%; }
+        button:hover { background-color: #218838; }
+        .add-files-btn { background-color: #f39c12; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%; text-align: center; }
+        .add-files-btn:hover { background-color: #e67e22; }
+        .file-input { display: none; }
+        /* Lightbox style */
+        .lightbox { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; }
+        .lightbox img, .lightbox video { max-width: 90%; max-height: 90%; }
+        .lightbox span { position: absolute; top: 20px; right: 20px; color: white; font-size: 30px; cursor: pointer; }
+
+        /* Fullscreen button */
+        .lightbox .fullscreen-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .lightbox .fullscreen-btn:hover {
+            background-color: #555;
+        }
+
+        /* Form Styling */
+        input[type="text"], input[type="file"] { 
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .input-wrapper { margin-bottom: 20px; }
+        .file-label { font-size: 14px; color: #333; display: block; margin-bottom: 8px; }
+        .file-input-container { margin-top: 5px; color: #888; }
+        .no-file-chosen { color: red; font-size: 14px; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            h1 { font-size: 28px; }
+            .folder-name { font-size: 16px; padding: 10px; }
+            .image-thumb-container { width: 100%; margin: 10px 0; }
+            .file-preview { max-width: 150px; max-height: 150px; }
+        }
+
+        @media (max-width: 480px) {
+            button, .add-files-btn { font-size: 16px; padding: 8px; }
+            .file-preview { max-width: 100px; max-height: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>My File Storage</h1>
+    <div class="input-wrapper">
+        <label for="folderName">Enter Folder Name:</label>
+        <input type="text" id="folderName" placeholder="Enter Folder Name" />
+    </div>
+    <div class="input-wrapper">
+        <label for="fileInput">Choose Files:</label>
+        <input type="file" id="fileInput" multiple />
+        <div class="file-input-container">
+            <span id="noFileChosen" class="no-file-chosen">No file chosen</span>
+        </div>
+    </div>
+    <button onclick="saveFiles()">Save Files</button>
+    <div id="foldersContainer"></div>
+</div>
+
+<!-- Lightbox for image and video preview -->
+<div class="lightbox" id="lightbox">
+    <span onclick="closeLightbox()">&#10006;</span>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">Full Screen</button>
+    <img id="lightbox-img" src="" alt="" />
+    <video id="lightbox-video" controls></video>
+</div>
+
+<script>
+
+    const foldersContainer = document.getElementById('foldersContainer');
+    const fileInput = document.getElementById('fileInput');
+    const noFileChosen = document.getElementById('noFileChosen');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxVideo = document.getElementById('lightbox-video');
+
+    let videoTimer; // To store the timer reference
+
+    // Show "No file chosen" if no file is selected
+    fileInput.addEventListener('change', function() {
+        if (fileInput.files.length > 0) {
+            noFileChosen.style.display = 'none';
+        } else {
+            noFileChosen.style.display = 'inline';
+        }
+    });
+
+    // Function to display all stored folders and files
+    function displayFolders() {
+        const folders = JSON.parse(localStorage.getItem('folders')) || {};
+        foldersContainer.innerHTML = '';
+        for (const folder in folders) {
+            const folderDiv = document.createElement('div');
+            folderDiv.classList.add('folder');
+            const folderNameDiv = document.createElement('div');
+            folderNameDiv.classList.add('folder-name');
+            folderNameDiv.innerHTML = `
+                ${folder} 
+                <span class="folder-toggle" onclick="toggleFolderContent('${folder}')">&#x25BC;</span>
+                <span class="folder-toggle" onclick="removeFolder('${folder}')">❌</span>
+            `;
+            const folderContentDiv = document.createElement('div');
+            folderContentDiv.classList.add('folder-content');
+            folderContentDiv.id = `folder-${folder}`;
+            folders[folder].forEach((fileData, index) => {
+                const fileDiv = document.createElement('div');
+                fileDiv.classList.add('image-thumb-container');
+                if (fileData.type === 'video') {
+                    const videoElement = document.createElement('video');
+                    videoElement.src = fileData.src;
+                    videoElement.classList.add('file-preview');
+                    videoElement.setAttribute('controls', 'true');
+                    videoElement.onclick = () => openLightbox(fileData.src, 'video');
+                    fileDiv.appendChild(videoElement);
+                } else if (fileData.type === 'image') {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = fileData.src;
+                    imgElement.classList.add('file-preview');
+                    imgElement.onclick = () => openLightbox(fileData.src, 'image');
+                    fileDiv.appendChild(imgElement);
+                }
+                const removeBtn = document.createElement('button');
+                removeBtn.innerText = 'Remove';
+                removeBtn.onclick = () => removeFile(folder, index);
+                fileDiv.appendChild(removeBtn);
+                folderContentDiv.appendChild(fileDiv);
+            });
+            folderDiv.appendChild(folderNameDiv);
+            folderDiv.appendChild(folderContentDiv);
+            foldersContainer.appendChild(folderDiv);
+        }
+    }
+
+    // Toggle folder content visibility
+    function toggleFolderContent(folderName) {
+        const folderContent = document.getElementById(`folder-${folderName}`);
+        folderContent.style.display = (folderContent.style.display === 'none') ? 'block' : 'none';
+    }
+
+    // Remove folder
+    function removeFolder(folderName) {
+        const folders = JSON.parse(localStorage.getItem('folders')) || {};
+        delete folders[folderName];
+        localStorage.setItem('folders', JSON.stringify(folders));
+        displayFolders();
+    }
+
+    // Remove file
+    function removeFile(folder, index) {
+        const folders = JSON.parse(localStorage.getItem('folders')) || {};
+        folders[folder].splice(index, 1);
+        localStorage.setItem('folders', JSON.stringify(folders));
+        displayFolders();
+    }
+
+    // Save folder and files
+    function saveFiles() {
+        const folderName = document.getElementById('folderName').value;
+        if (!folderName || !fileInput.files.length) {
+            alert('Please enter a folder name and select files.');
+            return;
+        }
+        const folders = JSON.parse(localStorage.getItem('folders')) || {};
+        if (!folders[folderName]) {
+            folders[folderName] = [];
+        }
+        for (let file of fileInput.files) {
+            const fileReader = new FileReader();
+            fileReader.onload = function(event) {
+                const fileData = {
+                    src: event.target.result,
+                    type: file.type.startsWith('image') ? 'image' : 'video'
+                };
+                folders[folderName].push(fileData);
+                localStorage.setItem('folders', JSON.stringify(folders));
+                displayFolders();
+            };
+            fileReader.readAsDataURL(file);
+        }
+    }
+
+    // Open lightbox for image or video
+    function openLightbox(src, type) {
+        lightbox.style.display = 'flex';
+        if (type === 'image') {
+            lightboxImg.src = src;
+            lightboxVideo.style.display = 'none';
+            lightboxImg.style.display = 'block';
+        } else if (type === 'video') {
+            lightboxVideo.src = src;
+            lightboxImg.style.display = 'none';
+            lightboxVideo.style.display = 'block';
+
+            // Set a timer for 3 hours (10800 seconds)
+            clearTimeout(videoTimer);
+            videoTimer = setTimeout(() => {
+                alert('The video has reached its time limit of 3 hours.');
+                lightboxVideo.pause();  // Pause the video
+            }, 10800 * 1000); // 3 hours in milliseconds
+        }
+    }
+
+    // Close lightbox
+    function closeLightbox() {
+        lightbox.style.display = 'none';
+        clearTimeout(videoTimer); // Clear the timer when lightbox is closed
+        lightboxVideo.pause();  // Pause the video when closing
+    }
+
+    // Toggle fullscreen for video
+    function toggleFullscreen() {
+        const video = lightboxVideo;
+        if (video.requestFullscreen) {
+            video.requestFullscreen();
+        } else if (video.mozRequestFullScreen) { // Firefox
+            video.mozRequestFullScreen();
+        } else if (video.webkitRequestFullscreen) { // Chrome, Safari, Opera
+            video.webkitRequestFullscreen();
+        } else if (video.msRequestFullscreen) { // IE/Edge
+            video.msRequestFullscreen();
+        }
+    }
+
+    // Initial display of folders
+    displayFolders();
+</script>
+
+</body>
+</html>

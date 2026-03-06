@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chess Master: Play vs AI or Friends</title>
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --light-square: #f0d9b5;
+      --dark-square: #b58863;
+      --highlight: rgba(255, 255, 0, 0.4);
+      --selected: rgba(170, 170, 255, 0.6);
+      --check: rgba(255, 0, 0, 0.5);
+    }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: #2c3e50; 
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    #container { 
+      max-width: 800px; 
+      margin: 20px auto; 
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    
+    h1 { 
+      text-align: center; 
+      margin: 0 0 20px;
+      color: #f1c40f;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    #mode-selector { 
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    #mode-selector button { 
+      padding: 12px 25px; 
+      font-size: 16px; 
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #3498db;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    #mode-selector button:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    #mode-selector button.active {
+      background: #f1c40f;
+      color: #2c3e50;
+    }
+    
+    .game-controls {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .game-controls button, .game-controls select {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .game-controls button {
+      background: #2ecc71;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .game-controls button:hover {
+      background: #27ae60;
+      transform: translateY(-1px);
+    }
+    
+    .game-controls button:disabled {
+      background: #7f8c8d;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .game-controls select {
+      background: white;
+      padding: 10px;
+    }
+    
+    #board-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    #board { 
+      display: grid; 
+      grid-template: repeat(8, 60px) / repeat(8, 60px); 
+      border: 3px solid #333;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .square { 
+      width: 60px; 
+      height: 60px; 
+      font-size: 40px; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .white { background: var(--light-square); }
+    .black { background: var(--dark-square); }
+    .selected { background: var(--selected); }
+    .highlight { background: var(--highlight); }
+    .check { background: var(--check); }
+    
+    .coord {
+      position: absolute;
+      font-size: 10px;
+      pointer-events: none;
+    }
+    
+    .coord.file {
+      bottom: 2px;
+      right: 4px;
+    }
+    
+    .coord.rank {
+      top: 2px;
+      left: 4px;
+    }
+    
+    #status { 
+      margin: 15px 0; 
+      font-weight: bold; 
+      font-size: 18px;
+      text-align: center;
+      min-height: 27px;
+    }
+    
+    #move-history {
+      max-height: 200px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+    
+    .move-entry {
+      padding: 5px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .move-entry:nth-child(even) {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    #multiplayer-id {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      word-break: break-all;
+      text-align: center;
+    }
+    
+    #peer-input {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      width: 200px;
+    }
+    
+    .modal {
+      display: none; 
+      position: fixed; 
+      left: 0; 
+      top: 0; 
+      width: 100vw; 
+      height: 100vh;
+      background: rgba(0,0,0,0.8); 
+      align-items: center; 
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal-box {
+      background: linear-gradient(135deg, #2c3e50, #4ca1af);
+      padding: 30px;
+      border-radius: 15px;
+      display: inline-block;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+      border: 2px solid #f1c40f;
+      max-width: 80%;
+    }
+    
+    .modal-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #f1c40f;
+    }
+    
+    .promotion-option {
+      font-size: 50px; 
+      margin: 0 15px; 
+      cursor: pointer; 
+      padding: 10px 15px; 
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+    
+    .promotion-option:hover { 
+      background: rgba(255, 255, 255, 0.2); 
+      transform: scale(1.1);
+    }
+    
+    .modal-button {
+      padding: 12px 25px;
+      margin-top: 20px;
+      background: #f1c40f;
+      color: #2c3e50;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .modal-button:hover {
+      background: #f39c12;
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 700px) {
+      #board { 
+        grid-template: repeat(8, 45px) / repeat(8, 45px); 
+      }
+      
+      .square { 
+        width: 45px; 
+        height: 45px; 
+        font-size: 30px; 
+      }
+      
+      #mode-selector {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+    
+    @media (max-width: 400px) {
+      #board { 
+        grid-template: repeat(8, 40px) / repeat(8, 40px); 
+      }
+      
+      .square { 
+        width: 40px; 
+        height: 40px; 
+        font-size: 25px; 
+      }
+      
+      .promotion-option {
+        font-size: 35px;
+        margin: 0 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="container">
+  <h1>Chess Master</h1>
+  <div id="mode-selector">
+    <button id="btn-single" class="active">Single Player</button>
+    <button id="btn-multi">Multiplayer</button>
+  </div>
+  
+  <div id="single-controls" class="game-controls">
+    <button id="new-game">New Game</button>
+    <button id="flip-board">Flip Board</button>
+    <label>AI Level: 
+      <select id="ai-level">
+        <option value="1">Easy</option>
+        <option value="2" selected>Medium</option>
+        <option value="3">Hard</option>
+      </select>
+    </label>
+  </div>
+  
+  <div id="multiplayer-controls" class="game-controls" style="display:none;">
+    <button id="new-multi">New Game</button>
+    <button id="copy-link">Copy Invite Link</button>
+    <input type="text" id="peer-input" placeholder="Paste opponent's ID">
+    <button id="connect-peer">Connect</button>
+    <div id="multiplayer-id">Your ID: <span id="peer-id"></span></div>
+    <div id="game-link"></div>
+  </div>
+  
+  <div id="status">White's turn</div>
+  
+  <div id="board-container">
+    <div id="board"></div>
+    <div id="move-history"></div>
+  </div>
+</div>
+
+<!-- Promotion Modal -->
+<div id="promotion-modal" class="modal">
+  <div class="modal-box">
+    <div class="modal-title">Promote Your Pawn</div>
+    <div id="promotion-options">
+      <span class="promotion-option" data-piece="q">♕</span>
+      <span class="promotion-option" data-piece="r">♖</span>
+      <span class="promotion-option" data-piece="b">♗</span>
+      <span class="promotion-option" data-piece="n">♘</span>
+    </div>
+  </div>
+</div>
+
+<!-- Game Over Modal -->
+<div id="game-over-modal" class="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="game-over-message">Checkmate!</div>
+    <button class="modal-button" onclick="location.reload()">Play Again</button>
+  </div>
+</div>
+
+<!-- Chess.js (move logic) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/1.0.0/chess.min.js"></script>
+<!-- PeerJS for multiplayer -->
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script>
+const boardEl = document.getElementById('board');
+const statusEl = document.getElementById('status');
+const moveHistoryEl = document.getElementById('move-history');
+const newGameBtn = document.getElementById('new-game');
+const flipBoardBtn = document.getElementById('flip-board');
+const aiLevelSel = document.getElementById('ai-level');
+const btnSingle = document.getElementById('btn-single');
+const btnMulti = document.getElementById('btn-multi');
+const singleControls = document.getElementById('single-controls');
+const multiControls = document.getElementById('multiplayer-controls');
+const newMultiBtn = document.getElementById('new-multi');
+const copyLinkBtn = document.getElementById('copy-link');
+const peerInput = document.getElementById('peer-input');
+const connectPeerBtn = document.getElementById('connect-peer');
+const peerIdSpan = document.getElementById('peer-id');
+const gameLinkDiv = document.getElementById('game-link');
+const promotionModal = document.getElementById('promotion-modal');
+const promotionOptions = document.getElementById('promotion-options');
+const gameOverModal = document.getElementById('game-over-modal');
+const gameOverMsg = document.getElementById('game-over-message');
+
+let chess = new Chess();
+let selected = null, highlights = [];
+let mode = 'single';
+let aiLevel = 2;
+let peer = null, conn = null, myColor = 'w', isMyTurn = true;
+let promotionMove = null;
+let waitingPromotion = false;
+let boardFlipped = false;
+let moveHistory = [];
+
+// Unicode for pieces
+const PIECES = {
+  'p': '♟', 'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚',
+  'P': '♙', 'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔'
+};
+
+// Initialize the board
+function initBoard() {
+  boardEl.innerHTML = '';
+  
+  // Add coordinates
+  const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+  const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+  
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const displayRow = boardFlipped ? 7 - r : r;
+      const displayCol = boardFlipped ? 7 - c : c;
+      
+      let sq = document.createElement('div');
+      sq.className = 'square ' + ((displayRow + displayCol) % 2 ? 'black' : 'white');
+      sq.dataset.row = r;
+      sq.dataset.col = c;
+      
+      // Add coordinates
+      if ((boardFlipped && r === 7) || (!boardFlipped && r === 0)) {
+        const fileCoord = document.createElement('div');
+        fileCoord.className = 'coord file';
+        fileCoord.textContent = files[displayCol];
+        sq.appendChild(fileCoord);
+      }
+      
+      if ((boardFlipped && c === 0) || (!boardFlipped && c === 7)) {
+        const rankCoord = document.createElement('div');
+        rankCoord.className = 'coord rank';
+        rankCoord.textContent = ranks[displayRow];
+        sq.appendChild(rankCoord);
+      }
+      
+      boardEl.appendChild(sq);
+    }
+  }
+}
+
+function render() {
+  let board = chess.board();
+  
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const displayRow = boardFlipped ? 7 - r : r;
+      const displayCol = boardFlipped ? 7 - c : c;
+      
+      const index = r * 8 + c;
+      const sq = boardEl.children[index];
+      
+      // Reset classes
+      sq.className = 'square ' + ((displayRow + displayCol) % 2 ? 'black' : 'white');
+      sq.innerHTML = '';
+      
+      // Add coordinates
+      if ((boardFlipped && r === 7) || (!boardFlipped && r === 0)) {
+        const fileCoord = document.createElement('div');
+        fileCoord.className = 'coord file';
+        fileCoord.textContent = String.fromCharCode(97 + displayCol);
+        sq.appendChild(fileCoord);
+      }
+      
+      if ((boardFlipped && c === 0) || (!boardFlipped && c === 7)) {
+        const rankCoord = document.createElement('div');
+        rankCoord.className = 'coord rank';
+        rankCoord.textContent = 8 - displayRow;
+        sq.appendChild(rankCoord);
+      }
+      
+      // Highlight selected square
+      if (selected && selected[0] === r && selected[1] === c) {
+        sq.classList.add('selected');
+      }
+      
+      // Add piece
+      let piece = board[r][c];
+      if (piece) {
+        const pieceEl = document.createElement('div');
+        pieceEl.textContent = PIECES[piece.color === 'w' ? piece.type.toUpperCase() : piece.type];
+        sq.appendChild(pieceEl);
+      }
+      
+      // Highlight possible moves
+      if (highlights.some(([hr, hc]) => hr === r && hc === c)) {
+        sq.classList.add('highlight');
+      }
+      
+      // Highlight king in check
+      if (chess.in_check()) {
+        const kingPos = findKing(chess.turn());
+        if (kingPos && kingPos[0] === r && kingPos[1] === c) {
+          sq.classList.add('check');
+        }
+      }
+    }
+  }
+  
+  updateStatus();
+  updateMoveHistory();
+}
+
+function findKing(color) {
+  const board = chess.board();
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const piece = board[r][c];
+      if (piece && piece.type === 'k' && piece.color === color) {
+        return [r, c];
+      }
+    }
+  }
+  return null;
+}
+
+function updateStatus() {
+  if (chess.in_checkmate()) {
+    statusEl.textContent = `Checkmate! ${chess.turn() === 'w' ? 'Black' : 'White'} wins!`;
+    showGameOver(`Checkmate! ${chess.turn() === 'w' ? 'Black' : 'White'} wins!`);
+  } 
+  else if (chess.in_draw()) {
+    let reason = 'Draw';
+    if (chess.in_stalemate()) reason = 'Stalemate';
+    else if (chess.in_threefold_repetition()) reason = 'Threefold repetition';
+    else if (chess.insufficient_material()) reason = 'Insufficient material';
+    statusEl.textContent = `${reason}!`;
+    showGameOver(`${reason}!`);
+  } 
+  else if (chess.in_check()) {
+    statusEl.textContent = `${chess.turn() === 'w' ? 'White' : 'Black'} is in check.`;
+  } 
+  else {
+    if (mode === 'single') {
+      statusEl.textContent = chess.turn() === 'w' ? "Your move (White)" : "AI thinking...";
+    } else {
+      statusEl.textContent = (isMyTurn ? "Your" : "Opponent's") + " move (" + (myColor === 'w' ? 'White' : 'Black') + ")";
+    }
+  }
+}
+
+function updateMoveHistory() {
+  moveHistoryEl.innerHTML = '';
+  const moves = chess.history({verbose: true});
+  
+  for (let i = 0; i < moves.length; i += 2) {
+    const moveEntry = document.createElement('div');
+    moveEntry.className = 'move-entry';
+    
+    const whiteMove = moves[i];
+    moveEntry.innerHTML = `
+      <strong>${Math.floor(i/2) + 1}.</strong> 
+      ${whiteMove.san}
+      ${moves[i+1] ? ` ${moves[i+1].san}` : ''}
+    `;
+    
+    moveHistoryEl.appendChild(moveEntry);
+  }
+  
+  // Scroll to bottom
+  moveHistoryEl.scrollTop = moveHistoryEl.scrollHeight;
+}
+
+function legalMovesFor(row, col) {
+  let file = String.fromCharCode(97 + col), rank = 8 - row;
+  let moves = chess.moves({square: file + rank, verbose: true});
+  return moves.map(m => m.to);
+}
+
+function coordToSquare(row, col) {
+  return String.fromCharCode(97 + col) + (8 - row);
+}
+
+function squareToCoord(square) {
+  return [8 - parseInt(square[1]), square.charCodeAt(0) - 97];
+}
+
+// Handle board clicks
+boardEl.onclick = function(e) {
+  if (waitingPromotion) return;
+  
+  let sq = e.target;
+  while (sq && !sq.classList.contains('square')) {
+    sq = sq.parentElement;
+  }
+  if (!sq) return;
+  
+  let r = +sq.dataset.row, c = +sq.dataset.col;
+  let file = String.fromCharCode(97 + c), rank = 8 - r;
+  let square = file + rank;
+  let piece = chess.get(square);
+
+  // Multiplayer: only allow move on your turn
+  if (mode === 'multi' && !isMyTurn) return;
+  
+  // Single player: only allow move for current player (white vs AI)
+  if (mode === 'single' && piece && piece.color !== chess.turn()) return;
+
+  if (!selected) {
+    if (piece && ((mode === 'single' && piece.color === 'w') || (mode === 'multi' && piece.color === myColor))) {
+      selected = [r, c];
+      highlights = legalMovesFor(r, c).map(squareToCoord);
+    }
+  } else {
+    let from = coordToSquare(selected[0], selected[1]);
+    let to = square;
+    let moveObj = {from, to};
+
+    // Check if this is a valid move
+    let validMove = chess.moves({verbose: true}).some(m => m.from === from && m.to === to);
+    
+    if (validMove) {
+      // Handle pawn promotion
+      let movingPiece = chess.get(from);
+      if (movingPiece.type === 'p' && (to[1] === '1' || to[1] === '8')) {
+        promotionMove = moveObj;
+        waitingPromotion = true;
+        promotionModal.style.display = 'flex';
+        return;
+      }
+      
+      // Make the move
+      let move = chess.move(moveObj);
+      if (move) {
+        if (mode === 'multi' && conn && isMyTurn) sendMove(moveObj);
+        selected = null; 
+        highlights = [];
+        render();
+        
+        if (mode === 'single' && !chess.game_over() && chess.turn() === 'b') {
+          setTimeout(aiMove, 400);
+        }
+      }
+    } else {
+      // If clicking on another piece of same color, select that instead
+      if (piece && piece.color === chess.get(from).color) {
+        selected = [r, c];
+        highlights = legalMovesFor(r, c).map(squareToCoord);
+      } else {
+        selected = null;
+        highlights = [];
+      }
+    }
+  }
+  
+  render();
+};
+
+// AI move (minimax with alpha-beta pruning)
+function aiMove() {
+  if (chess.game_over()) return;
+  
+  // Small delay for better UX
+  setTimeout(() => {
+    let bestMove = getBestMove(chess, aiLevel);
+    chess.move(bestMove);
+    render();
+  }, 300);
+}
+
+// Improved evaluation function
+function evaluate(game) {
+  // Piece values
+  const PIECE_VALUES = {
+    p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000
+  };
+  
+  // Piece-square tables (simplified)
+  const PAWN_TABLE = [
+    0,  0,  0,  0,  0,  0,  0,  0,
+    50, 50, 50, 50, 50, 50, 50, 50,
+    10, 10, 20, 30, 30, 20, 10, 10,
+    5,  5, 10, 25, 25, 10,  5,  5,
+    0,  0,  0, 20, 20,  0,  0,  0,
+    5, -5,-10,  0,  0,-10, -5,  5,
+    5, 10, 10,-20,-20, 10, 10,  5,
+    0,  0,  0,  0,  0,  0,  0,  0
+  ];
+  
+  let score = 0;
+  let board = game.board();
+  
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const piece = board[r][c];
+      if (piece) {
+        // Material score
+        let value = PIECE_VALUES[piece.type];
+        
+        // Piece-square tables
+        if (piece.type === 'p') {
+          const index = piece.color === 'w' ? (7 - r) * 8 + c : r * 8 + c;
+          value += PAWN_TABLE[index];
+        }
+        
+        // Add for white, subtract for black
+        score += piece.color === 'w' ? value : -value;
+      }
+    }
+  }
+  
+  // Add game phase consideration (opening/middlegame/endgame)
+  const gamePhase = Math.min(1, chess.history().length / 40); // 0-1 scale
+  const endgameWeight = 0.5 * gamePhase;
+  
+  // Encourage king activity in endgame
+  if (endgameWeight > 0.3) {
+    const whiteKing = findKing('w');
+    const blackKing = findKing('b');
+    
+    if (whiteKing) {
+      const whiteKingCentrality = 14 - (Math.abs(whiteKing[0] - 3.5) + Math.abs(whiteKing[1] - 3.5));
+      score += whiteKingCentrality * 5 * endgameWeight;
+    }
+    
+    if (blackKing) {
+      const blackKingCentrality = 14 - (Math.abs(blackKing[0] - 3.5) + Math.abs(blackKing[1] - 3.5));
+      score -= blackKingCentrality * 5 * endgameWeight;
+    }
+  }
+  
+  return score;
+}
+
+// Minimax with alpha-beta pruning
+function getBestMove(game, depth) {
+  let moves = game.moves({verbose: true});
+  if (moves.length === 0) return null;
+  
+  // Sort moves to improve pruning efficiency
+  moves.sort((a, b) => {
+    const aCapture = a.captured ? PIECE_VALUES[a.captured] : 0;
+    const bCapture = b.captured ? PIECE_VALUES[b.captured] : 0;
+    return bCapture - aCapture; // Try captures first
+  });
+  
+  let bestMove = null;
+  let bestScore = -Infinity;
+  
+  for (let move of moves) {
+    let clone = new Chess(game.fen());
+    clone.move(move);
+    
+    let score = -minimax(clone, depth - 1, -Infinity, Infinity, false);
+    
+    if (score > bestScore) {
+      bestScore = score;
+      bestMove = move;
+    }
+  }
+  
+  return bestMove || moves[0];
+}
+
+function minimax(game, depth, alpha, beta, isMaximizing) {
+  if (depth === 0 || game.game_over()) {
+    return evaluate(game);
+  }
+  
+  let moves = game.moves({verbose: true});
+  
+  if (isMaximizing) {
+    let maxEval = -Infinity;
+    for (let move of moves) {
+      let clone = new Chess(game.fen());
+      clone.move(move);
+      
+      let eval = minimax(clone, depth - 1, alpha, beta, false);
+      maxEval = Math.max(maxEval, eval);
+      alpha = Math.max(alpha, eval);
+      
+      if (beta <= alpha) break;
+    }
+    return maxEval;
+  } else {
+    let minEval = Infinity;
+    for (let move of moves) {
+      let clone = new Chess(game.fen());
+      clone.move(move);
+      
+      let eval = minimax(clone, depth - 1, alpha, beta, true);
+      minEval = Math.min(minEval, eval);
+      beta = Math.min(beta, eval);
+      
+      if (beta <= alpha) break;
+    }
+    return minEval;
+  }
+}
+
+// New game
+function newGame() {
+  chess = new Chess();
+  selected = null; 
+  highlights = [];
+  boardFlipped = false;
+  render();
+}
+
+newGameBtn.onclick = newGame;
+aiLevelSel.onchange = function() { aiLevel = +aiLevelSel.value; };
+
+// Flip board
+flipBoardBtn.onclick = function() {
+  boardFlipped = !boardFlipped;
+  render();
+};
+
+// Mode switching
+btnSingle.onclick = function() {
+  mode = 'single';
+  btnSingle.classList.add('active');
+  btnMulti.classList.remove('active');
+  singleControls.style.display = '';
+  multiControls.style.display = 'none';
+  newGame();
+};
+
+btnMulti.onclick = function() {
+  mode = 'multi';
+  btnMulti.classList.add('active');
+  btnSingle.classList.remove('active');
+  singleControls.style.display = 'none';
+  multiControls.style.display = '';
+  setupPeer();
+  newGame();
+};
+
+// Multiplayer (PeerJS)
+function setupPeer() {
+  if (peer) return;
+  
+  // Create peer with simpler ID
+  peer = new Peer({
+    debug: 0 // Reduce console logging
+  });
+  
+  peer.on('open', id => {
+    peerIdSpan.textContent = id;
+    const inviteLink = `${location.href.split('#')[0]}#${id}`;
+    gameLinkDiv.innerHTML = `
+      <input type="text" value="${inviteLink}" readonly style="width:100%; margin-top:5px; padding:5px;">
+      <small>Share this link with your opponent</small>
+    `;
+  });
+  
+  peer.on('connection', c => {
+    if (conn) conn.close();
+    conn = c;
+    myColor = 'w';
+    isMyTurn = true;
+    statusEl.textContent = 'Opponent connected! You play White.';
+    
+    conn.on('data', onReceiveMove);
+    conn.on('close', () => {
+      statusEl.textContent = 'Connection closed. Create a new game.';
+    });
+  });
+  
+  peer.on('error', err => {
+    console.error('PeerJS error:', err);
+    statusEl.textContent = 'Connection error: ' + err.type;
+  });
+}
+
+newMultiBtn.onclick = function() {
+  if (!peer) setupPeer();
+  newGame();
+  statusEl.textContent = 'Share your ID or invite link with opponent.';
+};
+
+copyLinkBtn.onclick = function() {
+  if (!peer) return;
+  const inviteLink = `${location.href.split('#')[0]}#${peerIdSpan.textContent}`;
+  navigator.clipboard.writeText(inviteLink).then(() => {
+    statusEl.textContent = 'Invite link copied to clipboard!';
+    setTimeout(() => {
+      if (!chess.game_over()) updateStatus();
+    }, 2000);
+  });
+};
+
+connectPeerBtn.onclick = function() {
+  let id = peerInput.value.trim();
+  if (!id) return alert('Enter opponent ID!');
+  
+  if (conn) conn.close();
+  conn = peer.connect(id);
+  myColor = 'b';
+  isMyTurn = false;
+  
+  conn.on('open', () => {
+    statusEl.textContent = 'Connected to opponent. You play Black.';
+  });
+  
+  conn.on('data', onReceiveMove);
+  
+  conn.on('close', () => {
+    statusEl.textContent = 'Connection closed. Create a new game.';
+  });
+  
+  conn.on('error', err => {
+    console.error('Connection error:', err);
+    statusEl.textContent = 'Connection error: ' + err.message;
+  });
+};
+
+function sendMove(moveObj) {
+  if (conn && conn.open) {
+    conn.send({
+      type: 'move',
+      move: moveObj,
+      fen: chess.fen()
+    });
+    isMyTurn = false;
+  }
+}
+
+function onReceiveMove(data) {
+  if (data.type === 'move') {
+    chess.move(data.move);
+    isMyTurn = true;
+    render();
+  }
+}
+
+// Promotion handling
+promotionOptions.onclick = function(e) {
+  const piece = e.target.dataset.piece;
+  if (piece) {
+    promotionMove.promotion = piece;
+    chess.move(promotionMove);
+    
+    if (mode === 'multi' && conn && isMyTurn) {
+      sendMove(promotionMove);
+    }
+    
+    promotionModal.style.display = 'none';
+    waitingPromotion = false;
+    promotionMove = null;
+    
+    render();
+    
+    if (mode === 'single' && !chess.game_over() && chess.turn() === 'b') {
+      setTimeout(aiMove, 400);
+    }
+  }
+};
+
+function showGameOver(msg) {
+  gameOverMsg.textContent = msg;
+  gameOverModal.style.display = 'flex';
+}
+
+// Multiplayer auto-connect via invite link
+window.onload = function() {
+  initBoard();
+  
+  let hash = location.hash.replace('#','');
+  if (hash && hash.length > 5) {
+    btnMulti.click();
+    setTimeout(() => {
+      peerInput.value = hash;
+      connectPeerBtn.click();
+    }, 1000);
+  } else {
+    btnSingle.click();
+  }
+  
+  // Start new game
+  newGame();
+};
+</script>
+</body>
+</html>

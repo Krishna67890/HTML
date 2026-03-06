@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shooting Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      display: block;
+      background: #000;
+      width: 100%;
+      height: 100%;
+    }
+    #playButton {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      padding: 15px 30px;
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    #gameOver {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+      color: red;
+      text-align: center;
+      display: none;
+    }
+    .moveButton {
+      position: absolute;
+      bottom: 20px;
+      padding: 10px;
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 20px;
+      z-index: 10;
+    }
+    #leftButton {
+      left: 20px;
+    }
+    #rightButton {
+      right: 20px;
+    }
+    #shootButton {
+      position: absolute;
+      bottom: 100px; /* Adjust the position from the bottom */
+      left: 20px;
+      padding: 10px 15px;
+      background-color: #ff6600;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 20px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <button id="playButton" onclick="startGame()">Play</button>
+  <div id="gameOver">
+    <p>Game Over</p>
+    <button onclick="location.reload()">Restart</button>
+  </div>
+  <canvas id="gameCanvas"></canvas>
+
+  <button id="leftButton" class="moveButton" onclick="moveLeft()">←</button>
+  <button id="rightButton" class="moveButton" onclick="moveRight()">→</button>
+  <button id="shootButton" class="moveButton" onclick="shootProjectile()">Shoot</button> <!-- Shoot Button -->
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const playButton = document.getElementById('playButton');
+    const gameOverDiv = document.getElementById('gameOver');
+
+    let score = 0;
+    let health = 100;
+    let gameRunning = false;
+
+    // Update canvas size for responsive design
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Player Object (with dynamic scaling)
+    const playerImage = new Image();
+    playerImage.src = 'player.png'; // Replace with the actual URL of the player image
+    const player = {
+      x: canvas.width / 2,
+      y: canvas.height - 50,
+      width: Math.min(canvas.width * 0.1, 50),  // Player size adjusted for mobile
+      height: Math.min(canvas.height * 0.1, 50),  // Player size adjusted for mobile
+      speed: 12 // Increased speed
+    };
+
+    // Enemy Object (with dynamic scaling)
+    const enemyImage = new Image();
+    enemyImage.src = 'attacker.png'; // Replace with the actual URL of the enemy image
+    const enemies = [];
+    const projectiles = [];
+
+    // Create Enemy
+    function spawnEnemy() {
+      const enemyWidth = Math.min(canvas.width * 0.1, 50);  // Enemy size adjusted for mobile
+      const enemyHeight = Math.min(canvas.height * 0.1, 50);  // Enemy size adjusted for mobile
+      const enemy = {
+        x: Math.random() * (canvas.width - enemyWidth),
+        y: 0,
+        width: enemyWidth,
+        height: enemyHeight,
+        speed: 2 + Math.random() * 2
+      };
+      enemies.push(enemy);
+    }
+
+    // Draw Player
+    function drawPlayer() {
+      ctx.drawImage(playerImage, player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
+    }
+
+    // Draw Enemies
+    function drawEnemies() {
+      enemies.forEach(enemy => {
+        ctx.drawImage(enemyImage, enemy.x, enemy.y, enemy.width, enemy.height);
+      });
+    }
+
+    // Draw Projectiles
+    function drawProjectiles() {
+      projectiles.forEach(projectile => {
+        ctx.fillStyle = 'green';
+        ctx.fillRect(projectile.x, projectile.y, projectile.width, projectile.height);
+      });
+    }
+
+    // Move Enemies
+    function moveEnemies() {
+      enemies.forEach((enemy, index) => {
+        enemy.y += enemy.speed;
+
+        // Check if enemy hits the player
+        if (
+          enemy.x < player.x + player.width / 2 &&
+          enemy.x + enemy.width > player.x - player.width / 2 &&
+          enemy.y < player.y + player.height / 2 &&
+          enemy.y + enemy.height > player.y - player.height / 2
+        ) {
+          enemies.splice(index, 1);
+          health -= 10;
+          if (health <= 0) endGame();
+        }
+
+        // Remove enemy if it goes off-screen
+        if (enemy.y > canvas.height) {
+          enemies.splice(index, 1);
+        }
+      });
+    }
+
+    // Move Projectiles
+    function moveProjectiles() {
+      projectiles.forEach((projectile, index) => {
+        projectile.y -= projectile.speed;
+
+        // Remove projectile if it goes off-screen
+        if (projectile.y < 0) {
+          projectiles.splice(index, 1);
+        }
+
+        // Check collision with enemies
+        enemies.forEach((enemy, enemyIndex) => {
+          if (
+            projectile.x < enemy.x + enemy.width &&
+            projectile.x + projectile.width > enemy.x &&
+            projectile.y < enemy.y + enemy.height &&
+            projectile.y + projectile.height > enemy.y
+          ) {
+            // Remove enemy and projectile on collision
+            enemies.splice(enemyIndex, 1);
+            projectiles.splice(index, 1);
+            score += 10;
+          }
+        });
+      });
+    }
+
+    // Draw Game Info
+    function drawInfo() {
+      ctx.fillStyle = 'white';
+      ctx.font = '20px Arial';
+      ctx.fillText(`Score: ${score}`, 10, 30);
+      ctx.fillText(`Health: ${health}`, canvas.width - 120, 30);
+    }
+
+    // Handle Player Movement (left and right)
+    function moveLeft() {
+      if (player.x - player.width / 2 > 0) {
+        player.x -= player.speed;
+      }
+    }
+
+    function moveRight() {
+      if (player.x + player.width / 2 < canvas.width) {
+        player.x += player.speed;
+      }
+    }
+
+    // Shoot Projectile
+    function shootProjectile() {
+      const projectile = {
+        x: player.x - 5,
+        y: player.y - player.height / 2,
+        width: 10,
+        height: 20,
+        speed: 7
+      };
+      projectiles.push(projectile);
+    }
+
+    // Draw and Update Game
+    function drawGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawPlayer();
+      drawEnemies();
+      drawProjectiles();
+      drawInfo();
+
+      moveEnemies();
+      moveProjectiles();
+
+      if (gameRunning) {
+        requestAnimationFrame(drawGame);
+      }
+    }
+
+    // Start Game
+    function startGame() {
+      playButton.style.display = 'none';
+      gameOverDiv.style.display = 'none';
+      gameRunning = true;
+      score = 0;
+      health = 100;
+      enemies.length = 0;
+      projectiles.length = 0;
+
+      // Spawn enemies periodically
+      setInterval(() => {
+        if (gameRunning) spawnEnemy();
+      }, 1000);
+
+      drawGame();
+    }
+
+    // End Game
+    function endGame() {
+      gameRunning = false;
+      gameOverDiv.style.display = 'block';
+    }
+
+    // Event Listeners for Keyboard Controls
+    document.addEventListener('keydown', (e) => {
+      if (e.key === ' ') shootProjectile();
+      if (e.key === 'ArrowLeft' || e.key === 'a') moveLeft();  // Left arrow or 'A' for left
+      if (e.key === 'ArrowRight' || e.key === 'd') moveRight(); // Right arrow or 'D' for right
+    });
+
+    // Start Game when Page Loads
+    window.onload = () => {
+      playButton.style.display = 'block';
+    };
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+player "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiTTtO7BtgEJFenvg95gzTtJXph872bWiESYvdc80T_nNPwh7itfY_An3IPmHh1BRnrGRk-ewzo7N4QiCCMq7kwuiwaIPVOZSEkOSHFLs36yxqZfgjsEYYC0NrXrxJpTHUazvxAJGNiaiasfuu3ggKArYaks3do-q4aAyAKwJsuAaj6pav73Em67vKq_wg/s320/player.png"
+attacker_id= "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi54uyps8ZVukcJGLxUPUadp_-kfXPbhh4QbfYhyphenhyphencem6h2GD9RUg4zXYypje0-A_6QRE9-nUrGA7Jg8gQv8iW1JndS5i0r_Y3Be7QenyzHK9oR5AV64fEflORfU2y0iQw-eKW3mIDo9VxLDeLiAB9MhJJ1C8l6mtc7F1SMAW_OV-B-M8TNOYrbk0KLjTH0/s320/attacker.png";

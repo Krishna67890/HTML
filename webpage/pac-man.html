@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Advanced Pac-Man Launcher</title>
+  <style>
+    body {
+      background-color: black;
+      color: yellow;
+      font-family: sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+    button {
+      padding: 12px 25px;
+      font-size: 20px;
+      background-color: yellow;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: orange;
+    }
+  </style>
+</head>
+<body>
+  <h1>Advanced Pac-Man Game</h1>
+  <button onclick="startGame()">Start Game</button>
+
+  <script>
+    function startGame() {
+      const gameWindow = window.open('', '', 'width=600,height=800');
+      const doc = gameWindow.document;
+
+      doc.write(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Advanced Pac-Man</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 10px;
+      user-select: none;
+    }
+    #game {
+      display: grid;
+      grid-template-columns: repeat(10, 40px);
+      grid-template-rows: repeat(10, 40px);
+      gap: 2px;
+      margin: 20px auto;
+      width: max-content;
+    }
+    .cell {
+      width: 40px;
+      height: 40px;
+      background-color: #111;
+      border: 1px solid #222;
+      position: relative;
+    }
+    .wall {
+      background-color: blue !important;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .pacman, .ghost {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      transition: top 0.3s, left 0.3s;
+      z-index: 10;
+    }
+    .pacman {
+      background-color: yellow;
+      clip-path: polygon(100% 50%, 0% 0%, 0% 100%);
+      animation: pacman-mouth 0.5s infinite;
+    }
+    @keyframes pacman-mouth {
+      0%, 100% {
+        clip-path: polygon(100% 50%, 0% 0%, 0% 100%);
+      }
+      50% {
+        clip-path: polygon(100% 50%, 15% 15%, 15% 85%);
+      }
+    }
+    .ghost {
+      background-color: red;
+      box-shadow:
+        0 4px 0 0 white,
+        8px 0 0 0 white,
+        16px 4px 0 0 white;
+      animation: ghost-move 1.5s infinite alternate;
+    }
+    @keyframes ghost-move {
+      0% { filter: brightness(100%); }
+      50% { filter: brightness(130%); }
+      100% { filter: brightness(100%); }
+    }
+    #score, #lives, #level {
+      margin-top: 10px;
+      font-size: 18px;
+      color: yellow;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Advanced Pac-Man</h1>
+  <div id="game"></div>
+  <div id="score">Score: 0</div>
+  <div id="lives">Lives: 3</div>
+  <div id="level">Level: 1</div>
+
+  <script>
+    const gridSize = 10;
+    let level = 1;
+    let score = 0;
+    let lives = 3;
+
+    let pacmanPosition = { x: 1, y: 1 };
+    let ghostPositions = [{ x: 8, y: 1 }, { x: 8, y: 8 }];
+    let walls = [];
+    let dotsLeft = 0;
+
+    const game = document.getElementById('game');
+    const scoreDisplay = document.getElementById('score');
+    const livesDisplay = document.getElementById('lives');
+    const levelDisplay = document.getElementById('level');
+
+    function generateWalls() {
+      const wallCount = 15 + level * 5; // Increase walls per level
+      const newWalls = [];
+      while (newWalls.length < wallCount) {
+        const x = Math.floor(Math.random() * gridSize);
+        const y = Math.floor(Math.random() * gridSize);
+        if ((x === 1 && y === 1) || (x === 8 && y === 1) || (x === 8 && y === 8)) continue;
+        if (!newWalls.some(w => w[0] === x && w[1] === y)) {
+          newWalls.push([x, y]);
+        }
+      }
+      return newWalls;
+    }
+
+    function createGrid() {
+      game.innerHTML = '';
+      walls = generateWalls();
+      dotsLeft = 0;
+
+      for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          cell.dataset.x = x;
+          cell.dataset.y = y;
+
+          if (walls.some(w => w[0] === x && w[1] === y)) {
+            cell.classList.add('wall');
+          } else {
+            if (!((x === pacmanPosition.x && y === pacmanPosition.y) || ghostPositions.some(g => g.x === x && g.y === y))) {
+              const dot = document.createElement('div');
+              dot.classList.add('dot');
+              cell.appendChild(dot);
+              dotsLeft++;
+            }
+          }
+          game.appendChild(cell);
+        }
+      }
+    }
+
+    function getCell(x, y) {
+      return document.querySelector(\`.cell[data-x="\${x}"][data-y="\${y}"]\`);
+    }
+
+    function drawCharacter(pos, className) {
+      document.querySelectorAll(\`.\${className}\`).forEach(el => el.remove());
+      const cell = getCell(pos.x, pos.y);
+      if (cell) {
+        const el = document.createElement('div');
+        el.classList.add(className);
+        cell.appendChild(el);
+      }
+    }
+
+    function eatDot() {
+      const cell = getCell(pacmanPosition.x, pacmanPosition.y);
+      const dot = cell.querySelector('.dot');
+      if (dot) {
+        dot.remove();
+        score += 10;
+        dotsLeft--;
+        scoreDisplay.textContent = 'Score: ' + score;
+      }
+    }
+
+    function nextLevel() {
+      alert('Level ' + level + ' complete! Moving to next level.');
+      level++;
+      levelDisplay.textContent = 'Level: ' + level;
+      resetPositions();
+      createGrid();
+      drawAllCharacters();
+    }
+
+    function resetPositions() {
+      pacmanPosition = { x: 1, y: 1 };
+      ghostPositions = [{ x: 8, y: 1 }, { x: 8, y: 8 }];
+    }
+
+    function drawAllCharacters() {
+      drawCharacter(pacmanPosition, 'pacman');
+      ghostPositions.forEach(pos => drawCharacter(pos, 'ghost'));
+    }
+
+    function canMoveTo(x, y) {
+      return (
+        x >= 0 &&
+        x < gridSize &&
+        y >= 0 &&
+        y < gridSize &&
+        !walls.some(w => w[0] === x && w[1] === y)
+      );
+    }
+
+    function movePacman(dx, dy) {
+      const newX = pacmanPosition.x + dx;
+      const newY = pacmanPosition.y + dy;
+      if (canMoveTo(newX, newY)) {
+        pacmanPosition = { x: newX, y: newY };
+        eatDot();
+        drawCharacter(pacmanPosition, 'pacman');
+        if (dotsLeft === 0) {
+          nextLevel();
+        }
+        checkGameOver();
+      }
+    }
+
+    function moveGhosts() {
+      ghostPositions = ghostPositions.map(pos => {
+        const dots = Array.from(document.querySelectorAll('.dot')).map(dot => {
+          const cell = dot.parentElement;
+          return {
+            x: parseInt(cell.dataset.x),
+            y: parseInt(cell.dataset.y),
+          };
+        });
+
+        if (dots.length === 0) return pos;
+
+        let closestDot = dots[0];
+        let minDist = Math.abs(closestDot.x - pos.x) + Math.abs(closestDot.y - pos.y);
+        for (const d of dots) {
+          const dist = Math.abs(d.x - pos.x) + Math.abs(d.y - pos.y);
+          if (dist < minDist) {
+            closestDot = d;
+            minDist = dist;
+          }
+        }
+
+        const moves = [
+          { dx: 1, dy: 0 },
+          { dx: -1, dy: 0 },
+          { dx: 0, dy: 1 },
+          { dx: 0, dy: -1 },
+        ];
+
+        moves.sort((a, b) => {
+          const distA = Math.abs(pos.x + a.dx - closestDot.x) + Math.abs(pos.y + a.dy - closestDot.y);
+          const distB = Math.abs(pos.x + b.dx - closestDot.x) + Math.abs(pos.y + b.dy - closestDot.y);
+          return distA - distB;
+        });
+
+        for (const move of moves) {
+          const newX = pos.x + move.dx;
+          const newY = pos.y + move.dy;
+          if (
+            canMoveTo(newX, newY) &&
+            !(newX === pacmanPosition.x && newY === pacmanPosition.y) &&
+            !ghostPositions.some(g => g.x === newX && g.y === newY)
+          ) {
+            return { x: newX, y: newY };
+          }
+        }
+        return pos;
+      });
+
+      drawAllCharacters();
+      checkGameOver();
+    }
+
+    function checkGameOver() {
+      for (const ghost of ghostPositions) {
+        if (ghost.x === pacmanPosition.x && ghost.y === pacmanPosition.y) {
+          lives--;
+          livesDisplay.textContent = 'Lives: ' + lives;
+          if (lives <= 0) {
+            alert('Game Over! Your score: ' + score);
+            location.reload();
+          } else {
+            resetPositions();
+            drawAllCharacters();
+          }
+          break;
+        }
+      }
+    }
+
+    window.addEventListener('keydown', e => {
+      switch (e.key) {
+        case 'ArrowUp': movePacman(0, -1); break;
+        case 'ArrowDown': movePacman(0, 1); break;
+        case 'ArrowLeft': movePacman(-1, 0); break;
+        case 'ArrowRight': movePacman(1, 0); break;
+      }
+    });
+
+    createGrid();
+    drawAllCharacters();
+    setInterval(moveGhosts, 1500);
+  </script>
+</body>
+</html>`);
+      doc.close();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishna Patil Rajput - Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: #ff4757;
+            --secondary-glow: #2ed573;
+            --background-dark: #1e272e;
+            --text-light: #f1f2f6;
+            --text-primary: #00a8ff;     /* Vibrant blue for primary text */
+            --text-secondary: #ffa502;   /* Bright orange for secondary text */
+            --text-accent: #7d3cff;      /* Deep purple for accent text */
+            --text-success: #2ecc71;     /* Green for success/positive text */
+            --text-danger: #e74c3c;      /* Red for danger/error text */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger {
+            width: 30px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1000;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-line {
+            width: 100%;
+            height: 3px;
+            background-color: var(--text-light);
+            transition: all 0.3s ease;
+            transform-origin: left center;
+        }
+
+        .hamburger:hover {
+            transform: scale(1.1);
+        }
+
+        .hamburger.open .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(4px, -2px);
+            background-color: var(--primary-glow);
+        }
+
+        .hamburger.open .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, 2px);
+            background-color: var(--primary-glow);
+        }
+
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(17, 24, 39, 0.95); /* Dark background with opacity */
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateX(-100%);
+            transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-links {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mobile-menu-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 300;
+            position: relative;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .mobile-menu-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background-color: var(--primary-glow);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-links a:hover {
+            color: var(--primary-glow);
+            transform: scale(1.05);
+        }
+
+        .mobile-menu-links a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        /* Glowing effect for menu items */
+        @keyframes menuItemGlow {
+            0% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); }
+            50% { text-shadow: 0 0 15px var(--primary-glow); }
+            100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); }
+        }
+
+        .mobile-menu-links a:hover {
+            animation: menuItemGlow 1.5s infinite alternate;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .mobile-menu-links a {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Glowing Hero Section */
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, 
+                #ff0000,    /* Red */
+                #ff7f00,    /* Orange */
+                #ffff00,    /* Yellow */
+                #00ff00,    /* Green */
+                #0000ff,    /* Blue */
+                #4b0082,    /* Indigo */
+                #9400d3     /* Violet */
+            );
+            -webkit-background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            background-size: 400% 400%;
+            animation: gradientFlow 10s ease infinite;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-danger);
+            margin-top: 15px;
+            opacity: 0.8;
+        }
+
+        .hero-content h3 {
+            color: var(--text-danger);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .skills-badge {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .skill-tag {
+            background-color: rgba(255,255,255,0.1);
+            color: var(--text-light);
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            transform: scale(1.1);
+            background-color: var(--primary-glow);
+        }
+
+        /* Background Glow Effect */
+        .hero-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,71,87,0.3), rgba(46,213,115,0.2));
+            border-radius: 50%;
+            filter: blur(150px);
+            z-index: 1;
+            animation: moveGlow 10s infinite alternate;
+        }
+
+        @keyframes glowText {
+            0% { text-shadow: 0 0 10px var(--primary-glow); }
+            100% { text-shadow: 0 0 20px var(--secondary-glow); }
+        }
+
+        @keyframes moveGlow {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            100% { transform: translate(-40%, -60%) scale(1.2); }
+        }
+
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+        }
+
+        .logo {
+            color: var(--text-primary);
+        }
+
+        h2 {
+            color: var(--text-secondary);
+        }
+
+        .project-title {
+            color: var(--text-accent);
+        }
+
+        .skill-tag {
+            background-color: var(--background-dark);
+            color: var(--text-success);
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            transform: scale(1.1);
+            background-color: var(--primary-glow);
+            color: var(--text-light);
+        }
+
+        a {
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--text-secondary);
+        }
+
+        .error-text {
+            color: var(--text-danger);
+        }
+    </style>
+</head>
+<body>
+    <header class="fixed w-full top-0 z-50 bg-gray-800 shadow-md">
+        <nav class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="logo text-2xl font-bold text-yellow-500">Krishna's Projects</div>
+            
+            <!-- Desktop Navigation -->
+            <ul class="nav-links hidden lg:flex space-x-4">
+                <li><a href="index.html" class="hover:text-yellow-500 transition">Home</a></li>
+                <li><a href="#web-dev" class="hover:text-yellow-500 transition">Web Development</a></li>
+                <li><a href="#react-projects" class="hover:text-yellow-500 transition">React Projects</a></li>
+                <li><a href="#academic-projects" class="hover:text-yellow-500 transition">Academic Projects</a></li>
+                <li><a href="#comprehensive-projects" class="hover:text-yellow-500 transition">Comprehensive Projects</a></li>
+                <li><a href="#resume" class="hover:text-yellow-500 transition">Resume</a></li>
+                <li><a href="#readme" class="hover:text-yellow-500 transition">README</a></li>
+            </ul>
+
+            <!-- Hamburger Menu for Mobile -->
+            <div class="lg:hidden">
+                <div class="hamburger cursor-pointer lg:hidden z-50 fixed top-4 right-4">
+                    <div class="hamburger-line w-6 h-1 bg-white mb-1 transition-all duration-300 origin-center"></div>
+                    <div class="hamburger-line w-6 h-1 bg-white mb-1 transition-all duration-300 origin-center"></div>
+                    <div class="hamburger-line w-6 h-1 bg-white transition-all duration-300 origin-center"></div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu fixed top-0 left-0 w-64 h-full bg-gray-900 bg-opacity-95 transform -translate-x-full transition-transform duration-500 ease-in-out z-40 flex items-center justify-center shadow-lg">
+        <div class="mobile-menu-links text-center relative w-full px-6">
+            <a href="index.html" class="block text-2xl text-white py-4 hover:text-yellow-500 transition-colors duration-300">Home</a>
+            <a href="#web-dev" class="block text-2xl text-white py-4 hover:text-yellow-500 transition-colors duration-300">Web Development</a>
+            <a href="#react-projects" class="block text-2xl text-white py-4 hover:text-yellow-500 transition-colors duration-300">React Projects</a>
+            <a href="#academic-projects" class="block text-2xl text-white py-4 hover:text-yellow-500 transition-colors duration-300">Academic Projects</a>
+            <a href="#comprehensive-projects" class="block text-2xl text-white py-4 hover:text-yellow-500 transition-colors duration-300">Comprehensive Projects</a>
+            <a href="#resume" class="block text-2xl text-white py-4 hover:text-yellow-500 transition-colors duration-300">Resume</a>
+            <a href="#readme" class="block text-2xl text-white py-4 hover:text-yellow-500 transition-colors duration-300">README</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <h3 class="text-xl mb-4 opacity-70">Hello, My Name Is</h3>
+            <h1 class="hero-title">KRISHNA PATIL RAJPUT</h1>
+            <p class="hero-subtitle">
+                A Creative Developer Skilled in HTML, CSS, JavaScript, React, and Tailwind CSS
+            </p>
+            <div class="skills-badge">
+                <span class="skill-tag">HTML5</span>
+                <span class="skill-tag">CSS3</span>
+                <span class="skill-tag">JavaScript</span>
+                <span class="skill-tag">React</span>
+                <span class="skill-tag">Tailwind CSS</span>
+            </div>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 pt-24">
+        <section id="web-dev" class="my-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-yellow-500">Web Development Projects</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <img src="https://via.placeholder.com/400x250" alt="E-Commerce Website" class="w-full">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 project-title">E-Commerce Platform</h3>
+                        <p class="mb-4">A fully responsive e-commerce website with product catalog, cart, and checkout functionality.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="bg-gray-500 text-white px-4 py-2 rounded cursor-not-allowed opacity-70">Coming Soon</a>
+                            <a href="#" class="border border-yellow-500 text-yellow-500 px-4 py-2 rounded hover:bg-yellow-500 hover:text-gray-900">GitHub</a>
+                        </div>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">HTML5</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">CSS3</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <img src="https://via.placeholder.com/400x250" alt="Weather App" class="w-full">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 project-title">Real-Time Weather App</h3>
+                        <p class="mb-4">Interactive weather application fetching real-time data from OpenWeatherMap API.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="bg-gray-500 text-white px-4 py-2 rounded cursor-not-allowed opacity-70">Coming Soon</a>
+                            <a href="#" class="border border-yellow-500 text-yellow-500 px-4 py-2 rounded hover:bg-yellow-500 hover:text-gray-900">GitHub</a>
+                        </div>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">JavaScript</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">API Integration</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Responsive Design</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <img src="https://via.placeholder.com/400x250" alt="Portfolio Website" class="w-full">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 project-title">Personal Portfolio Website</h3>
+                        <p class="mb-4">Responsive personal portfolio showcasing skills, projects, and professional information.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="bg-gray-500 text-white px-4 py-2 rounded cursor-not-allowed opacity-70">Coming Soon</a>
+                            <a href="#" class="border border-yellow-500 text-yellow-500 px-4 py-2 rounded hover:bg-yellow-500 hover:text-gray-900">GitHub</a>
+                        </div>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Tailwind CSS</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Responsive Design</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">JavaScript</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="react-projects" class="my-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-yellow-500">React Projects</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <img src="https://via.placeholder.com/400x250" alt="Task Management App" class="w-full">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 project-title">Task Management App</h3>
+                        <p class="mb-4">Productivity application with drag-and-drop task management and state persistence.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="bg-gray-500 text-white px-4 py-2 rounded cursor-not-allowed opacity-70">Coming Soon</a>
+                            <a href="#" class="border border-yellow-500 text-yellow-500 px-4 py-2 rounded hover:bg-yellow-500 hover:text-gray-900">GitHub</a>
+                        </div>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">React</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Context API</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Local Storage</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <img src="https://via.placeholder.com/400x250" alt="Blog Platform" class="w-full">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 project-title">Blog Platform</h3>
+                        <p class="mb-4">Full-featured blog platform with user authentication and content management.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="bg-gray-500 text-white px-4 py-2 rounded cursor-not-allowed opacity-70">Coming Soon</a>
+                            <a href="#" class="border border-yellow-500 text-yellow-500 px-4 py-2 rounded hover:bg-yellow-500 hover:text-gray-900">GitHub</a>
+                        </div>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">React</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Firebase</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Authentication</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <img src="https://via.placeholder.com/400x250" alt="Quiz Application" class="w-full">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 project-title">Quiz Application</h3>
+                        <p class="mb-4">Interactive quiz app with multiple categories, scoring, and result tracking.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="bg-gray-500 text-white px-4 py-2 rounded cursor-not-allowed opacity-70">Coming Soon</a>
+                            <a href="#" class="border border-yellow-500 text-yellow-500 px-4 py-2 rounded hover:bg-yellow-500 hover:text-gray-900">GitHub</a>
+                        </div>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">React</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Redux</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">API Integration</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="academic-projects" class="my-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-yellow-500">Academic Projects</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 project-title">College Management System</h3>
+                        <p class="mb-4">Comprehensive system for managing student records, courses, and administrative tasks.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="border border-yellow-500 text-yellow-500 px-4 py-2 rounded hover:bg-yellow-500 hover:text-gray-900">GitHub</a>
+                        </div>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Java</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">MySQL</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">JDBC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 project-title">Network Security Analyzer</h3>
+                        <p class="mb-4">Tool for analyzing network traffic, detecting potential security threats and vulnerabilities.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="border border-yellow-500 text-yellow-500 px-4 py-2 rounded hover:bg-yellow-500 hover:text-gray-900">GitHub</a>
+                        </div>
+                        <div class="mt-4">
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Python</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Wireshark</span>
+                            <span class="inline-block bg-gray-700 rounded-full px-3 py-1 text-sm mr-2 mb-2">Cybersecurity</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="all-projects" class="my-16 bg-gray-900">
+            <h2 class="text-3xl font-bold text-center mb-8 text-yellow-500">Comprehensive Project Collection</h2>
+            
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-6">
+                    <!-- Web Development Projects -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Web Development Projects</h3>
+                        <ul class="space-y-2">
+                            <li><a href="https://krishnablogy.blogspot.com/p/search-image-engine.html" target="_blank" class="text-white hover:text-yellow-500">1. Search Image Engine</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/enhanced-scientific-calculator.html" target="_blank" class="text-white hover:text-yellow-500">2. Enhanced Scientific Calculator</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/translate-app.html" target="_blank" class="text-white hover:text-yellow-500">3. Translate App</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/image-generator.html" target="_blank" class="text-white hover:text-yellow-500">4. Image Generator</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/background-remover-app.html" target="_blank" class="text-white hover:text-yellow-500">5. Background Remover App</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/image-designer.html" target="_blank" class="text-white hover:text-yellow-500">6. Animal Scenario Website</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/welcome-to-mars.html" target="_blank" class="text-white hover:text-yellow-500">7. Space of Planets</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/rental-website.html" target="_blank" class="text-white hover:text-yellow-500">8. Rental Website</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/products-buy-or-sell.html" target="_blank" class="text-white hover:text-yellow-500">9. Products Buy or Sell</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/food-delivery-app.html" target="_blank" class="text-white hover:text-yellow-500">10. Food Delivery App</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Code Editors -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Code Editors</h3>
+                        <ul class="space-y-2">
+                            <li><a href="https://krishnablogy.blogspot.com/p/html-code-editor.html" target="_blank" class="text-white hover:text-yellow-500">1. HTML Code Editor</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/python-code-editor.html" target="_blank" class="text-white hover:text-yellow-500">2. Python Code Editor</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Basic Apps -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h3 class="text-2xl font-semibold text-yellow-500 mb-4">Basic Apps</h3>
+                        <ul class="space-y-2">
+                            <li><a href="https://krishnablogy.blogspot.com/p/votting-app.html" target="_blank" class="text-white hover:text-yellow-500">1. Voting App</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/your-calender.html" target="_blank" class="text-white hover:text-yellow-500">2. Your Calendar</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/currency-converter-app.html" target="_blank" class="text-white hover:text-yellow-500">3. Currency Converter App</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/daily-quotes.html" target="_blank" class="text-white hover:text-yellow-500">4. Daily Quotes</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/to-do-list.html" target="_blank" class="text-white hover:text-yellow-500">5. To-Do List</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/clock.html" target="_blank" class="text-white hover:text-yellow-500">6. Clock</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/mobile-phone-comparison-app.html" target="_blank" class="text-white hover:text-yellow-500">7. Mobile Comparison App</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- AI Apps -->
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h3 class="text-2xl font-semibold text-yellow-500 mb-4">AI Apps</h3>
+                        <ul class="space-y-2">
+                            <li><a href="https://krishnablogy.blogspot.com/p/your-jarvis.html" target="_blank" class="text-white hover:text-yellow-500">1. Your Jarvis</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/chatbot-jarvis.html" target="_blank" class="text-white hover:text-yellow-500">2. Chatbot Jarvis</a></li>
+                            <li><a href="https://krishnablogy.blogspot.com/p/chatbot-and-voice-assistant-combination.html" target="_blank" class="text-white hover:text-yellow-500">3. Chatbot and Jarvis Combination Assistant</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="readme" class="my-16 bg-gray-800 p-8 rounded-lg">
+            <h2 class="text-3xl font-bold text-center mb-8 text-yellow-500">README</h2>
+            <div class="max-w-4xl mx-auto text-white">
+                <div class="markdown-content">
+                    <h3 class="text-2xl font-semibold mb-4">Krishna Patil Rajput - Portfolio Project</h3>
+                    
+                    <h4 class="text-xl font-medium mt-6 mb-2">🚀 Overview</h4>
+                    <p class="mb-4">
+                        This is a comprehensive portfolio website showcasing my skills, projects, and professional journey as a first-year IT student and aspiring full-stack developer.
+                    </p>
+
+                    <h4 class="text-xl font-medium mt-6 mb-2">🛠 Technologies Used</h4>
+                    <ul class="list-disc list-inside mb-4">
+                        <li>HTML5</li>
+                        <li>CSS3</li>
+                        <li>Tailwind CSS</li>
+                        <li>JavaScript</li>
+                        <li>Responsive Design</li>
+                    </ul>
+
+                    <h4 class="text-xl font-medium mt-6 mb-2">✨ Features</h4>
+                    <ul class="list-disc list-inside mb-4">
+                        <li>Responsive and mobile-friendly design</li>
+                        <li>Interactive project showcase</li>
+                        <li>Smooth scrolling navigation</li>
+                        <li>Modern, clean UI/UX</li>
+                        <li>Project filtering and search</li>
+                    </ul>
+
+                    <h4 class="text-xl font-medium mt-6 mb-2">🔧 Setup Instructions</h4>
+                    <pre class="bg-gray-900 p-4 rounded-lg overflow-x-auto">
+                        <code class="text-sm">
+                            # Clone the repository
+                            <span class="text-success">git clone https://github.com/krishna67890</span>
+
+                            # Navigate to project directory
+                            <span class="text-accent">cd portfolio</span>
+
+                            # Potential Error Handling
+                            <span class="error-text">Error: Repository not found</span>
+                        </code>
+                    </pre>
+
+                    <h4 class="text-xl font-medium mt-6 mb-2">🤝 Contact</h4>
+                    <div class="flex space-x-4">
+                        <a href="" class="text-yellow-500 hover:text-yellow-400">LinkedIn</a>
+                        <a href="https://github.com/Krishna67890/" class="text-yellow-500 hover:text-yellow-400">GitHub</a>
+                        <a href="dhanadai.krishna@gmail.com" class="text-yellow-500 hover:text-yellow-400">Email</a>
+                    </div>
+
+                    <h4 class="text-xl font-medium mt-6 mb-2">📄 License</h4>
+                    <p class="mb-4">
+                        This project is open-source and available.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 py-8 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="https://github.com/Krishna67890/" target="_blank" class="text-2xl hover:text-yellow-500"><i class="fab fa-github"></i></a>
+                <a href="" target="_blank" class="text-2xl hover:text-yellow-500"><i class="fab fa-linkedin"></i></a>
+                <a href="" target="_blank" class="text-2xl hover:text-yellow-500"><i class="fab fa-twitter"></i></a>
+            </div>
+            <p>Matoshri College of Engineering and Research center</p>
+            <p>&copy; 2024 Krishna Patil Rajput. All Projects Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.querySelector('.hamburger');
+            const hamburgerLines = hamburger.querySelectorAll('.hamburger-line');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const mobileMenuLinks = document.querySelectorAll('.mobile-menu-links a');
+
+            // Prevent multiple event listeners
+            const toggleMobileMenu = (forceClose = false) => {
+                if (forceClose) {
+                    // Close menu
+                    mobileMenu.classList.add('-translate-x-full');
+                    hamburgerLines[0].classList.remove('rotate-45', 'translate-y-2');
+                    hamburgerLines[1].classList.remove('opacity-0');
+                    hamburgerLines[2].classList.remove('-rotate-45', '-translate-y-2');
+                } else {
+                    // Toggle menu
+                    mobileMenu.classList.toggle('-translate-x-full');
+                    
+                    // Cross animation
+                    if (mobileMenu.classList.contains('-translate-x-full')) {
+                        // Revert to hamburger
+                        hamburgerLines[0].classList.remove('rotate-45', 'translate-y-2');
+                        hamburgerLines[1].classList.remove('opacity-0');
+                        hamburgerLines[2].classList.remove('-rotate-45', '-translate-y-2');
+                    } else {
+                        // Transform to cross
+                        hamburgerLines[0].classList.add('rotate-45', 'translate-y-2');
+                        hamburgerLines[1].classList.add('opacity-0');
+                        hamburgerLines[2].classList.add('-rotate-45', '-translate-y-2');
+                    }
+                }
+            };
+
+            // Toggle mobile menu when hamburger is clicked
+            hamburger.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleMobileMenu();
+            });
+
+            // Close menu when a link is clicked
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    toggleMobileMenu(true);
+                    
+                    // Smooth scroll to the section
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (event) => {
+                const isClickInsideMenu = mobileMenu.contains(event.target);
+                const isClickOnHamburger = hamburger.contains(event.target);
+
+                if (!isClickInsideMenu && !isClickOnHamburger) {
+                    toggleMobileMenu(true);
+                }
+            });
+
+            // Prevent menu toggle when clicking inside menu
+            mobileMenu.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>

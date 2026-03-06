@@ -1,0 +1,372 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexbox</title>
+    <style> 
+        .container {
+            height: 300px;
+            width: 50%;
+            background-color: red;
+            padding: 10px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .child {
+            height: 80px;
+            width: 100px;
+            background-color: blue;
+            margin: 10px;
+            text-align: center;
+            line-height: 80px; /* Match with height */
+            font-size: 20px;
+            color: white;
+        }
+        .child1 {
+            order: 1;
+        }
+        .child2 {
+            order: 2;
+        }
+        .child3 {
+            order: 3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Flexbox</h1>
+    <div class="container">
+        <div class="child child1">Box 1</div>
+        <div class="child child2">Box 2</div>
+        <div class="child child3">Box 3</div>
+        <div class="child">Box 4</div>
+        <div class="child">Box 5</div>
+        <div class="child">Box 6</div>
+    </div>
+</body>
+</html> -->
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Form</title>
+    <style>
+        /* Navbar Styles */
+        .navbar {
+            background: black;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar ul {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            color: white;
+        }
+        .navbar li {
+            color: white;
+            cursor: pointer;
+        }
+        .navbar li:hover {
+            color: gray;
+        }
+
+        /* Form Styles */
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .form-group button:hover {
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+   //Navbar -->
+    <!-- <div class="navbar">
+        <ul>
+            <li>Contact</li>
+            <li>Work</li>
+            <li>Profile</li>
+        </ul>
+    </div>
+
+   Form 
+    <div class="form-container">
+        <h2>Contact Us</h2>
+        <form id="contactForm">
+           // Name Field 
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+
+            //Email Field 
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+            </div>
+
+            // Subject Field
+            <div class="form-group">
+                <label for="subject">Subject:</label>
+                <select id="subject" name="subject" required>
+                    <option value="">Select a subject</option>
+                    <option value="general">General Inquiry</option>
+                    <option value="feedback">Feedback</option>
+                    <option value="support">Support</option>
+                </select>
+            </div>
+
+            // Message Field 
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="5" placeholder="Type your message here..." required></textarea>
+            </div>
+
+           //Submit Button 
+            <div class="form-group">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Form Submission Handler
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent actual form submission
+
+            // Gather form data
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            // Display alert (or replace with an actual submission process)
+            alert(`Thank you, ${name}! Your message about "${subject}" has been received. We will contact you at ${email}.`);
+            
+            // Reset form
+            this.reset();
+        });
+    </script>
+</body>
+</html>  -->
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Containers with Rainbow Lines</title>
+    <style>
+        /* Rainbow Line Styling */
+        .rainbow-line {
+            width: 100%;
+            height: 10px; /* Line thickness */
+            background: linear-gradient(
+                to right, 
+                red, orange, yellow, green, blue, indigo, violet
+            );
+            margin: 10px 0; /* Adds space around the line */
+            position: relative;
+        }
+
+        /* Line Label Styling */
+        .line-label {
+            position: absolute;
+            top: -25px; /* Position the label above the line */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: bold;
+            color: black;
+        }
+
+        /* Container Styling */
+        .container {
+            width: 100px;
+            height: 50px;
+            background-color: rgb(26, 211, 249);
+            border: 1px solid rgb(9, 88, 236);
+        }
+        .container1 {
+            width: 100px;
+            height: 50px;
+            background-color: rgb(17, 223, 96);
+            border: 1px solid rgb(14, 239, 119);
+            position: relative;
+        }
+        .container2 {
+            background-color: rgb(117, 12, 254);
+            border: 1px solid rgba(249, 8, 197, 0.215);
+        }
+        .container3 {
+            background-color: rgb(164, 238, 15);
+            border: 1px solid rgb(6, 242, 195);
+        }
+        .container4 {
+            background-color: rgb(246, 11, 11);
+            border: 1px solid rgb(231, 13, 86);
+        }
+
+        /* Parent Container Styling */
+        .parent {
+            width: 100%;
+            background-color: gray;
+            border: 1px solid gray;
+            padding: 10px; /* Adds spacing inside the parent container */
+            display: flex;
+            gap: 10px; /* Spacing between child elements */
+            flex-wrap: wrap; /* Wraps children to the next line if needed */
+        }
+    </style>
+</head>
+<body>
+    <h1>Positions</h1>
+
+   // Rainbow Lines with Labels 
+    <div class="rainbow-line">
+        <span class="line-label">1</span>
+    </div>
+    <div class="rainbow-line">
+        <span class="line-label">2</span>
+    </div>
+    <div class="rainbow-line">
+        <span class="line-label">3</span>
+    </div>
+    <div class="rainbow-line">
+        <span class="line-label">4</span>
+    </div>
+    <div class="rainbow-line">
+        <span class="line-label">5</span>
+    </div>
+    <div class="rainbow-line">
+        <span class="line-label">6</span>
+    </div>
+    <div class="rainbow-line">
+        <span class="line-label">7</span>
+    </div>
+
+   //Content 
+    <div class="grandparent">
+        <div class="parent">
+            <div class="container container1">1</div>
+            <div class="container container2">2</div>
+            <div class="container container3">3</div>
+            <div class="container container4">4</div>
+        </div>
+    </div>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container{
+            width: 100%;
+            height: 50px;
+            background-color: black;
+            border: 1px solid black;
+        }
+        .container1{
+            background-color: red;
+            border: 1px solid black;
+        }
+        .container2{
+            background-color: blue;
+            border: 1px solid black;
+        }
+        .container3{
+            background-color: green;
+            border: 1px solid black;
+        }
+        .container4{
+            background-color: yellow;
+            border: 1px solid black;
+        }
+        .container5{
+            position:sticky;
+            border: 1px solid pink;
+            top:20px;
+        }
+        .parent{
+            background-color: black;
+            width: 100%;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="grandparent">
+        <div class="parent">
+            <div class="container container1">1</div>
+            <div class="container container2">2</div>
+            <div class="container container3">3</div>
+            <div class="container container4">4</div>
+        </div>
+    </div>
+</body>
+</html>

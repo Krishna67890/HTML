@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Candy Crush Launcher</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            text-align: center;
+        }
+        #launcher-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        h1 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(255,107,107,0.3);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(255,107,107,0.4);
+        }
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(255,107,107,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="launcher-container">
+        <h1>Candy Crush Infinite</h1>
+        <p>Click below to play in a new window!</p>
+        <button class="btn" id="open-game">Start Game</button>
+    </div>
+    <script>
+        document.getElementById('open-game').onclick = function() {
+            const win = window.open('', 'CandyCrushGame', 'width=500,height=700,scrollbars=no,resizable=yes');
+            if (!win) {
+                alert('Popup blocked! Please allow popups for this site.');
+                return;
+            }
+            
+            // Create basic document structure
+            const doc = win.document;
+            doc.open();
+            doc.write('<!DOCTYPE html><html><head><title>Candy Crush Infinite</title></head><body></body></html>');
+            doc.close();
+            
+            // Add meta tag
+            const meta = doc.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = 'width=device-width, initial-scale=1.0';
+            doc.head.appendChild(meta);
+            
+            // Add styles
+            const style = doc.createElement('style');
+            style.textContent = `
+                html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);}
+                #game-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+                #header { width: 100%; display: flex; justify-content: space-around; align-items: center; padding: 15px 0; background: rgba(255,255,255,0.8); box-shadow: 0 2px 10px rgba(0,0,0,0.1);}
+                .game-info { display: flex; flex-direction: column; align-items: center;}
+                .game-info-label { font-size: 14px; color: #6c5ce7; font-weight: bold; margin-bottom: 5px;}
+                .game-info-value { font-size: 24px; color: #2d3436; font-weight: bold;}
+                #board-container { position: relative; margin-top: 20px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden;}
+                #game-board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 80vw; max-width: 400px; height: 80vw; max-height: 400px; position: relative; background: linear-gradient(135deg, #f8fafc 0%, #e1e8ed 100%);}
+                .tile { position: relative; display: flex; justify-content: center; align-items: center; cursor: pointer;}
+                .candy { width: 80%; height: 80%; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 24px; transition: transform 0.25s cubic-bezier(.68,-0.55,.27,1.55), box-shadow 0.2s; position: relative; z-index: 2; box-shadow: 0 3px 6px rgba(0,0,0,0.16); background-size: cover; background-position: center; animation: candy-bounce-in 0.3s;}
+                @keyframes candy-bounce-in { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+                .candy.selected { transform: scale(1.15) rotate(-4deg); box-shadow: 0 0 20px 8px #fff8; z-index: 3;}
+                .candy.removing { animation: pop 0.5s forwards;}
+                @keyframes pop { 0% { transform: scale(1); opacity: 1; filter: brightness(1);} 40% { transform: scale(1.3) rotate(10deg); opacity: 1; filter: brightness(1.3);} 60% { transform: scale(0.7) rotate(-10deg); opacity: 0.7; filter: brightness(1.1);} 100% { transform: scale(0); opacity: 0; filter: brightness(2);}}
+                .candy.falling { animation: fall 0.35s cubic-bezier(.68,-0.55,.27,1.55);}
+                @keyframes fall { 0% { transform: translateY(-120px) scale(0.7); opacity: 0.7; } 80% { transform: translateY(10px) scale(1.1);} 100% { transform: translateY(0) scale(1);}}
+                .candy.new { animation: appear 0.3s forwards;}
+                @keyframes appear { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+                .candy.swap { animation: swap 0.2s;}
+                @keyframes swap { 0% { transform: scale(1) rotate(0deg);} 50% { transform: scale(1.3) rotate(8deg);} 100% { transform: scale(1) rotate(0deg);} }
+                #level-complete { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(46, 204, 113, 0.92); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; border-radius: 15px; animation: fadeIn 0.8s;}
+                #level-complete h2 { font-size: 36px; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
+                .btn { padding: 12px 30px; background: white; border: none; border-radius: 50px; font-size: 18px; font-weight: bold; color: #2d3436; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: all 0.3s; margin-top: 20px;}
+                .btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.3);}
+                .btn:active { transform: translateY(1px); box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+                #candy-colors { display: flex; margin-top: 20px;}
+                .color-sample { width: 30px; height: 30px; border-radius: 8px; margin: 0 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+                @media (max-width: 500px) { #game-board { width: 96vw; height: 96vw; max-width: 96vw; max-height: 96vw;} #header { flex-direction: column; gap: 10px;}}
+                @keyframes fadeIn { 0% { opacity: 0;} 100% { opacity: 1;}}
+            `;
+            doc.head.appendChild(style);
+            
+            // Create game container
+            const gameContainer = doc.createElement('div');
+            gameContainer.id = 'game-container';
+            
+            // Create header
+            const header = doc.createElement('div');
+            header.id = 'header';
+            
+            // Create game info sections
+            const createGameInfo = (label, id) => {
+                const container = doc.createElement('div');
+                container.className = 'game-info';
+                
+                const labelEl = doc.createElement('div');
+                labelEl.className = 'game-info-label';
+                labelEl.textContent = label;
+                
+                const valueEl = doc.createElement('div');
+                valueEl.className = 'game-info-value';
+                valueEl.id = id;
+                
+                container.appendChild(labelEl);
+                container.appendChild(valueEl);
+                return container;
+            };
+            
+            header.appendChild(createGameInfo('Level', 'level'));
+            header.appendChild(createGameInfo('Score', 'score'));
+            header.appendChild(createGameInfo('Target', 'target'));
+            header.appendChild(createGameInfo('Moves', 'moves'));
+            
+            // Create board container
+            const boardContainer = doc.createElement('div');
+            boardContainer.id = 'board-container';
+            
+            const gameBoard = doc.createElement('div');
+            gameBoard.id = 'game-board';
+            boardContainer.appendChild(gameBoard);
+            
+            // Create level complete overlay
+            const levelComplete = doc.createElement('div');
+            levelComplete.id = 'level-complete';
+            
+            const levelCompleteH2 = doc.createElement('h2');
+            levelCompleteH2.textContent = 'Level Complete!';
+            
+            const nextLevelBtn = doc.createElement('button');
+            nextLevelBtn.className = 'btn';
+            nextLevelBtn.id = 'next-level-btn';
+            nextLevelBtn.textContent = 'Next Level';
+            
+            levelComplete.appendChild(levelCompleteH2);
+            levelComplete.appendChild(nextLevelBtn);
+            boardContainer.appendChild(levelComplete);
+            
+            // Create candy colors display
+            const candyColors = doc.createElement('div');
+            candyColors.id = 'candy-colors';
+            
+            const colors = ['#ff7675', '#74b9ff', '#55efc4', '#ffeaa7', '#a29bfe', '#fd79a8'];
+            colors.forEach(color => {
+                const sample = doc.createElement('div');
+                sample.className = 'color-sample';
+                sample.style.background = color;
+                candyColors.appendChild(sample);
+            });
+            
+            // Assemble game container
+            gameContainer.appendChild(header);
+            gameContainer.appendChild(boardContainer);
+            gameContainer.appendChild(candyColors);
+            
+            // Add to document
+            doc.body.appendChild(gameContainer);
+            
+            // Now add the game script
+            const script = doc.createElement('script');
+            script.textContent = `
+                const config = {
+                    boardSize: 8,
+                    candyTypes: 6,
+                    initialMoves: 15,
+                    scorePerCandy: 100,
+                    levelTargetMultiplier: 1.2,
+                    movesPerLevel: 3,
+                    baseTargetScore: 1000,
+                    scoreMultiplier: 1.1
+                };
+
+                let state = {
+                    board: [],
+                    selectedCandy: null,
+                    score: 0,
+                    level: 1,
+                    movesLeft: 0,
+                    targetScore: 0,
+                    isAnimating: false,
+                    gameActive: true
+                };
+
+                const elements = {
+                    board: document.getElementById('game-board'),
+                    score: document.getElementById('score'),
+                    level: document.getElementById('level'),
+                    target: document.getElementById('target'),
+                    moves: document.getElementById('moves'),
+                    levelComplete: document.getElementById('level-complete'),
+                    nextLevelBtn: document.getElementById('next-level-btn')
+                };
+
+                const candies = [
+                    { color: '#ff7675', emoji: '🍎' },
+                    { color: '#74b9ff', emoji: '🍬' },
+                    { color: '#55efc4', emoji: '🍏' },
+                    { color: '#ffeaa7', emoji: '🍋' },
+                    { color: '#a29bfe', emoji: '🍇' },
+                    { color: '#fd79a8', emoji: '🍓' }
+                ];
+
+                function initGame() {
+                    state.level = 1;
+                    state.score = 0;
+                    state.targetScore = Math.floor(config.baseTargetScore * Math.pow(config.levelTargetMultiplier, state.level - 1));
+                    state.movesLeft = config.initialMoves + (state.level - 1) * config.movesPerLevel;
+                    state.gameActive = true;
+                    updateUI();
+                    createBoard();
+                    elements.levelComplete.style.display = 'none';
+                }
+
+                function createBoard() {
+                    elements.board.innerHTML = '';
+                    state.board = [];
+                    
+                    for (let row = 0; row < config.boardSize; row++) {
+                        state.board[row] = [];
+                        for (let col = 0; col < config.boardSize; col++) {
+                            const tile = document.createElement('div');
+                            tile.className = 'tile';
+                            tile.dataset.row = row;
+                            tile.dataset.col = col;
+                            
+                            const candy = createCandy(row, col);
+                            tile.appendChild(candy);
+                            elements.board.appendChild(tile);
+                            state.board[row][col] = candy;
+                            
+                            tile.addEventListener('click', () => handleTileClick(row, col));
+                        }
+                    }
+                    
+                    // Ensure no matches exist at start
+                    while (findMatches().length > 0) {
+                        shuffleBoard();
+                    }
+                }
+
+                function createCandy(row, col, isNew = false) {
+                    const candy = document.createElement('div');
+                    candy.className = 'candy';
+                    if (isNew) candy.classList.add('new');
+                    
+                    const type = Math.floor(Math.random() * config.candyTypes);
+                    candy.dataset.type = type;
+                    candy.style.background = candies[type].color;
+                    candy.innerHTML = candies[type].emoji;
+                    candy.dataset.row = row;
+                    candy.dataset.col = col;
+                    
+                    return candy;
+                }
+
+                function handleTileClick(row, col) {
+                    if (!state.gameActive || state.isAnimating) return;
+                    
+                    const candy = state.board[row][col];
+                    
+                    if (!state.selectedCandy) {
+                        state.selectedCandy = candy;
+                        candy.classList.add('selected');
+                        return;
+                    }
+                    
+                    if (state.selectedCandy === candy) {
+                        candy.classList.remove('selected');
+                        state.selectedCandy = null;
+                        return;
+                    }
+                    
+                    const selectedRow = parseInt(state.selectedCandy.dataset.row);
+                    const selectedCol = parseInt(state.selectedCandy.dataset.col);
+                    
+                    // Check if adjacent
+                    if ((Math.abs(row - selectedRow) === 1 && col === selectedCol) ||
+                        (Math.abs(col - selectedCol) === 1 && row === selectedRow)) {
+                        
+                        swapCandies(selectedRow, selectedCol, row, col, () => {
+                            const matches = findMatches();
+                            if (matches.length > 0) {
+                                state.movesLeft--;
+                                updateUI();
+                                processMatches(matches);
+                            } else {
+                                // No matches, swap back
+                                swapCandies(selectedRow, selectedCol, row, col);
+                            }
+                        }, true);
+                    } else {
+                        // Not adjacent, just select new candy
+                        state.selectedCandy.classList.remove('selected');
+                        state.selectedCandy = candy;
+                        candy.classList.add('selected');
+                    }
+                }
+
+                function swapCandies(row1, col1, row2, col2, callback, animate = false) {
+                    state.isAnimating = true;
+                    
+                    const candy1 = state.board[row1][col1];
+                    const candy2 = state.board[row2][col2];
+                    
+                    // Swap in array
+                    state.board[row1][col1] = candy2;
+                    state.board[row2][col2] = candy1;
+                    
+                    // Update positions
+                    candy1.dataset.row = row2;
+                    candy1.dataset.col = col2;
+                    candy2.dataset.row = row1;
+                    candy2.dataset.col = col1;
+                    
+                    const tile1 = elements.board.children[row1 * config.boardSize + col1];
+                    const tile2 = elements.board.children[row2 * config.boardSize + col2];
+                    
+                    if (animate) {
+                        candy1.classList.add('swap');
+                        candy2.classList.add('swap');
+                        
+                        setTimeout(() => {
+                            candy1.classList.remove('swap');
+                            candy2.classList.remove('swap');
+                            
+                            // Move DOM elements
+                            tile1.appendChild(candy2);
+                            tile2.appendChild(candy1);
+                            
+                            state.isAnimating = false;
+                            if (state.selectedCandy) {
+                                state.selectedCandy.classList.remove('selected');
+                                state.selectedCandy = null;
+                            }
+                            
+                            if (callback) callback();
+                        }, 200);
+                    } else {
+                        // Move DOM elements without animation
+                        tile1.appendChild(candy2);
+                        tile2.appendChild(candy1);
+                        
+                        setTimeout(() => {
+                            state.isAnimating = false;
+                            if (callback) callback();
+                        }, 200);
+                    }
+                }
+
+                function findMatches() {
+                    const matches = [];
+                    
+                    // Check horizontal matches
+                    for (let row = 0; row < config.boardSize; row++) {
+                        let streak = 1;
+                        for (let col = 1; col < config.boardSize; col++) {
+                            const prev = state.board[row][col - 1].dataset.type;
+                            const curr = state.board[row][col].dataset.type;
+                            
+                            if (curr === prev) {
+                                streak++;
+                            } else {
+                                if (streak >= 3) {
+                                    const match = [];
+                                    for (let k = 0; k < streak; k++) {
+                                        match.push({row, col: col - 1 - k});
+                                    }
+                                    matches.push(match);
+                                }
+                                streak = 1;
+                            }
+                        }
+                        
+                        if (streak >= 3) {
+                            const match = [];
+                            for (let k = 0; k < streak; k++) {
+                                match.push({row, col: config.boardSize - 1 - k});
+                            }
+                            matches.push(match);
+                        }
+                    }
+                    
+                    // Check vertical matches
+                    for (let col = 0; col < config.boardSize; col++) {
+                        let streak = 1;
+                        for (let row = 1; row < config.boardSize; row++) {
+                            const prev = state.board[row - 1][col].dataset.type;
+                            const curr = state.board[row][col].dataset.type;
+                            
+                            if (curr === prev) {
+                                streak++;
+                            } else {
+                                if (streak >= 3) {
+                                    const match = [];
+                                    for (let k = 0; k < streak; k++) {
+                                        match.push({row: row - 1 - k, col});
+                                    }
+                                    matches.push(match);
+                                }
+                                streak = 1;
+                            }
+                        }
+                        
+                        if (streak >= 3) {
+                            const match = [];
+                            for (let k = 0; k < streak; k++) {
+                                match.push({row: config.boardSize - 1 - k, col});
+                            }
+                            matches.push(match);
+                        }
+                    }
+                    
+                    return matches;
+                }
+
+                function processMatches(matches) {
+                    state.isAnimating = true;
+                    
+                    // Collect all unique positions to remove
+                    const toRemove = {};
+                    matches.flat().forEach(({row, col}) => {
+                        toRemove[\`\${row},\${col}\`] = true;
+                    });
+                    
+                    // Animate removal
+                    Object.keys(toRemove).forEach(key => {
+                        const [row, col] = key.split(',').map(Number);
+                        state.board[row][col].classList.add('removing');
+                    });
+                    
+                    setTimeout(() => {
+                        // Remove candies and update score
+                        Object.keys(toRemove).forEach(key => {
+                            const [row, col] = key.split(',').map(Number);
+                            const tile = elements.board.children[row * config.boardSize + col];
+                            tile.removeChild(state.board[row][col]);
+                            state.board[row][col] = null;
+                            
+                            // Calculate score with multiplier for combos
+                            const multiplier = 1 + (matches.length > 1 ? 0.1 * (matches.length - 1) : 0);
+                            state.score += Math.floor(config.scorePerCandy * multiplier);
+                        });
+                        
+                        updateUI();
+                        
+                        // Drop candies, then fill new ones
+                        dropCandies(() => {
+                            fillCandies(() => {
+                                const newMatches = findMatches();
+                                if (newMatches.length > 0) {
+                                    // Chain reaction - more matches
+                                    processMatches(newMatches);
+                                } else {
+                                    state.isAnimating = false;
+                                    checkEndOfTurn();
+                                }
+                            });
+                        });
+                    }, 500);
+                }
+
+                function dropCandies(callback) {
+                    for (let col = 0; col < config.boardSize; col++) {
+                        for (let row = config.boardSize - 1; row >= 0; row--) {
+                            if (!state.board[row][col]) {
+                                // Find first candy above to drop down
+                                for (let above = row - 1; above >= 0; above--) {
+                                    if (state.board[above][col]) {
+                                        state.board[row][col] = state.board[above][col];
+                                        state.board[above][col] = null;
+                                        state.board[row][col].dataset.row = row;
+                                        
+                                        // Animate falling
+                                        state.board[row][col].classList.add('falling');
+                                        const tile = elements.board.children[row * config.boardSize + col];
+                                        tile.appendChild(state.board[row][col]);
+                                        
+                                        setTimeout(() => {
+                                            state.board[row][col].classList.remove('falling');
+                                        }, 350);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    setTimeout(callback, 350);
+                }
+
+                function fillCandies(callback) {
+                    for (let col = 0; col < config.boardSize; col++) {
+                        for (let row = 0; row < config.boardSize; row++) {
+                            if (!state.board[row][col]) {
+                                const tile = elements.board.children[row * config.boardSize + col];
+                                const candy = createCandy(row, col, true);
+                                tile.appendChild(candy);
+                                state.board[row][col] = candy;
+                            }
+                        }
+                    }
+                    
+                    setTimeout(callback, 320);
+                }
+
+                function shuffleBoard() {
+                    for (let row = 0; row < config.boardSize; row++) {
+                        for (let col = 0; col < config.boardSize; col++) {
+                            const tile = elements.board.children[row * config.boardSize + col];
+                            tile.removeChild(state.board[row][col]);
+                            const candy = createCandy(row, col);
+                            tile.appendChild(candy);
+                            state.board[row][col] = candy;
+                        }
+                    }
+                }
+
+                function updateUI() {
+                    elements.score.textContent = state.score;
+                    elements.level.textContent = state.level;
+                    elements.target.textContent = state.targetScore;
+                    elements.moves.textContent = state.movesLeft;
+                }
+
+                function checkEndOfTurn() {
+                    if (state.score >= state.targetScore) {
+                        state.gameActive = false;
+                        elements.levelComplete.style.display = 'flex';
+                    } else if (state.movesLeft <= 0) {
+                        // For infinite mode, just reset the level with same score
+                        createBoard();
+                        state.movesLeft = config.initialMoves + (state.level - 1) * config.movesPerLevel;
+                        updateUI();
+                    }
+                }
+
+                elements.nextLevelBtn.addEventListener('click', () => {
+                    state.level++;
+                    state.targetScore = Math.floor(config.baseTargetScore * Math.pow(config.levelTargetMultiplier, state.level - 1));
+                    state.movesLeft = config.initialMoves + (state.level - 1) * config.movesPerLevel;
+                    elements.levelComplete.style.display = 'none';
+                    state.gameActive = true;
+                    createBoard();
+                    updateUI();
+                });
+
+                window.onload = function() { 
+                    initGame();
+                };
+            `;
+            doc.body.appendChild(script);
+            
+            // Initialize the game
+            win.addEventListener('load', () => {
+                win.initGame();
+            });
+        };
+    </script>
+</body>
+</html>

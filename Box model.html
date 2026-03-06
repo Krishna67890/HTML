@@ -1,0 +1,346 @@
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style> 
+        .container1 {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            padding:10px;
+            padding-right:20px;
+            padding-left:20px;
+            border: 3px solid rgb(39, 26, 26);
+            margin: 100px 30% 34px 3%;
+            gap: 10px;
+            border-color: turquoise;
+            box-shadow: inset;
+            justify-content: right;
+
+        }
+        .bordercontainer1 {
+           box-sizing: border-box;
+           width: 100px;
+           height: 100px;
+           background-color: red;
+           padding-right:20px;
+           padding-left:20px; 
+           padding-top:20px; 
+           padding-bottom:20px; 
+           border: 10px solid black;
+           margin: 100px 30% 24px 70%;
+           border-color: blue;
+           box-shadow: inset;
+           justify-content: right;
+        }
+        .container2 {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(242, 12, 85);
+            padding:10px;
+            padding-right:20px;
+            padding-left:20px;
+            border: 3px solid rgb(39, 26, 26);
+            margin:20px;
+            gap: 10px;
+            border-color: gray;
+            box-shadow: inset;
+            justify-content: right;
+        }
+        .bordercontainer2 {
+           box-sizing: border-box;
+           width: 100px;
+           height: 100px;
+           background-color: rgba(218, 15, 229, 0.365);
+           padding-right:20px;
+           padding-left:20px; 
+           padding-top:20px; 
+           padding-bottom:20px; 
+           border: 10px solid black;
+           margin: 100px 40% 24px 90%;
+           border-color: palevioletred;
+           box-shadow: inset;
+           justify-content: right;
+        }
+        .container3 {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(119, 18, 214);
+            padding:10px;
+            padding-right:20px;
+            padding-left:20px;
+            border: 3px solid rgb(39, 26, 26);
+            margin: 100px 40% 24px 60%;
+            gap: 10px;
+            border-color: aqua;
+            box-shadow: inset;
+            justify-content: right;
+        }
+        .bordercontainer3 {
+           box-sizing: content-box;
+           width: 100px;
+           height: 100px;
+           background-color: red;
+           padding-right:20px;
+           padding-left:20px; 
+           padding-top:20px; 
+           padding-bottom:20px; 
+           border: 10px solid rgb(0, 255, 115);
+           margin: 100px 40% 24px 60%;
+           border-color: aliceblue;
+           box-shadow: inset;
+           justify-content: right;
+        } 
+  
+        .container4 {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            padding:10px;
+            padding-right:20px;
+            padding-left:20px;
+            border: 3px solid turquoise;
+            margin: 100px auto 34px auto; /* Centered horizontally */
+            display: flex;
+            justify-content: end; /* Align content to the right */
+            box-shadow: inset;
+        } 
+        .container5 {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(242, 12, 85);
+            padding:10px;
+            padding-right:20px;
+            padding-left:20px;
+            border: 3px solid gray;
+            margin: 20px auto; /* Centered horizontally */
+            display: flex;
+            justify-content: end; /* Align content to the right */
+            box-shadow: inset;
+        }
+        .container6 {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(119, 18, 214);
+            padding:10px;
+            padding-right:20px;
+            padding-left:20px;
+            border: 3px solid aqua;
+            margin: 100px auto 24px auto; /* Centered horizontally */
+            display: flex;
+            justify-content: end; /* Align content to the right */
+            box-shadow: inset;
+        }
+  
+        .container1, .container2, .container3, .container4, .container5, .container6{
+            width: 100px;
+            height: 100px;
+            padding: 10px;
+            border: 3px solid;
+            position: absolute;
+            right: 10px; /* Aligns the containers to the right edge */
+            box-shadow: inset;
+        }
+
+        .container1 {
+            top: 20px; /* Adjusts position from the top */
+            background-color: red;
+            border-color: turquoise;
+        }
+
+        .container2 {
+            top: 150px; /* Adjusts position from the top */
+            background-color: rgb(242, 12, 85);
+            border-color: gray;
+        }
+
+        .container3 {
+            top: 280px; /* Adjusts position from the top */
+            background-color: rgb(119, 18, 214);
+            border-color: aqua;
+        } 
+        .container4 {
+            top: 410px; /* Adjusts position from the top */
+            background-color: red;
+            border-color: turquoise;
+        }
+        .container5 {
+            top: 540px; /* Adjusts position from the top */
+            background-color: rgb(242, 12, 85);
+            border-color: gray;
+        }   
+        .container6 {
+            top: 670px; /* Adjusts position from the top */
+            background-color: rgb(119, 18, 214);
+            border-color: aqua;
+        }
+
+        .fifty_vw{
+         width: 50%;
+         background-color: red;
+        }
+
+        .twentyFive_vh{
+            width: 50%;
+            background-color: blue;
+        }
+        .parent_50{
+            width: 50%;
+            background-color: green;
+        }
+        .parent{
+            width: 50%;
+            background-color: yellow;
+        }
+    </style>
+
+    </head>
+<body>
+    <div class="container1">container1</div>
+    <div class="container2">container2</div>
+    <div class="container3">container3</div>
+
+  <div class="parent_50">50%</div>
+  <div class="fifty_vw">50vw</div>
+  <div class="twentyFive_vh">25vh</div>
+
+    
+    
+</body>
+</html> 
+
+ -->
+
+ 
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewport and Percentage Width Elements</title>
+    <style>
+        /* Main container styling */
+        .main-container {
+            display: flex;
+        }
+
+        /* Left-side elements */
+        .left-side {
+            width: 50%;
+            padding: 10px;
+        }
+
+        .parent_50 {
+            width: 100%;
+            background-color: green;
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .fifty_vw {
+            width: 50vw;
+            background-color: red;
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .twentyFive_vh {
+            width: 100%;
+            height: 25vh;
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .parent {
+            width: 100%;
+            background-color: yellow;
+            color: black;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        /* Right-side elements */
+        .right-side {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .container1, .container2, .container3, .container4, .container5, .container6 {
+            width: 100px;
+            height: 100px;
+            padding: 10px;
+            border: 3px solid;
+            text-align: center;
+            color: white;
+        }
+
+        .container1 {
+            background-color: red;
+            border-color: turquoise;
+        }
+
+        .container2 {
+            background-color: rgb(242, 12, 85);
+            border-color: gray;
+        }
+
+        .container3 {
+            background-color: rgb(119, 18, 214);
+            border-color: aqua;
+        }
+
+        .container4 {
+            background-color: red;
+            border-color: turquoise;
+        }
+
+        .container5 {
+            background-color: rgb(242, 12, 85);
+            border-color: gray;
+        }
+
+        .container6 {
+            background-color: rgb(119, 18, 214);
+            border-color: aqua;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Left side with main containers -->
+        <div class="left-side">
+            <div class="parent_50">50% Width</div>
+            <div class="fifty_vw">50vw Width</div>
+            <div class="twentyFive_vh">25vh Height</div>
+            <div class="parent">Another 50% Width</div>
+        </div>
+
+        <!-- Right side with smaller containers -->
+        <div class="right-side">
+            <div class="container1">Container 1</div>
+            <div class="container2">Container 2</div>
+            <div class="container3">Container 3</div>
+            <div class="container4">Container 4</div>
+            <div class="container5">Container 5</div>
+            <div class="container6">Container 6</div>
+        </div>
+    </div>
+</body>
+</html>
+
+

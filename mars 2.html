@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mars</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+        *,
+        *::after,
+        *::before {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+
+
+
+
+
+
+
+        body {
+            background-image: url('space.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: white;
+            scroll-behavior: smooth;
+            font-family: 'Nunito', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container {
+            position: relative;
+            margin: 0 auto;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .desktopmenu {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+        }
+
+
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 768px) {
+            .hamburger {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 30px;
+                color: white;
+            }
+
+            .desktopmenu {
+                display: none;
+            }
+        }
+
+        /* Toggle menu visibility */
+        .hamburger.active+.desktopmenu {
+            display: flex;
+            flex-direction: column;
+        }
+
+
+
+        /*mars menu*/
+        .mars {
+            position: absolute;
+            animation: movement 60s linear infinite;
+            width: 20rem;
+            /* default size */
+            max-width: 100%;
+            /* Ensures it scales with screen size */
+        }
+
+        @media screen and (max-width: 768px) {
+            .mars {
+                width: 15rem;
+                /* Adjust the size for smaller screens */
+            }
+        }
+
+        /* Menu close*/
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+
+        #home,
+        #Info,
+        #projects,
+        #Launch-Shedule,
+        #contact-us {
+            background-color: rgb(0, 0, 0);
+        }
+
+        #homepage {
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+
+
+
+
+
+        /*     Hamburger by vedio  */
+        .hamburger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-direction: column;
+            display: none;
+        }
+
+        .ham {
+            width: 40px;
+            height: 2px;
+            background-color: aliceblue;
+        }
+
+        .mobilemenu {
+            position: absolute;
+            top: 80px;
+            width: 100%;
+            height: 100vh;
+            right: 0;
+            transform: translateX(100%);
+            flex-direction: column;
+
+        }
+
+        .activemobile {
+            transform: translateX(0%);
+        }
+
+        @media(max-width:750px) {
+            .desktopmenu {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* 
+
+
+.desktopmenu, .mobilemenu {
+  list-style: none;
+  padding: 0;
+}
+
+.desktopmenu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.desktopmenu li a,
+.mobilemenu li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.desktopmenu li a:hover,
+.mobilemenu li a:hover {
+  color: rgb(66, 180, 205);
+}
+
+.hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+}
+
+nav ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: white;
+  list-style: none;
+  font-size: 20px;
+}
+
+nav ul a {
+  cursor: pointer;
+}
+
+nav ul a:hover {
+  color: rgb(107, 211, 211);
+  border-bottom: 2px solid white;
+}
+
+.active {
+  color: rgb(107, 211, 211);
+  border-bottom: 2px solid white;
+}
+
+.ham {
+  width: 40px;
+  height: 2px;
+  background-color: white;
+  transition: all 0.5s;
+}
+
+.mobilemenu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 80px;
+  right: 0;
+  width: 100%;
+  background-color: rgba(17, 20, 23, 0.95);
+  backdrop-filter: blur(7px);
+  padding: 20px;
+  gap: 20px;
+}
+
+.activemobile {
+  display: flex;
+}
+
+.activeham .ham:nth-child(1) {
+  transform: rotate(45deg);
+  position: relative;
+  top: 8px;
+}
+
+.activeham .ham:nth-child(2) {
+  opacity: 0;
+}
+
+.activeham .ham:nth-child(3) {
+  transform: rotate(-45deg);
+  position: relative;
+  top: -13px;
+}
+
+@media (max-width: 750px) {
+  .desktopmenu {
+    display: none;
+  }
+  .hamburger {
+    display: flex;
+  }
+  .mobilemenu {
+    display: flex;
+  }
+}
+
+ */
+
+
+
+
+
+
+
+
+
+        /* 
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: rgba(17, 20, 23);
+            z-index: 20;
+        }
+
+        nav h1 {
+            font-size: 40px;
+            background: linear-gradient(to right, rgb(66, 180, 205), white);
+            background-clip: text;
+            color: transparent;
+        }
+
+
+ */
+
+
+
+
+
+
+
+
+
+
+        /* 
+
+        .desktopmenu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .desktopmenu li a,
+        .mobilemenu li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .desktopmenu li a:hover,
+        .mobilemenu li a:hover {
+            color: rgb(66, 180, 205);
+        }
+
+        .hamburger {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+
+
+
+
+
+
+
+
+/*scroll down
+
+        @media screen and (max-width: 768px) {
+    .desktopmenu {
+        display: none;
+    }
+    .hamburger {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .hamburger div {
+        background-color: white;
+        height: 3px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .hamburger.active div:nth-child(1) {
+        transform: rotate(45deg);
+        transform-origin: top left;
+    }
+    .hamburger.active div:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger.active div:nth-child(3) {
+        transform: rotate(-45deg);
+        transform-origin: bottom left;
+    }
+
+    .desktopmenu.active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        background-color: rgba(17, 20, 23, 0.9);
+        width: 100%;
+        padding: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .desktopmenu li a {
+        font-size: 18px;
+    }
+} */
+
+        /* scroll down close*/
+
+
+
+
+
+
+
+
+
+        /*
+
+.ham {
+      width: 40px;
+      height: 2px;
+      background-color: white;
+      transition: all 0.5s;
+    }
+
+    .mobilemenu {
+      display: none;
+      flex-direction: column;
+      list-style: none;
+      position: absolute;
+      top: 80px;
+      right: 0;
+      width: 100%;
+      background-color: rgba(17, 20, 23, 0.95);
+      backdrop-filter: blur(7px);
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .activemobile {
+      display: flex;
+    }
+
+    .activeham .ham:nth-child(1) {
+      transform: rotate(45deg);
+      position: relative;
+      top: 8px;
+    }
+
+    .activeham .ham:nth-child(2) {
+      opacity: 0;
+    }
+
+    .activeham .ham:nth-child(3) {
+      transform: rotate(-45deg);
+      position: relative;
+      top: -13px;
+    }
+
+    @media (max-width: 750px) {
+      .desktopmenu {
+        display: none;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
+
+    section {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px; /* Adjusted for smaller text 
+    }
+
+    #home {
+      background-color: rgb(0, 0, 0);
+    }
+
+    #Info {
+      background-color: rgb(0, 0, 0);
+    }
+
+    #projects {
+      background-color: rgb(0, 0, 0);
+    }
+
+    #Launch-Schedule {
+      background-color: rgb(0, 0, 0);
+    }
+
+    #Contact-Us {
+      background-color: rgb(0, 0, 0);
+    }
+
+   
+
+
+
+
+
+
+    .ham {
+      width: 40px;
+      height: 2px;
+      background-color: white;
+      transition: all 0.5s;
+    }
+
+    .mobilemenu {
+      display: none;
+      flex-direction: column;
+      list-style: none;
+      position: absolute;
+      top: 80px;
+      right: 0;
+      width: 100%;
+      background-color: rgba(17, 20, 23, 0.95);
+      backdrop-filter: blur(7px);
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .activemobile {
+      display: flex;
+    }
+
+    .activeham .ham:nth-child(1) {
+      transform: rotate(45deg);
+      position: relative;
+      top: 8px;
+    }
+
+    .activeham .ham:nth-child(2) {
+      opacity: 0;
+    }
+
+    .activeham .ham:nth-child(3) {
+      transform: rotate(-45deg);
+      position: relative;
+      top: -13px;
+    }
+
+    @media (max-width: 750px) {
+      .desktopmenu {
+        display: none;
+      }
+      .hamburger {
+        display: flex;
+      }
+    } 
+
+
+ .hamburger {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        h4 {
+            color: red;
+            width: 600px;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            color: white;
+            overflow: hidden;
+            background-color: black;
+        }
+
+        .bg-img {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url(/images/space.jpg) no-repeat fixed center;
+            background-size: cover;
+            animation: scaling 60s linear infinite;
+        }
+
+        @keyframes scaling {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .bg-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        ol {
+            list-style-type: none;
+            display: flex;
+        }
+
+        .container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100vh;
+        }
+
+        .mars {
+            position: absolute;
+            animation: movement 60s linear infinite;
+        }
+
+        @keyframes movement {
+            0% {
+                width: 20rem;
+                top: 10%;
+                right: 30%;
+                transform: rotate(0deg);
+            }
+
+            50% {
+                width: 50rem;
+                top: 20%;
+                right: -10%;
+                transform: rotate(180deg);
+            }
+
+            100% {
+                width: 20rem;
+                top: 10%;
+                right: 30%;
+                transform: rotate(360deg);
+            }
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 50px 0;
+        }
+
+        header>a {
+            font-weight: 700;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        header ol li {
+            font-weight: 600;
+            padding: 0 20px;
+            opacity: 0.6;
+        }
+
+        header ol li:first-child {
+            opacity: 1;
+        }
+
+        h1 {
+            font-size: 54px;
+        }
+
+        main {
+            padding-top: 5%;
+        }
+
+        main>p {
+            max-width: 50%;
+            opacity: 0.75;
+            font-size: 13px;
+        }
+
+        .d-flex {
+            display: flex;
+            margin-top: 20px;
+            margin-bottom: 50px;
+        }
+
+        .d-flex a {
+            margin-right: 50px;
+            display: flex;
+            font-size: 14px;
+            align-items: center;
+            text-transform: uppercase;
+        }
+
+        .d-flex a span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .d-flex a:first-child span {
+            background: maroon;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .d-flex a:last-child span {
+            height: 20px;
+            width: 20px;
+            font-size: 7px;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        ul.info {
+            padding-top: 5%;
+        }
+
+        l.info li {
+            flex: 0 0 30%;
+        }
+
+        ol.info li h5 {
+            margin-bottom: 10px;
+        }
+
+        ol.info li h4 {
+            margin-bottom: 10px;
+        }
+
+        ol.info li p {
+            padding-right: 20%;
+            opacity: 0.75;
+        }
+
+        footer {
+            background-color: #222;
+            color: #fff;
+            font-size: 14px;
+            bottom: 0;
+            position: fixed;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 999;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        footer i {
+            color: red;
+            margin: 0 10px;
+        }
+
+        footer a {
+            color: greenyellow;
+            text-decoration: none;
+        }
+
+        .explore-mars-button {
+            display: inline-block;
+            background-color: #ff4500;
+            /* Mars-like red */
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .explore-mars-button:hover {
+            background-color: #e63900;
+            /* Slightly darker red */
+            transform: scale(1.05);
+            /* Adds a zoom-in effect on hover */
+            box-shadow: 0 4px 15px rgba(255, 69, 0, 0.5);
+            /* Adds a glowing effect */
+        }
+
+
+        .explore-mars-button:active {
+            background-color: #cc3300;
+            /* Even darker red */
+            transform: scale(1);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* General styles for the ordered list */
+        .info {
+            list-style: none;
+            /* Remove default list styling */
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            /* Make the list items stack vertically */
+            align-items: flex-start;
+            /* Align items to the left */
+        }
+
+        /* Styling each item in the list */
+        .info .item {
+            margin-bottom: 20px;
+            /* Add spacing between items */
+            padding: 0;
+            /* Remove inner spacing for items */
+            border: none;
+            /* Remove borders */
+            background-color: transparent;
+            /* Fully transparent boxes */
+            width: 100%;
+            /* Make the boxes take full width */
+        }
+
+        /* Styling the numbering (h5) */
+        .info .item h5 {
+            font-size: 20px;
+            /* Number font size */
+            font-weight: bold;
+            /* Make numbers bold */
+            color: #d32f2f;
+            /* Red color for numbers */
+            margin: 0 0 5px;
+            /* Add space below numbers */
+            background-color: transparent;
+            /* Transparent background for numbers */
+            display: inline-block;
+            /* Keep numbers inline */
+        }
+
+        /* Styling the heading (h4) */
+        .info .item h4 {
+            font-size: 18px;
+            /* Heading font size */
+            color: violet;
+            /* Dark gray color for text */
+            margin: 0 0 10px;
+            /* Add space below the heading */
+            background-color: transparent;
+            /* Transparent background for headings */
+            display: block;
+            /* Ensure headings are block-level elements */
+        }
+
+        /* Styling the description paragraph */
+        .info .item p {
+            font-size: 16px;
+            /* Paragraph font size */
+            color: white;
+            /* Medium gray text color */
+            line-height: 1.6;
+            /* Increase line spacing for readability */
+            margin: 0 0 10px;
+            /* Add space below the paragraph */
+            background-color: transparent;
+            /* Transparent background for paragraph */
+        }
+
+        /* Styling the unordered lists inside items */
+        .info .item ul {
+            margin: 10px 0 0 20px;
+            /* Indentation for list items */
+            padding: 0;
+            background-color: transparent;
+            /* Transparent background for the list */
+        }
+
+        /* Styling the individual list items */
+        .info .item ul li {
+            font-size: 16px;
+            /* Font size for list items */
+            color: gray;
+            /* Slightly darker gray text */
+            margin-bottom: 5px;
+            /* Add spacing between list items */
+            line-height: 1.5;
+            /* Improve spacing between lines */
+            background-color: transparent;
+            /* Transparent background for list items */
+        }
+
+        /* Highlighting bold text inside the list */
+        .info .item ul li strong {
+            color: #2e7d32;
+            /* Green color for emphasis */
+            background-color: transparent;
+            /* Transparent background for bold text */
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- 
+    <div class="hamburger">
+        <i class="fas fa-bars"></i>
+    </div>
+
+
+
+    <nav aria-label="Main Navigation">
+        <div class="hamburger" aria-label="Open menu" tabindex="0" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div> -->
+
+
+
+
+
+
+
+
+
+
+    <h1 href="#">Mars</h1>
+    <ul class="desktopmenu">
+        <li><a href="#home">HOME</a></li>
+        <li><a href="#about">Info</a></li>
+        <li><a href="#projects">PROJECTS</a></li>
+        <li><a href="#contact">Launch Schedule</a></li>
+        <li><a href="#website">Contact us</a></li>
+    </ul>
+    </nav>
+
+
+
+
+    <div class="hamburger" ref={menu} onclick={()=>{
+         mobile.current.classList.toggle()
+        }
+        }>
+        <div class="ham"></div>
+        <div class="ham"></div>
+        <div class="ham"></div>
+    </div>
+    <ul class="mobilemenu" ref={mobile}>
+        <li><a href="#home" onclick="toggleMenu()">HOME</a></li>
+        <li><a href="#about" onclick="toggleMenu()">ABOUT</a></li>
+        <li><a href="#projects" onclick="toggleMenu()">PROJECTS</a></li>
+        <li><a href="#contact" onclick="toggleMenu()">CONTACT US</a></li>
+        <li><a href="#website" onclick="toggleMenu()">MY WEBSITE</a></li>
+    </ul>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="bg-img"></span>
+    <img src="mars.png" alt="Mars" class="mars">
+    <div class="container">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <main>
+            <h1>Humans live on Mars <br>is it possible?</h1>
+            <p>Mars might not be somewhere we could live. We are not sure how effective Mars's atmosphere would be as a
+                radiation shield (how will astronauts hide from radiation on Mars?) And we must remember that the
+                explorers will have to spend a long time on the planet. There can be no quick there-and-back dash, as
+                with the Moon.</p>
+
+            <div class="d-flex">
+                <a href="#">
+                    <span>
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                    <a href="https://mars.nasa.gov/" target="_blank" class="explore-mars-button">
+                        Explore Mars
+                    </a>
+                </a>
+                <a href="#">
+                    <span>
+                        <i class="fas fa-play"></i>
+                    </span>
+                    <a href="https://youtu.be/PPgFKZvfMUU" target="_blank" class="watch-video-button">
+                        Watch Video
+                    </a>
+                </a>
+            </div>
+
+
+
+
+
+
+            <ol class="info">
+                <li class="item">
+                    <h5>01</h5>
+                    <h4>Mars: The Red Planet</h4>
+                    <p>
+                        Mars, often referred to as the Red Planet, is the fourth planet from the Sun in our Solar
+                        System.
+                        It is named after the Roman god of war due to its reddish appearance, which comes from iron
+                        oxide (rust) on its surface.
+                        Here's a detailed overview:
+                    </p>
+                    <ul>
+                        <li><strong>Distance from the Sun:</strong> About 227.9 million kilometers (141.6 million
+                            miles).</li>
+                        <li><strong>Length of a Day (Sol):</strong> 24.6 hours.</li>
+                        <li><strong>Length of a Year:</strong> 687 Earth days.</li>
+                        <li><strong>Diameter:</strong> 6,779 kilometers (4,212 miles) – roughly half the size of Earth.
+                        </li>
+                        <li><strong>Gravity:</strong> 38% of Earth's gravity (you'd weigh much less on Mars!).</li>
+                        <li><strong>Moons:</strong> Two small moons, Phobos and Deimos.</li>
+                    </ul>
+                </li>
+                <li class="item">
+                    <h5>02</h5>
+                    <h4>Interesting Facts About Mars</h4>
+                    <ul>
+                        <li>Mars has the largest volcano in the Solar System, Olympus Mons, which is about 21.9 km (13.6
+                            miles) high.</li>
+                        <li>Valles Marineris, a canyon system on Mars, stretches over 4,000 km (2,500 miles).</li>
+                        <li>Mars experiences massive dust storms that can last for weeks and cover the entire planet.
+                        </li>
+                        <li>Sunsets on Mars appear blue due to the way its atmosphere scatters sunlight.</li>
+                        <li>Mars' atmosphere is 95.3% carbon dioxide, making it inhospitable for human life without
+                            support systems.</li>
+                    </ul>
+                </li>
+                <li class="item">
+                    <h5>03</h5>
+                    <h4>Water on Mars</h4>
+                    <p>Evidence suggests Mars once had flowing rivers, lakes, and even an ocean. Today, water is mostly
+                        found as ice in polar caps and possibly beneath the surface.</p>
+                    <ul>
+                        <li>Seasonal dark streaks on the surface hint at possible briny liquid water flows.</li>
+                        <li>Subsurface ice could be a vital resource for future human missions.</li>
+                    </ul>
+                </li>
+                <li class="item">
+                    <h5>04</h5>
+                    <h4>Exploration of Mars</h4>
+                    <p>Several missions have explored Mars, including orbiters, landers, and rovers.</p>
+                    <ul>
+                        <li><strong>Rovers:</strong> Perseverance, Curiosity, Spirit, and Opportunity have provided
+                            invaluable data.</li>
+                        <li><strong>Orbiters:</strong> Mars Reconnaissance Orbiter and MAVEN continue to study the
+                            planet from above.</li>
+                        <li><strong>Future:</strong> Plans for human exploration by NASA and private companies like
+                            SpaceX are underway.</li>
+                    </ul>
+                </li>
+            </ol>
+        </main>
+        <footer>
+            <p>
+                Created with <i class="fa fa-heart"></i> by
+                <a target="_blank" href="https://www.youtube.com/@ATHARVA_GAMING_YT">KRISHNA
+                    PATIL RAJPUT</a>
+                - @MATOSHRI COLLEGE OF ENGINEERING COLLEGE
+
+            </p>
+        </footer>
+    </div>
+
+    <script>
+
+        let menu = useref()
+        console.log(menu)
+
+
+
+
+
+
+        const hamburger = document.querySelector('.hamburger');
+        const menu = document.querySelector('.desktopmenu');
+        hamburger.addEventListener('click', () => {
+            menu.classList.toggle('active');
+        });
+
+
+
+        let menu = useref()
+        let mobile = useref()
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+ <script>
+    //----- SPEED OPERATOR ---------------- 
+// ... -> SYNTAX
+
+const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+// if you think this is a copy 
+
+const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+const copyArr1 = [];
+
+// Method 1: Using a for loop to create a copy
+for (let i = 0; i < arr.length; i++) {
+    const item = arr[i];
+    copyArr1.push(item);
+}
+
+console.log(copyArr1); // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+console.log(copyArr1 === arr, "Comparing arr with copyArr1"); // false
+
+// Method 2: Using Spread Operator for shallow copy
+const copyArr2 = [...arr];
+
+console.log(copyArr2, 'copyArr2'); // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+console.log(arr === copyArr2, "Comparing arr with copyArr2"); // false
+
+//----- DEEP COPY VS SHALLOW COPY ----------------
+
+const person = {
+    name: 'John',
+    age: 30,
+    address: {
+        street: '123 Main St',
+        city: 'New York'
+    }
+}
+
+// Shallow copy of person
+const copyPerson = { ...person };
+
+console.log(copyPerson, 'copyPerson');
+console.log(copyPerson === person, 'Comparing person and copyPerson'); // false
+
+// Modifying a property of the shallow copy
+copyPerson.name = 'Jane'; // Change name in copy
+console.log(copyPerson, 'copyPerson after changing name');
+
+// Deep copy of person
+const deepCopyPerson = JSON.parse(JSON.stringify(person));
+deepCopyPerson.address.city = 'Los Angeles'; // Change city in deep copy
+console.log(deepCopyPerson, 'deepCopyPerson after changing city');
+console.log(person.address.city, 'Original person city'); // Still 'New York'
+
+// To demonstrate the impact of shallow copy
+const shallowCopy = { ...person };
+shallowCopy.address.city = 'Los Angeles'; // Change city in shallow copy
+console.log(shallowCopy.address.city, 'Shallow copy city'); // 'Los Angeles'
+console.log(person.address.city, 'Original person city after shallow copy change'); // Now also 'Los Angeles'
+
+
+var a = 12;
+console.log(a)
+
+if(true) {
+    console.log(a, 'Los Angeles')
+}
+console.log(a)
+
+var b =16;
+console.log(b);
+
+function abc(){
+    var b = 100;
+    console.log(b, 'inside the function');
+
+    return 1;
+}
+
+//functional exicution context
+
+var returnedValue = abc();
+console.log(returnedValue);
+console.log(a, 'after the function call');
+
+var a = 100;
+console.log(a);
+if (true) {
+var a = 100;
+console.log(a, 'inside the if');
+}
+
+console.log(a, 'after if') 
+ 
+
+///////////////////////////******////////////////
+
+function user() {
+var obj = {
+    name: "akash"
+}
+obj.name = "amit";
+
+console.log(obj);
+}
+console.log(user());
+
+console.log(obj);
+
+
+// let and CONST Scoping ----------------------------------------------------------------
+
+// we const re-declare let and const in the same 
+
+
+let a = 99;
+console.log(a);
+
+if (true) {
+    let a = 12;
+    console.log(a);
+}
+
+console.log(a);
+
+//99 12 99
+
+
+function great(name = 'kk'){
+    console.log(`Hello ${name}!`);
+}
+
+great('krishna');
+
+function great(name = 'alexa'){
+    console.log(`Hello ${name}!`);
+}
+
+// Corrected first 'great' function
+function great(name = 'kk') {
+    console.log('Hello ' + name);
+}
+great('akash'); // This will print: Hello akash
+
+// Corrected second 'great' function
+function greet(name = "alexa") {
+    console.log('hello2 greet2 ' + name);
+}
+
+greet();           // This will print: hello2 greet2 alexa
+greet("krishna");  // This will print: hello2 greet2 krishna
+
+// Calling great with 'undefined' and 'null' as values
+great(undefined);  // This will print: Hello kk (default value 'kk' is used)
+great(null);       // This will print: Hello null (null is passed explicitly)
+
+
+function abc (abc) {
+
+    function inner() {
+    
+
+    return inner; 
+}
+
+abc(1)
+abc({})
+abc(() => {});
+
+
+
+}
+
+
+
+//deference between arrow functions vs normal functions keywords
+//1. this keyword: TODO {this keyword do not work with arrow functions}
+//2. arguments keywords  {arguments does not work with arrow functions}
+//3. new keyword: Arrow functions do not create their own this, they inherit this from the surrounding function context.
+
+ function sum (a,b) {
+    console.log('arguments given to function', arguments);
+    return a + b;
+
+ }
+
+sum2(100, 20);
+sum(1,2);
+sum2(4, 10);
+
+// ------------ try  catch -----------
+
+function sum2(a,b) {
+    let c = a + b;
+
+    // ------ Google call 
+
+    return c
+
+}
+
+try {
+    console.log(sum2(100, '20'));
+} catch (error) {
+    console.error('An error occurred', error);
+    alert('hey user you are in denger An error occurred')
+} finally {
+    obj = null;
+}
+
+  sum =>{
+    () => {
+        console.log('this is arrow function');
+    },
+
+    function () {
+        console.log('this is normal function');
+    
+}
+}
+
+
+
+// Higher Order Functions (HDF)
+
+
+// ------------------ Call back functions --------------------------------
+
+
+
+function spaceship(leftFunction, rightFunction, command) {
+
+    if(command === "left") {
+        leftFunction();
+    } else if(command === "right") {
+        rightFunction();
+    } else {
+        console.log('Emergency in spaceship');
+
+    }
+
+}
+
+function left() {
+    console.log('Turning left');
+}
+
+function right() {
+    console.log('Turning right');
+}
+
+spaceship(left, right, "left");
+
+spaceship(left, right, "right");
+
+spaceship(left, right, "up"); // Emergency in spaceship
+
+function humanleftFunction(){
+    console.log('Human Turning left');
+}
+
+function humanRightFunction(){
+    console.log('Human Turning right');
+}
+
+spaceship(humanleftFunction, humanRightFunction, "left");
+spaceship(humanleftFunction, humanRightFunction, "right");
+spaceship(humanleftFunction, humanRightFunction, "up"); // Emergency in spaceship
+spaceship(humanrightFunction, humanLeftFunction, "down"); // Emergency in
+
+
+
+
+
+    </script>
+</body>
+</html>
